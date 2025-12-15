@@ -1,0 +1,89 @@
+# Workflow Status - pm6
+# BMad Method Workflow Tracking
+# Generated: 2025-12-15
+
+generated: "2025-12-15"
+project: "pm6"
+project_type: "Python backend - Claude API SDK with agent/skill creation"
+selected_track: "method"
+field_type: "greenfield"
+workflow_path: "method-greenfield"
+
+# Project Context
+context:
+  description: |
+    Python backend application with Claude API SDK integration.
+    Functions to create agents and agent skills.
+    Minimal, test-driven approach with iterative development philosophy.
+  tech_stack:
+    - Python
+    - Anthropic SDK
+    - pytest + pytest-cov
+    - GitHub Actions CI/CD
+  principles:
+    - Minimal/basic implementation only
+    - Test-driven development
+    - Iterative cycles (learn and restart fresh)
+    - CI/CD with branch protection
+
+# CI/CD Strategy (from research)
+cicd:
+  platform: "GitHub Actions"
+  testing: "pytest + pytest-cov"
+  branch_protection: true
+  self_hosted_runner: "later (if needed)"
+
+workflow_status:
+  # Phase 0: Discovery
+  - phase: 0
+    name: "Discovery"
+    workflows:
+      - id: "brainstorm"
+        status: "skipped"
+      - id: "research"
+        status: "docs/research-cicd.md"
+        note: "CI/CD research completed - GitHub Actions selected"
+      - id: "product-brief"
+        status: "skipped"
+
+  # Phase 1: Planning
+  - phase: 1
+    name: "Planning"
+    workflows:
+      - id: "prd"
+        status: "docs/prd.md"
+        agent: "pm"
+        completed: "2025-12-15"
+      - id: "ux-design"
+        status: "skipped"
+        note: "Backend only - no UI"
+
+  # Phase 2: Solutioning
+  - phase: 2
+    name: "Solutioning"
+    workflows:
+      - id: "architecture"
+        status: "docs/architecture.md"
+        agent: "architect"
+        completed: "2025-12-15"
+      - id: "epics-stories"
+        status: "required"
+        agent: "pm"
+        command: "/bmad:bmm:workflows:create-epics-stories"
+      - id: "test-design"
+        status: "recommended"
+        agent: "tea"
+        command: "/bmad:bmm:workflows:testarch-test-design"
+      - id: "implementation-readiness"
+        status: "required"
+        agent: "architect"
+        command: "/bmad:bmm:workflows:check-implementation-readiness"
+
+  # Phase 3: Implementation
+  - phase: 3
+    name: "Implementation"
+    workflows:
+      - id: "sprint-planning"
+        status: "required"
+        agent: "sm"
+        command: "/bmad:bmm:workflows:sprint-planning"

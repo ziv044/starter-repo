@@ -1,0 +1,98 @@
+name: israeli_pm
+description: "Political simulation as the Israeli Prime Minister navigating complex domestic and international challenges"
+version: "1.0"
+author: "pm6"
+tags:
+  - political
+  - roleplay
+  - strategy
+
+# The player controls the PM character
+playerCharacter: pm
+
+agents:
+  - name: pm
+    role: Israeli Prime Minister
+    systemPromptFile: prompts/pm_system.md
+    model: claude-sonnet-4-20250514
+    memoryPolicy: SUMMARY
+    maxTurns: 15
+    controlledBy: player  # User controls this character
+    situationTypes:
+      - political
+      - security
+      - economic
+      - diplomatic
+    metadata:
+      party: "Coalition Leader"
+      term_start: "2024"
+
+  - name: advisor
+    role: Chief Political Advisor
+    systemPromptFile: prompts/advisor_system.md
+    model: claude-sonnet-4-20250514
+    memoryPolicy: SUMMARY
+    maxTurns: 10
+    controlledBy: cpu
+    initiative: 0.6  # Fairly likely to speak up
+    situationTypes:
+      - political
+      - strategy
+    metadata:
+      specialty: "Political strategy"
+
+  - name: security
+    role: National Security Advisor
+    systemPromptFile: prompts/security_system.md
+    model: claude-sonnet-4-20250514
+    memoryPolicy: FULL
+    maxTurns: 10
+    controlledBy: cpu
+    initiative: 0.4  # Speaks when security matters arise
+    situationTypes:
+      - security
+      - military
+      - intelligence
+    metadata:
+      background: "IDF General (ret.)"
+
+initialState:
+  # Political metrics
+  approval_rating: 45
+  coalition_seats: 64
+  coalition_stability: "fragile"
+  opposition_strength: "moderate"
+
+  # Security situation
+  security_level: "elevated"
+  border_situation:
+    north: "tense"
+    south: "calm"
+    east: "stable"
+
+  # Economy
+  economic_growth: 3.2
+  unemployment: 4.5
+  inflation: 3.8
+  budget_deficit: "moderate"
+
+  # International relations
+  us_relations: "strong"
+  eu_relations: "complicated"
+  regional_relations: "mixed"
+
+  # Current issues
+  active_issues:
+    - "Judicial reform debate"
+    - "Housing crisis"
+    - "Cost of living"
+    - "Regional tensions"
+
+settings:
+  # Cost optimization
+  enableCaching: true
+  maxCostPerSession: 5.0
+
+  # Gameplay
+  enableAutoSave: true
+  autoSaveInterval: 10

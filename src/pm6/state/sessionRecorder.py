@@ -186,6 +186,14 @@ class SessionRecorder:
         self._interactions = []
         self._metadata = None
 
+    def getInteractions(self) -> list[InteractionRecord]:
+        """Get all interactions from the current session.
+
+        Returns:
+            List of interaction records.
+        """
+        return list(self._interactions)
+
     def _saveSession(self) -> None:
         """Save current session to disk."""
         if self._currentSession is None or self._metadata is None:

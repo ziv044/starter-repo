@@ -1,6 +1,6 @@
 """Agent configuration using Pydantic models."""
 
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -22,6 +22,8 @@ class AgentConfig(BaseModel):
         maxTurns: Turns before memory compaction (if using SUMMARY policy).
         situationTypes: Types of situations this agent handles.
         tools: Tool names this agent can use.
+        controlledBy: Whether agent is controlled by 'player' or 'cpu'.
+        initiative: Probability (0-1) that CPU agent speaks on a turn.
         metadata: Additional agent-specific data.
     """
 
@@ -59,6 +61,16 @@ class AgentConfig(BaseModel):
         default_factory=list,
         description="Tools this agent can use",
     )
+    controlledBy: Literal["player", "cpu"] = Field(
+        default="cpu",
+        description="Whether agent is controlled by player or CPU",
+    )
+    initiative: float = Field(
+        default=0.5,
+        description="Probability (0-1) that CPU agent speaks on a turn",
+        ge=0.0,
+        le=1.0,
+    )
     metadata: dict[str, Any] = Field(
         default_factory=dict,
         description="Additional agent-specific data",
@@ -83,3 +95,13 @@ class AgentConfig(BaseModel):
             AgentConfig instance.
         """
         return cls.model_validate(data)
+
+    @property
+    def isPlayer(self) -> bool:
+        """Check if this agent is controlled by the player."""
+        return self.controlledBy == "player"
+
+    @property
+    def isCpu(self) -> bool:
+        """Check if this agent is controlled by the CPU."""
+        return self.controlledBy == "cpu"

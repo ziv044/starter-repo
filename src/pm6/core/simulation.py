@@ -149,6 +149,7 @@ class Simulation:
         self._history: list[InteractionResult] = []
         self._isRunning = False
         self._recordingEnabled = True  # Record by default
+        self._playerAgentName: str | None = None
 
         logger.info(f"Initialized simulation: {name}")
 
@@ -191,6 +192,70 @@ class Simulation:
     def listAgents(self) -> list[str]:
         """List all registered agent names."""
         return list(self._agents.keys())
+
+    # Player/CPU Agent Management
+
+    def setPlayerAgent(self, name: str) -> None:
+        """Set which agent is controlled by the player.
+
+        Args:
+            name: Name of the agent to set as player-controlled.
+
+        Raises:
+            AgentNotFoundError: If agent not found.
+        """
+        if name not in self._agents:
+            raise AgentNotFoundError(name)
+        self._playerAgentName = name
+        # Also update the agent's controlledBy field
+        self._agents[name].controlledBy = "player"
+
+    def getPlayerAgent(self) -> AgentConfig | None:
+        """Get the player-controlled agent configuration.
+
+        Returns:
+            AgentConfig for player agent, or None if not set.
+        """
+        if self._playerAgentName and self._playerAgentName in self._agents:
+            return self._agents[self._playerAgentName]
+        # Fallback: look for agent with controlledBy='player'
+        for agent in self._agents.values():
+            if agent.isPlayer:
+                return agent
+        return None
+
+    def getPlayerAgentName(self) -> str | None:
+        """Get the name of the player-controlled agent.
+
+        Returns:
+            Agent name or None if not set.
+        """
+        if self._playerAgentName:
+            return self._playerAgentName
+        player = self.getPlayerAgent()
+        return player.name if player else None
+
+    def getCpuAgents(self) -> list[AgentConfig]:
+        """Get all CPU-controlled agents.
+
+        Returns:
+            List of AgentConfig for CPU agents.
+        """
+        return [agent for agent in self._agents.values() if agent.isCpu]
+
+    def isPlayerAgent(self, name: str) -> bool:
+        """Check if an agent is the player-controlled agent.
+
+        Args:
+            name: Agent name to check.
+
+        Returns:
+            True if this is the player agent.
+        """
+        if self._playerAgentName:
+            return name == self._playerAgentName
+        agent = self._agents.get(name)
+        return agent.isPlayer if agent else False
 
     # Agent Relevance Detection
 
@@ -417,6 +482,16 @@ class Simulation:
             True if key exists in world state.
         """
         return key in self._worldState
+
+    def getHistory(self) -> list[Any]:
+        """Get interaction history from the current session.
+
+        Returns:
+            List of interaction records with agentName, userInput, response.
+        """
+        if not self._sessionRecorder.isRecording:
+            return []
+        return self._sessionRecorder.getInteractions()
 
     def getStateBucket(self) -> str:
         """Get the current state bucket for signature matching.

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Agents - {{ sim_name }}{% endblock %}
+
+{% block content %}
+<h1>Agents: {{ sim_name }}</h1>
+
+<div class="actions refresh-btn">
+    <a href="{{ url_for('agents.add_agent_view', sim_name=sim_name) }}" class="btn btn-success">Add Agent</a>
+    <button onclick="refreshAgents('{{ sim_name }}')" class="btn btn-secondary">Refresh</button>
+    <a href="{{ url_for('simulation.view_simulation', name=sim_name) }}" class="btn">Back to Simulation</a>
+</div>
+
+<div class="card">
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Role</th>
+                <th>Model</th>
+                <th>Controlled By</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="agents-list">
+            {% if agents %}
+                {% for agent in agents %}
+                <tr>
+                    <td>{{ agent.name }}</td>
+                    <td>{{ agent.metadata.agentType if agent.metadata and agent.metadata.agentType else 'entity' }}</td>
+                    <td>{{ agent.role }}</td>
+                    <td>{{ agent.model }}</td>
+                    <td>{{ agent.controlledBy }}</td>
+                    <td>
+                        <a href="{{ url_for('agents.edit_agent_view', sim_name=sim_name, agent_name=agent.name) }}" class="btn btn-sm">Edit</a>
+                        <form action="{{ url_for('agents.delete_agent_view', sim_name=sim_name, agent_name=agent.name) }}" method="POST" style="display:inline">
+                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirmDelete('Delete agent {{ agent.name }}?')">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="6" class="empty-state">
+                        No agents registered. <a href="{{ url_for('agents.add_agent_view', sim_name=sim_name) }}">Add one now</a>
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

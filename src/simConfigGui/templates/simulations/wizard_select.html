@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}AI-Assisted Setup{% endblock %}
+
+{% block content %}
+<h1>AI-Assisted Setup</h1>
+
+<div class="mode-selector">
+    <div class="card mode-card" onclick="window.location='{{ url_for('simulation.create_wizard_chat') }}'">
+        <h2>Guided Conversation</h2>
+        <p>Have a conversation with the AI to design your simulation step by step.</p>
+        <ul>
+            <li>AI asks clarifying questions</li>
+            <li>Build up requirements interactively</li>
+            <li>Best for complex or custom scenarios</li>
+        </ul>
+        <a href="{{ url_for('simulation.create_wizard_chat') }}" class="btn btn-success">Start Conversation</a>
+    </div>
+
+    <div class="card mode-card" onclick="window.location='{{ url_for('simulation.create_wizard_quick') }}'">
+        <h2>Quick Generate</h2>
+        <p>Describe your simulation in one prompt and generate immediately.</p>
+        <ul>
+            <li>Use templates for common scenarios</li>
+            <li>Single prompt generation</li>
+            <li>Best when you know exactly what you want</li>
+        </ul>
+        <a href="{{ url_for('simulation.create_wizard_quick') }}" class="btn btn-success">Quick Generate</a>
+    </div>
+</div>
+
+<div class="actions">
+    <a href="{{ url_for('simulation.create_simulation_view') }}" class="btn btn-secondary">Back</a>
+</div>
+
+<style>
+.mode-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+.mode-card {
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.mode-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.mode-card h2 {
+    margin-top: 0;
+}
+.mode-card ul {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+}
+.mode-card li {
+    margin: 0.5rem 0;
+}
+@media (max-width: 768px) {
+    .mode-selector {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

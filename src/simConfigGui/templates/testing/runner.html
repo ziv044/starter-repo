@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Test Runner - {{ sim_name }}{% endblock %}
+
+{% block content %}
+<h1>Test Runner: {{ sim_name }}</h1>
+
+<div class="actions refresh-btn">
+    <a href="{{ url_for('simulation.view_simulation', name=sim_name) }}" class="btn">Back to Simulation</a>
+    {% if is_test_mode %}
+    <form action="{{ url_for('testing.reset_test', sim_name=sim_name) }}" method="POST" style="display:inline">
+        <button type="submit" class="btn btn-secondary">Reset Mock State</button>
+    </form>
+    {% endif %}
+</div>
+
+{% if not is_test_mode %}
+<div class="alert alert-info">
+    This simulation is NOT in test mode. Interactions will use the real LLM API and incur costs.
+</div>
+{% endif %}
+
+<div class="card">
+    <h2>Quick Interaction Test</h2>
+    <form method="POST" action="{{ url_for('testing.run_test', sim_name=sim_name) }}">
+        <div class="form-row">
+            <label>
+                <span>Agent</span>
+                <select name="agentName" required>
+                    {% if agents %}
+                        {% for agent in agents %}
+                        <option value="{{ agent.name }}">{{ agent.name }} ({{ agent.role }})</option>
+                        {% endfor %}
+                    {% else %}
+                        <option value="" disabled>No agents registered</option>
+                    {% endif %}
+                </select>
+            </label>
+        </div>
+
+        <label>
+            <span>User Input</span>
+            <textarea name="userInput" rows="3" required placeholder="What do you want to say to the agent?"></textarea>
+        </label>
+
+        {% if is_test_mode %}
+        <div class="mode-toggle">
+            <label class="toggle-option">
+                <input type="radio" name="interactionMode" value="mock" checked onchange="toggleInteractionMode()">
+                <span>Mock Response</span>
+            </label>
+            <label class="toggle-option">
+                <input type="radio" name="interactionMode" value="live" onchange="toggleInteractionMode()">
+                <span>Live LLM (costs API credits)</span>
+            </label>
+        </div>
+
+        <div id="mockResponseSection">
+            <label>
+                <span>Mock Response (leave empty for default)</span>
+                <textarea name="mockResponse" rows="3" placeholder="The response the mock LLM should return..."></textarea>
+            </label>
+        </div>
+
+        <div id="liveWarningSection" style="display: none;">
+            <div class="alert alert-warning">
+                This will call the real Anthropic API and incur costs. The simulation will temporarily exit test mode for this interaction.
+            </div>
+            <input type="hidden" name="forceLive" id="forceLiveInput" value="">
+        </div>
+        {% endif %}
+
+        <div class="actions">
+            <button type="submit" class="btn btn-success" {% if not agents %}disabled{% endif %}>
+                Run Interaction
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="card">
+    <h2>Interaction History</h2>
+    <div id="test-results">
+        {% if history %}
+            {% for item in history | reverse %}
+            <div class="event-item">
+                <strong>{{ item.agentName }}</strong>
+                <span class="event-source">[{{ "cached" if item.fromCache else item.model }}]</span>
+                <div><strong>Input:</strong> {{ item.userInput }}</div>
+                <div><strong>Response:</strong> {{ item.response }}</div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">No interactions yet. Run a test above.</div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.mode-toggle {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background: #f5f5f5;
+    border-radius: 4px;
+}
+.toggle-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+.toggle-option input[type="radio"] {
+    width: auto;
+    margin: 0;
+}
+.alert-warning {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    color: #856404;
+    padding: 0.75rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+</style>
+
+{% if is_test_mode and mock_history %}
+<div class="card">
+    <h2>Mock Call History</h2>
+    <pre>{{ mock_history | tojson(indent=2) }}</pre>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleInteractionMode() {
+    const isLive = document.querySelector('input[name="interactionMode"][value="live"]').checked;
+    const mockSection = document.getElementById('mockResponseSection');
+    const liveSection = document.getElementById('liveWarningSection');
+    const forceLiveInput = document.getElementById('forceLiveInput');
+
+    if (mockSection && liveSection) {
+        mockSection.style.display = isLive ? 'none' : 'block';
+        liveSection.style.display = isLive ? 'block' : 'none';
+        forceLiveInput.value = isLive ? 'on' : '';
+    }
+}
+</script>
+{% endblock %}

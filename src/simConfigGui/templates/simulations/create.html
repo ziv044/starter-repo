@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Create Simulation{% endblock %}
+
+{% block content %}
+<h1>Create New Simulation</h1>
+
+<div class="mode-selector">
+    <div class="card mode-card" onclick="window.location='{{ url_for('simulation.create_manual') }}'">
+        <h2>Manual Setup</h2>
+        <p>Configure agents, world state, and settings yourself step by step.</p>
+        <ul>
+            <li>Full control over configuration</li>
+            <li>Add agents one at a time</li>
+            <li>Define custom world state</li>
+        </ul>
+        <a href="{{ url_for('simulation.create_manual') }}" class="btn btn-success">Start Manual Setup</a>
+    </div>
+
+    <div class="card mode-card" onclick="window.location='{{ url_for('simulation.create_wizard') }}'">
+        <h2>AI-Assisted Setup</h2>
+        <p>Describe your simulation and let AI generate the configuration.</p>
+        <ul>
+            <li>Quick setup from description</li>
+            <li>Choose from templates</li>
+            <li>Review and edit before applying</li>
+        </ul>
+        <a href="{{ url_for('simulation.create_wizard') }}" class="btn btn-success">Start AI-Assisted</a>
+    </div>
+</div>
+
+<div class="actions">
+    <a href="{{ url_for('simulation.list_simulations_view') }}" class="btn btn-secondary">Cancel</a>
+</div>
+
+<style>
+.mode-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+.mode-card {
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.mode-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.mode-card h2 {
+    margin-top: 0;
+}
+.mode-card ul {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+}
+.mode-card li {
+    margin: 0.5rem 0;
+}
+@media (max-width: 768px) {
+    .mode-selector {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

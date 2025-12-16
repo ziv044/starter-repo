@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}{{ sim_name }}{% endblock %}
+
+{% block content %}
+<h1>Simulation: {{ sim_name }}</h1>
+
+<div class="actions refresh-btn">
+    <button onclick="refreshStats('{{ sim_name }}')" class="btn btn-secondary">Refresh</button>
+    <a href="{{ url_for('agents.list_agents_view', sim_name=sim_name) }}" class="btn">Manage Agents</a>
+    <a href="{{ url_for('events.events_page', sim_name=sim_name) }}" class="btn">Events</a>
+    <a href="{{ url_for('testing.testing_page', sim_name=sim_name) }}" class="btn">Run Tests</a>
+    <a href="{{ url_for('simulation.edit_state', name=sim_name) }}" class="btn">Edit State</a>
+</div>
+
+<div class="grid">
+    <div class="card stat-card">
+        <div class="value">{{ sim.agents | length }}</div>
+        <div class="label">Agents</div>
+    </div>
+    <div class="card stat-card">
+        <div class="value">{{ sim.turnCount }}</div>
+        <div class="label">Turns</div>
+    </div>
+    <div class="card stat-card">
+        <div class="value">{{ "Yes" if sim.isTestMode else "No" }}</div>
+        <div class="label">Test Mode</div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Agents</h2>
+    {% if sim.agents %}
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Role</th>
+                <th>Model</th>
+                <th>Controlled By</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for agent in sim.agents %}
+            <tr>
+                <td>{{ agent.name }}</td>
+                <td>{{ agent.role }}</td>
+                <td>{{ agent.model }}</td>
+                <td>{{ agent.controlledBy }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <p>No agents registered.</p>
+        <p><a href="{{ url_for('agents.add_agent_view', sim_name=sim_name) }}" class="btn btn-success">Add First Agent</a></p>
+    </div>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h2>World State</h2>
+    <pre>{{ sim.worldState | tojson(indent=2) }}</pre>
+</div>
+
+<div class="card">
+    <h2>Statistics</h2>
+    <div id="sim-stats">
+        <pre>{{ sim.stats | tojson(indent=2) }}</pre>
+    </div>
+</div>
+{% endblock %}

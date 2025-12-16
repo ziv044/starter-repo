@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block title %}Review Configuration{% endblock %}
+
+{% block content %}
+<h1>Review Generated Configuration</h1>
+
+<form method="POST" action="{{ url_for('simulation.apply_config') }}">
+    <div class="card">
+        <h2>Basic Settings</h2>
+        <div class="form-row">
+            <label>
+                <span>Simulation Name</span>
+                <input type="text" name="name" value="{{ config.name }}" required>
+            </label>
+        </div>
+        <label>
+            <span>Description</span>
+            <textarea name="description" rows="2">{{ config.description }}</textarea>
+        </label>
+        <div class="form-row">
+            <label>
+                <input type="checkbox" name="test_mode" {{ "checked" if config.settings.testMode else "" }}>
+                Test Mode
+            </label>
+            <label>
+                <input type="checkbox" name="enable_cache" {{ "checked" if config.settings.enableCaching else "" }}>
+                Enable Cache
+            </label>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Entity Agents (Characters)</h2>
+        <div id="entityAgents">
+            {% for agent in config.entityAgents %}
+            <div class="agent-card" data-index="{{ loop.index0 }}">
+                <div class="agent-header">
+                    <strong>{{ agent.name }}</strong>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="removeAgent(this, 'entity')">Remove</button>
+                </div>
+                <input type="hidden" name="entity_agent_{{ loop.index0 }}_name" value="{{ agent.name }}">
+                <div class="form-row">
+                    <label>
+                        <span>Role</span>
+                        <input type="text" name="entity_agent_{{ loop.index0 }}_role" value="{{ agent.role }}">
+                    </label>
+                    <label>
+                        <span>Model</span>
+                        <select name="entity_agent_{{ loop.index0 }}_model">
+                            <option value="claude-sonnet-4-20250514" {{ "selected" if agent.model == "claude-sonnet-4-20250514" else "" }}>Claude Sonnet 4</option>
+                            <option value="claude-3-5-haiku-20241022" {{ "selected" if agent.model == "claude-3-5-haiku-20241022" else "" }}>Claude 3.5 Haiku</option>
+                            <option value="claude-opus-4-20250514" {{ "selected" if agent.model == "claude-opus-4-20250514" else "" }}>Claude Opus 4</option>
+                        </select>
+                    </label>
+                </div>
+                <label>
+                    <span>System Prompt</span>
+                    <textarea name="entity_agent_{{ loop.index0 }}_systemPrompt" rows="3">{{ agent.systemPrompt }}</textarea>
+                </label>
+                <div class="form-row">
+                    <label>
+                        <span>Controlled By</span>
+                        <select name="entity_agent_{{ loop.index0 }}_controlledBy">
+                            <option value="cpu" {{ "selected" if agent.controlledBy == "cpu" else "" }}>CPU (AI)</option>
+                            <option value="player" {{ "selected" if agent.controlledBy == "player" else "" }}>Player</option>
+                        </select>
+                    </label>
+                    <label>
+                        <span>Initiative</span>
+                        <input type="number" name="entity_agent_{{ loop.index0 }}_initiative" value="{{ agent.initiative }}" min="0" max="1" step="0.1">
+                    </label>
+                    <label>
+                        <span>Memory</span>
+                        <select name="entity_agent_{{ loop.index0 }}_memoryPolicy">
+                            <option value="summary" {{ "selected" if agent.memoryPolicy == "summary" else "" }}>Summary</option>
+                            <option value="full" {{ "selected" if agent.memoryPolicy == "full" else "" }}>Full</option>
+                            <option value="selective" {{ "selected" if agent.memoryPolicy == "selective" else "" }}>Selective</option>
+                            <option value="none" {{ "selected" if agent.memoryPolicy == "none" else "" }}>None</option>
+                        </select>
+                    </label>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <input type="hidden" name="entity_agent_count" id="entityAgentCount" value="{{ config.entityAgents | length }}">
+    </div>
+
+    {% if config.operationalAgents %}
+    <div class="card">
+        <h2>Operational Agents (Utility)</h2>
+        <div id="operationalAgents">
+            {% for agent in config.operationalAgents %}
+            <div class="agent-card" data-index="{{ loop.index0 }}">
+                <div class="agent-header">
+                    <strong>{{ agent.name }}</strong>
+                    <span class="badge">{{ agent.metadata.function if agent.metadata and agent.metadata.function else 'custom' }}</span>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="removeAgent(this, 'operational')">Remove</button>
+                </div>
+                <input type="hidden" name="op_agent_{{ loop.index0 }}_name" value="{{ agent.name }}">
+                <input type="hidden" name="op_agent_{{ loop.index0 }}_function" value="{{ agent.metadata.function if agent.metadata else 'custom' }}">
+                <div class="form-row">
+                    <label>
+                        <span>Role</span>
+                        <input type="text" name="op_agent_{{ loop.index0 }}_role" value="{{ agent.role }}">
+                    </label>
+                    <label>
+                        <span>Model</span>
+                        <select name="op_agent_{{ loop.index0 }}_model">
+                            <option value="claude-sonnet-4-20250514" {{ "selected" if agent.model == "claude-sonnet-4-20250514" else "" }}>Claude Sonnet 4</option>
+                            <option value="claude-3-5-haiku-20241022" {{ "selected" if agent.model == "claude-3-5-haiku-20241022" else "" }}>Claude 3.5 Haiku</option>
+                            <option value="claude-opus-4-20250514" {{ "selected" if agent.model == "claude-opus-4-20250514" else "" }}>Claude Opus 4</option>
+                        </select>
+                    </label>
+                </div>
+                <label>
+                    <span>System Prompt</span>
+                    <textarea name="op_agent_{{ loop.index0 }}_systemPrompt" rows="3">{{ agent.systemPrompt }}</textarea>
+                </label>
+                <div class="form-row">
+                    <label>
+                        <span>Initiative</span>
+                        <input type="number" name="op_agent_{{ loop.index0 }}_initiative" value="{{ agent.initiative }}" min="0" max="1" step="0.1">
+                    </label>
+                    <label>
+                        <span>Memory</span>
+                        <select name="op_agent_{{ loop.index0 }}_memoryPolicy">
+                            <option value="summary" {{ "selected" if agent.memoryPolicy == "summary" else "" }}>Summary</option>
+                            <option value="full" {{ "selected" if agent.memoryPolicy == "full" else "" }}>Full</option>
+                            <option value="selective" {{ "selected" if agent.memoryPolicy == "selective" else "" }}>Selective</option>
+                            <option value="none" {{ "selected" if agent.memoryPolicy == "none" else "" }}>None</option>
+                        </select>
+                    </label>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <input type="hidden" name="op_agent_count" id="opAgentCount" value="{{ config.operationalAgents | length }}">
+    </div>
+    {% endif %}
+
+    <div class="card">
+        <h2>World State</h2>
+        <label>
+            <span>Initial World State (JSON)</span>
+            <textarea name="world_state" rows="10" id="worldStateEditor">{{ config.worldState | tojson(indent=2) }}</textarea>
+        </label>
+    </div>
+
+    <div class="actions">
+        <button type="submit" class="btn btn-success">Create Simulation</button>
+        <a href="{{ url_for('simulation.create_wizard') }}" class="btn btn-secondary">Regenerate</a>
+        <a href="{{ url_for('simulation.create_simulation_view') }}" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
+
+<style>
+.agent-card {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background: #f9f9f9;
+}
+.agent-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+.agent-header strong {
+    flex: 1;
+}
+.badge {
+    background: #007bff;
+    color: white;
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.8rem;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function removeAgent(button, type) {
+    const card = button.closest('.agent-card');
+    card.remove();
+    // Update count
+    const countInput = type === 'entity' ? document.getElementById('entityAgentCount') : document.getElementById('opAgentCount');
+    countInput.value = parseInt(countInput.value) - 1;
+}
+</script>
+{% endblock %}

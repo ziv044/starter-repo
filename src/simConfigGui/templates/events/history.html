@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Event History - {{ sim_name }}{% endblock %}
+
+{% block content %}
+<h1>Event History: {{ sim_name }}</h1>
+
+<div class="actions refresh-btn">
+    <button onclick="refreshEvents('{{ sim_name }}')" class="btn btn-secondary">Refresh</button>
+    <a href="{{ url_for('events.events_page', sim_name=sim_name) }}" class="btn">Inject Events</a>
+    <a href="{{ url_for('simulation.view_simulation', name=sim_name) }}" class="btn">Back to Simulation</a>
+</div>
+
+<div class="card">
+    <div id="event-history">
+        {% if events %}
+            {% for event in events | reverse %}
+            <div class="event-item">
+                <span class="event-name">{{ event.name }}</span>
+                <span class="event-source">[{{ event.source }}]</span>
+                <span class="event-time">{{ event.timestamp }}</span>
+                <pre>{{ event.data | tojson(indent=2) }}</pre>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">No events recorded</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Events - {{ sim_name }}{% endblock %}
+
+{% block content %}
+<h1>Event Injection: {{ sim_name }}</h1>
+
+<div class="actions refresh-btn">
+    <button onclick="refreshEvents('{{ sim_name }}')" class="btn btn-secondary">Refresh</button>
+    <a href="{{ url_for('simulation.view_simulation', name=sim_name) }}" class="btn">Back to Simulation</a>
+</div>
+
+<div class="card">
+    <h2>Inject Event</h2>
+    <form method="POST" action="{{ url_for('events.inject_event_view', sim_name=sim_name) }}">
+        <div class="form-row">
+            <label>
+                <span>Event Name</span>
+                <select name="eventName" id="eventName" onchange="toggleCustomEvent()">
+                    {% for event in standard_events %}
+                    <option value="{{ event }}">{{ event }}</option>
+                    {% endfor %}
+                    <option value="custom">Custom...</option>
+                </select>
+            </label>
+
+            <label id="customEventLabel" style="display:none">
+                <span>Custom Event Name</span>
+                <input type="text" name="customEventName" placeholder="my_custom_event">
+            </label>
+        </div>
+
+        <label>
+            <span>Event Data (JSON)</span>
+            <textarea name="eventData" rows="4" placeholder='{"key": "value"}'>{}</textarea>
+        </label>
+
+        <label>
+            <span>Source</span>
+            <input type="text" name="source" value="admin" placeholder="admin">
+        </label>
+
+        <div class="actions">
+            <button type="submit" class="btn btn-success">Inject Event</button>
+        </div>
+    </form>
+</div>
+
+<div class="card">
+    <h2>Recent Events</h2>
+    <div id="event-history">
+        {% if events %}
+            {% for event in events | reverse %}
+            <div class="event-item">
+                <span class="event-name">{{ event.name }}</span>
+                <span class="event-source">[{{ event.source }}]</span>
+                <span class="event-time">{{ event.timestamp }}</span>
+                <pre>{{ event.data | tojson(indent=2) }}</pre>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">No events yet</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleCustomEvent() {
+    const select = document.getElementById('eventName');
+    const customLabel = document.getElementById('customEventLabel');
+    customLabel.style.display = select.value === 'custom' ? 'block' : 'none';
+}
+</script>
+{% endblock %}

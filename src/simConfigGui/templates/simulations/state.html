@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Edit State - {{ sim_name }}{% endblock %}
+
+{% block content %}
+<h1>Edit World State: {{ sim_name }}</h1>
+
+<div class="card">
+    <form method="POST">
+        <label>
+            <span>World State (JSON)</span>
+            <textarea name="state" rows="20">{{ state_json }}</textarea>
+        </label>
+
+        <div class="actions">
+            <button type="submit" class="btn btn-success">Save State</button>
+            <a href="{{ url_for('simulation.view_simulation', name=sim_name) }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

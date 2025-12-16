@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}{{ "Edit" if agent else "Add" }} Agent - {{ sim_name }}{% endblock %}
+
+{% block content %}
+<h1>{{ "Edit" if agent else "Add" }} Agent: {{ sim_name }}</h1>
+
+<div class="card">
+    <form method="POST">
+        <label>
+            <span>Name</span>
+            <input type="text" name="name" value="{{ agent.name if agent else '' }}"
+                   {{ "readonly" if agent else "" }} required placeholder="agent_name">
+            {% if agent %}
+            <small>Agent name cannot be changed</small>
+            {% endif %}
+        </label>
+
+        <label>
+            <span>Role</span>
+            <input type="text" name="role" value="{{ agent.role if agent else '' }}"
+                   required placeholder="Describe the agent's role">
+        </label>
+
+        <div class="form-row">
+            <label>
+                <span>Agent Type</span>
+                <select name="agentType" id="agentType" onchange="toggleAgentTypeFields()">
+                    <option value="entity" {{ "selected" if not agent or (agent.metadata and agent.metadata.get('agentType') == 'entity') or (agent and not agent.metadata) else "" }}>Entity (Character)</option>
+                    <option value="operational" {{ "selected" if agent and agent.metadata and agent.metadata.get('agentType') == 'operational' else "" }}>Operational (Utility)</option>
+                </select>
+                <small>Entity = character in simulation, Operational = utility agent</small>
+            </label>
+        </div>
+
+        <div id="operationalFields" style="display: {{ 'block' if agent and agent.metadata and agent.metadata.get('agentType') == 'operational' else 'none' }};">
+            <label>
+                <span>Function</span>
+                <select name="function">
+                    <option value="narrator" {{ "selected" if agent and agent.metadata and agent.metadata.get('function') == 'narrator' else "" }}>Narrator</option>
+                    <option value="state_updater" {{ "selected" if agent and agent.metadata and agent.metadata.get('function') == 'state_updater' else "" }}>State Updater</option>
+                    <option value="aggregator" {{ "selected" if agent and agent.metadata and agent.metadata.get('function') == 'aggregator' else "" }}>Event Aggregator</option>
+                    <option value="game_master" {{ "selected" if agent and agent.metadata and agent.metadata.get('function') == 'game_master' else "" }}>Game Master</option>
+                    <option value="custom" {{ "selected" if agent and agent.metadata and agent.metadata.get('function') == 'custom' else "" }}>Custom</option>
+                </select>
+                <small>What operational function does this agent perform?</small>
+            </label>
+        </div>
+
+        <label>
+            <span>System Prompt</span>
+            <textarea name="systemPrompt" rows="6" placeholder="Instructions for how the agent should behave...">{{ agent.systemPrompt if agent else '' }}</textarea>
+        </label>
+
+        <div class="form-row">
+            <label>
+                <span>Model</span>
+                <select name="model">
+                    <option value="claude-sonnet-4-20250514" {{ "selected" if not agent or agent.model == "claude-sonnet-4-20250514" else "" }}>Claude Sonnet 4</option>
+                    <option value="claude-3-5-haiku-20241022" {{ "selected" if agent and agent.model == "claude-3-5-haiku-20241022" else "" }}>Claude 3.5 Haiku</option>
+                    <option value="claude-opus-4-20250514" {{ "selected" if agent and agent.model == "claude-opus-4-20250514" else "" }}>Claude Opus 4</option>
+                </select>
+            </label>
+
+            <label>
+                <span>Memory Policy</span>
+                <select name="memoryPolicy">
+                    <option value="summary" {{ "selected" if not agent or agent.memoryPolicy.value == "summary" else "" }}>Summary</option>
+                    <option value="full" {{ "selected" if agent and agent.memoryPolicy.value == "full" else "" }}>Full</option>
+                    <option value="selective" {{ "selected" if agent and agent.memoryPolicy.value == "selective" else "" }}>Selective</option>
+                    <option value="none" {{ "selected" if agent and agent.memoryPolicy.value == "none" else "" }}>None</option>
+                </select>
+            </label>
+        </div>
+
+        <div class="form-row">
+            <label>
+                <span>Controlled By</span>
+                <select name="controlledBy">
+                    <option value="cpu" {{ "selected" if not agent or agent.controlledBy == "cpu" else "" }}>CPU (AI)</option>
+                    <option value="player" {{ "selected" if agent and agent.controlledBy == "player" else "" }}>Player</option>
+                </select>
+            </label>
+
+            <label>
+                <span>Initiative (0-1)</span>
+                <input type="number" name="initiative" min="0" max="1" step="0.1"
+                       value="{{ agent.initiative if agent else 0.5 }}">
+                <small>Probability that CPU agent speaks each turn</small>
+            </label>
+        </div>
+
+        <div class="actions">
+            <button type="submit" class="btn btn-success">{{ "Update" if agent else "Add" }} Agent</button>
+            <a href="{{ url_for('agents.list_agents_view', sim_name=sim_name) }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleAgentTypeFields() {
+    const agentType = document.getElementById('agentType').value;
+    const operationalFields = document.getElementById('operationalFields');
+    operationalFields.style.display = agentType === 'operational' ? 'block' : 'none';
+}
+</script>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Test Results - {{ sim_name }}{% endblock %}
+
+{% block content %}
+<h1>Test Results: {{ sim_name }}</h1>
+
+<div class="actions refresh-btn">
+    <button onclick="location.reload()" class="btn btn-secondary">Refresh</button>
+    <a href="{{ url_for('testing.testing_page', sim_name=sim_name) }}" class="btn">Back to Test Runner</a>
+</div>
+
+<div class="card">
+    <h2>Interaction History</h2>
+    {% if history %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Agent</th>
+                    <th>Input</th>
+                    <th>Response</th>
+                    <th>Cached</th>
+                    <th>Model</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in history | reverse %}
+                <tr>
+                    <td>{{ item.agentName }}</td>
+                    <td>{{ item.userInput[:50] }}...</td>
+                    <td>{{ item.response[:50] }}...</td>
+                    <td>{{ "Yes" if item.fromCache else "No" }}</td>
+                    <td>{{ item.model or "N/A" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="empty-state">No interactions recorded</div>
+    {% endif %}
+</div>
+
+{% if mock_history %}
+<div class="card">
+    <h2>Mock Call History</h2>
+    <pre>{{ mock_history | tojson(indent=2) }}</pre>
+</div>
+{% endif %}
+{% endblock %}

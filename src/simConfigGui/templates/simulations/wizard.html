@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}AI-Assisted Setup - Create Simulation{% endblock %}
+
+{% block content %}
+<h1>Create Simulation (AI-Assisted)</h1>
+
+<div class="card">
+    <form method="POST" action="{{ url_for('simulation.generate_config') }}">
+        <label>
+            <span>Start from Template (optional)</span>
+            <select name="template" id="templateSelect" onchange="loadTemplatePrompt()">
+                <option value="">-- Select a template or write your own --</option>
+                {% for template in templates %}
+                <option value="{{ template.name }}">{{ template.name }} - {{ template.description }}</option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <label>
+            <span>Describe Your Simulation</span>
+            <textarea name="prompt" id="promptInput" rows="8" required placeholder="Describe the simulation you want to create. Include:
+- What kind of scenario is it? (political, RPG, business, etc.)
+- Who are the main characters/agents?
+- What is the setting and context?
+- Any special mechanics or operational agents needed?
+
+Example: Create a parliamentary debate simulation with the Prime Minister defending a new healthcare bill against opposition criticism. Include a neutral moderator and a fact-checker."></textarea>
+        </label>
+
+        <div class="actions">
+            <button type="submit" class="btn btn-success">Generate Configuration</button>
+            <a href="{{ url_for('simulation.create_simulation_view') }}" class="btn btn-secondary">Back</a>
+        </div>
+    </form>
+</div>
+
+<div class="card">
+    <h2>How it works</h2>
+    <ol>
+        <li><strong>Describe</strong> - Tell us what kind of simulation you want</li>
+        <li><strong>Generate</strong> - AI creates agents, world state, and settings</li>
+        <li><strong>Review</strong> - Edit any part of the generated configuration</li>
+        <li><strong>Apply</strong> - Create the simulation with your approved config</li>
+    </ol>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const templatePrompts = {
+    {% for template in templates %}
+    "{{ template.name }}": {{ template.prompt | tojson }},
+    {% endfor %}
+};
+
+function loadTemplatePrompt() {
+    const select = document.getElementById('templateSelect');
+    const input = document.getElementById('promptInput');
+    const template = select.value;
+
+    if (template && templatePrompts[template]) {
+        input.value = templatePrompts[template];
+    }
+}
+</script>
+{% endblock %}

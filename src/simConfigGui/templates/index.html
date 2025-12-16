@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h1>pm6 Admin Dashboard</h1>
+
+<div class="grid">
+    <div class="card stat-card">
+        <div class="value">{{ sim_count }}</div>
+        <div class="label">Active Simulations</div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Quick Actions</h2>
+    <div class="actions">
+        <a href="{{ url_for('simulation.create_simulation_view') }}" class="btn btn-success">Create New Simulation</a>
+        <a href="{{ url_for('simulation.list_simulations_view') }}" class="btn">View All Simulations</a>
+    </div>
+</div>
+
+{% if simulations %}
+<div class="card">
+    <h2>Active Simulations</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sim_name in simulations %}
+            <tr>
+                <td>{{ sim_name }}</td>
+                <td>
+                    <a href="{{ url_for('simulation.view_simulation', name=sim_name) }}" class="btn btn-sm">View</a>
+                    <a href="{{ url_for('agents.list_agents_view', sim_name=sim_name) }}" class="btn btn-sm">Agents</a>
+                    <a href="{{ url_for('events.events_page', sim_name=sim_name) }}" class="btn btn-sm">Events</a>
+                    <a href="{{ url_for('testing.testing_page', sim_name=sim_name) }}" class="btn btn-sm">Test</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="card">
+    <div class="empty-state">
+        <p>No simulations created yet.</p>
+        <p><a href="{{ url_for('simulation.create_simulation_view') }}" class="btn btn-success">Create your first simulation</a></p>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

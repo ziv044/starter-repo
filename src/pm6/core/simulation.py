@@ -154,7 +154,33 @@ class Simulation:
         self._recordingEnabled = True  # Record by default
         self._playerAgentName: str | None = None
 
+        # Load existing agents from disk
+        self._loadExistingAgents()
+
         logger.info(f"Initialized simulation: {name}")
+
+    def _loadExistingAgents(self) -> None:
+        """Load existing agents from storage on initialization."""
+        try:
+            agent_names = self._storage.listAgents()
+            for agent_name in agent_names:
+                try:
+                    agent_data = self._storage.loadAgent(agent_name)
+                    # Handle memoryPolicy conversion if needed
+                    if "memoryPolicy" in agent_data and isinstance(
+                        agent_data["memoryPolicy"], str
+                    ):
+                        agent_data["memoryPolicy"] = MemoryPolicy(
+                            agent_data["memoryPolicy"]
+                        )
+                    config = AgentConfig(**agent_data)
+                    self._agents[config.name] = config
+                    self._agentRouter.addAgent(config)
+                    logger.debug(f"Loaded agent from disk: {config.name}")
+                except Exception as e:
+                    logger.warning(f"Failed to load agent {agent_name}: {e}")
+        except Exception as e:
+            logger.warning(f"Failed to list agents from storage: {e}")
 
     # Agent Management
 

@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block title %}Design Your Simulation{% endblock %}
+
+{% block content %}
+<h1>Design Your Simulation</h1>
+
+<div class="chat-container">
+    <div class="chat-messages" id="chatMessages">
+        {% if not conversation %}
+        <div class="chat-welcome">
+            <p><strong>Welcome!</strong> I'll help you design your simulation by asking a few questions.</p>
+            <p>Start by telling me what kind of simulation you'd like to create.</p>
+        </div>
+        {% endif %}
+
+        {% for msg in conversation %}
+        <div class="chat-message {{ 'user' if msg.role == 'user' else 'assistant' }}">
+            <div class="message-role">{{ 'You' if msg.role == 'user' else 'Assistant' }}</div>
+            <div class="message-content">{{ msg.content }}</div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if ready %}
+    <div class="ready-banner">
+        <p>Ready to generate your simulation configuration!</p>
+        <form method="POST" action="{{ url_for('simulation.wizard_chat_generate') }}" style="display: inline;">
+            <button type="submit" class="btn btn-success">Generate Configuration</button>
+        </form>
+        <span class="or-continue">or continue the conversation below</span>
+    </div>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('simulation.wizard_chat_send') }}" class="chat-input-form">
+        <textarea name="message" id="messageInput" rows="2"
+                  placeholder="Describe your simulation or answer the question..."
+                  required autofocus></textarea>
+        <button type="submit" class="btn btn-success">Send</button>
+    </form>
+</div>
+
+<div class="actions">
+    <a href="{{ url_for('simulation.create_wizard_chat') }}" class="btn btn-secondary">Start Over</a>
+    <a href="{{ url_for('simulation.create_wizard') }}" class="btn btn-secondary">Back</a>
+</div>
+
+<style>
+.chat-container {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.chat-messages {
+    max-height: 400px;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 4px;
+}
+
+.chat-welcome {
+    color: #666;
+    padding: 1rem;
+    text-align: center;
+}
+
+.chat-message {
+    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+}
+
+.chat-message.user {
+    background: #e3f2fd;
+    margin-left: 20%;
+}
+
+.chat-message.assistant {
+    background: #f5f5f5;
+    margin-right: 20%;
+}
+
+.message-role {
+    font-size: 0.75rem;
+    color: #666;
+    margin-bottom: 0.25rem;
+    font-weight: bold;
+}
+
+.message-content {
+    white-space: pre-wrap;
+}
+
+.ready-banner {
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.ready-banner p {
+    margin: 0 0 0.5rem 0;
+    font-weight: bold;
+    color: #155724;
+}
+
+.or-continue {
+    margin-left: 1rem;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.chat-input-form {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.chat-input-form textarea {
+    flex: 1;
+    resize: none;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.chat-input-form button {
+    align-self: flex-end;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Scroll to bottom of chat
+const chatMessages = document.getElementById('chatMessages');
+if (chatMessages) {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Submit on Ctrl+Enter
+document.getElementById('messageInput').addEventListener('keydown', function(e) {
+    if (e.ctrlKey && e.key === 'Enter') {
+        this.form.submit();
+    }
+});
+</script>
+{% endblock %}

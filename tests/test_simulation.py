@@ -208,24 +208,26 @@ class TestSimulationSaveResume:
             assert state["crisis"] == "economic"
 
     def test_resume_simulation_restores_agents(self):
-        """Test resuming restores registered agents."""
+        """Test that agents are auto-loaded from disk and resume restores world state."""
         with tempfile.TemporaryDirectory() as tmpdir:
             sim = Simulation("test", dbPath=Path(tmpdir))
             agent1 = AgentConfig(name="pm", role="Prime Minister")
             agent2 = AgentConfig(name="chancellor", role="Chancellor")
             sim.registerAgent(agent1)
             sim.registerAgent(agent2)
+            sim.setWorldState({"crisis": "budget"})
             sim.saveSimulation("with_agents")
 
-            # Create new simulation and resume
+            # Create new simulation - agents should auto-load from disk
             sim2 = Simulation("test", dbPath=Path(tmpdir))
-            assert sim2.listAgents() == []
-
-            sim2.resumeSimulation("with_agents")
             agents = sim2.listAgents()
-            assert "pm" in agents
+            assert "pm" in agents, "Agents should auto-load from disk"
             assert "chancellor" in agents
             assert sim2.getAgent("pm").role == "Prime Minister"
+
+            # Resume should restore world state
+            sim2.resumeSimulation("with_agents")
+            assert sim2.getWorldState().get("crisis") == "budget"
 
     def test_list_saves(self):
         """Test listing available saves."""

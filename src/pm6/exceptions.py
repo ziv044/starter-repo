@@ -1,4 +1,7 @@
-"""Custom exceptions for pm6."""
+"""pm6 exception hierarchy.
+
+All pm6 exceptions inherit from PM6Error for easy catching.
+"""
 
 
 class PM6Error(Exception):
@@ -7,29 +10,68 @@ class PM6Error(Exception):
     pass
 
 
-class ReplayNotFoundError(PM6Error):
-    """Raised when replay data is not found for a request.
+class AgentNotFoundError(PM6Error):
+    """Raised when a requested agent doesn't exist in the simulation."""
 
-    Args:
-        agent_name: The agent that made the request.
-        call_index: The call index that was not found.
-    """
+    def __init__(self, agentName: str):
+        self.agentName = agentName
+        super().__init__(f"Agent '{agentName}' not found in simulation")
 
-    def __init__(self, agent_name: str, call_index: int) -> None:
-        self.agent_name = agent_name
-        self.call_index = call_index
+
+class CostLimitError(PM6Error):
+    """Raised when an operation would exceed cost limits."""
+
+    def __init__(self, limit: float, current: float, requested: float):
+        self.limit = limit
+        self.current = current
+        self.requested = requested
         super().__init__(
-            f"No replay data found for agent '{agent_name}' at call index {call_index}"
+            f"Cost limit exceeded: limit={limit}, current={current}, requested={requested}"
         )
 
 
+class SignatureMatchError(PM6Error):
+    """Raised when signature lookup fails in strict mode."""
+
+    def __init__(self, signature: str):
+        self.signature = signature
+        super().__init__(f"No cached response found for signature: {signature}")
+
+
 class SessionNotFoundError(PM6Error):
-    """Raised when a session file is not found.
+    """Raised when a requested session or checkpoint doesn't exist."""
 
-    Args:
-        session_path: The path to the session file that was not found.
-    """
+    def __init__(self, sessionName: str, checkpoint: str | None = None):
+        self.sessionName = sessionName
+        self.checkpoint = checkpoint
+        if checkpoint:
+            msg = f"Checkpoint '{checkpoint}' not found in session '{sessionName}'"
+        else:
+            msg = f"Session '{sessionName}' not found"
+        super().__init__(msg)
 
-    def __init__(self, session_path: str) -> None:
-        self.session_path = session_path
-        super().__init__(f"Session file not found: {session_path}")
+
+class ConfigurationError(PM6Error):
+    """Raised when configuration is invalid or missing."""
+
+    pass
+
+
+class StorageError(PM6Error):
+    """Raised when storage operations fail."""
+
+    pass
+
+
+class SimulationError(PM6Error):
+    """Raised when simulation operations fail."""
+
+    pass
+
+
+class RuleViolationError(PM6Error):
+    """Raised when a simulation rule is violated."""
+
+    def __init__(self, ruleName: str, message: str):
+        self.ruleName = ruleName
+        super().__init__(f"Rule '{ruleName}' violated: {message}")

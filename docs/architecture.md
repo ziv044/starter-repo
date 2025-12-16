@@ -2,11 +2,10 @@
 stepsCompleted: [1, 2, 3, 4, 5, 6, 7, 8]
 inputDocuments:
   - docs/prd.md
-  - docs/research-cicd.md
 workflowType: 'architecture'
 lastStep: 8
 status: 'complete'
-completedAt: '2025-12-15'
+completedAt: '2025-12-16'
 project_name: 'pm6'
 user_name: 'Ziv04'
 date: '2025-12-15'
@@ -21,196 +20,299 @@ _This document builds collaboratively through step-by-step discovery. Sections a
 ### Requirements Overview
 
 **Functional Requirements:**
-26 FRs organized into 6 capability areas covering logging, replay, agent configuration, environment configuration, testing infrastructure, and CI/CD. The core architectural pattern is a record-replay system for deterministic LLM testing.
+47 FRs organized into 8 capability areas covering the full simulation engine lifecycle: creation, agent management, state persistence, cost optimization, session management, developer API, configuration, and testing infrastructure. The core pattern is an LLM orchestration layer that makes simulation-grade AI interactions cost-effective and sustainable.
 
 **Non-Functional Requirements:**
-12 NFRs focused on code quality (PEP 8, black, ruff), testability (deterministic, <30s), integration compatibility (Anthropic SDK, pytest 8.x), and security (env-only secrets).
+18 NFRs focused on:
+- Performance metrics & visibility (NFR1-5): Track everything, optimize continuously
+- Integration (NFR6-10): Anthropic ecosystem (Claude, Skills, caching), configurable DB backends
+- Reliability (NFR11-15): No data loss, graceful recovery, transactional state
+- Security (NFR16-18): Credential management, access control, cost limits
 
 **Scale & Complexity:**
-- Primary domain: Python backend infrastructure
-- Complexity level: Low
-- Estimated architectural components: 4-5 modules
+- Primary domain: Python backend infrastructure / SDK
+- Complexity level: Medium-High
+- Estimated architectural components: 6-8 major modules
 
 ### Technical Constraints & Dependencies
 
-- Python 3.12+
-- Anthropic SDK (latest stable)
-- pytest 8.x with pytest-asyncio
-- GitHub Actions (ubuntu-latest runner)
-- No external databases or services
+- Python 3.x (primary language, standard package management)
+- Anthropic API (Claude models - mandatory)
+- Prompt caching (Anthropic feature - key to cost optimization)
+- Claude Skills (tool use for DB/file operations)
+- Database backend (configurable - SQLite for dev, production TBD)
+- No external services beyond Anthropic API
 
 ### Cross-Cutting Concerns Identified
 
-1. **Mode Management** - LIVE/REPLAY/HYBRID state affects all LLM operations
-2. **Configuration Hierarchy** - Global defaults with per-agent overrides
-3. **Session Management** - Log file naming, auto-increment, lifecycle
+1. **Cost Tracking** - Every LLM interaction must be metered, logged, and attributed
+2. **Mode Management** - Test mode vs production affects all agent behavior
+3. **State Persistence** - Sessions, agent memory, world state all need coordinated storage
+4. **Token Management** - Context limits affect compaction, caching, and response strategies
+5. **Agent Identification** - Determining relevant agents affects cost and response quality
 
 ## Starter Template Evaluation
 
 ### Primary Technology Domain
 
-Python backend infrastructure library - custom tooling for LLM testing with record-replay pattern.
+Python backend infrastructure library - LLM orchestration SDK for simulation engines. This is custom tooling, not a web/mobile application.
 
 ### Starter Options Considered
 
-No traditional starter template applicable. This is a Python library/infrastructure project requiring manual project setup following modern Python conventions.
+| Option | Pros | Cons |
+|--------|------|------|
+| Manual Setup | Full control, minimal cruft | Requires knowing patterns |
+| cookiecutter-pypackage | Complete Python package template | Overkill for single-purpose lib |
+| poetry new | Quick init with poetry | Less flexible than manual |
 
 ### Selected Approach: Manual Setup with Modern Python Standards
 
 **Rationale:**
-- Infrastructure library, not a web application
-- Requires specific structure for LLMLogger, LLMReplayProvider modules
-- Modern pyproject.toml-based packaging
+- Infrastructure library requires custom structure for simulation modules
+- No need for publishing boilerplate (PyPI, docs site) in MVP
+- Modern pyproject.toml (PEP 517/518) provides all needed configuration
+- src/ layout prevents import confusion during development
 
 **Initialization Commands:**
 ```bash
-mkdir -p src/pm6 tests .github/workflows
+mkdir -p src/pm6 tests
 touch src/pm6/__init__.py pyproject.toml .env.example
 ```
 
 ### Architectural Decisions for Project Structure
 
 **Language & Runtime:**
-- Python 3.12+
+- Python 3.10+ (for modern typing features)
 - Type hints throughout (mypy compatible)
 
 **Package Configuration:**
 - pyproject.toml (PEP 517/518)
-- src/ layout for import safety
+- src/ layout for clean imports
 
 **Build Tooling:**
 - pip for installation
-- black + ruff for formatting/linting
+- ruff for linting + formatting (replaces black + flake8)
 
 **Testing Framework:**
-- pytest 8.x with pytest-asyncio
+- pytest with pytest-asyncio
 - pytest-cov for coverage
 
 **Code Organization:**
 ```
 src/pm6/
-├── __init__.py      # Package exports
-├── logger.py        # LLMLogger class
-├── replay.py        # LLMReplayProvider class
-├── config.py        # Settings, AgentConfig
-└── modes.py         # Mode enum (LIVE/REPLAY/HYBRID)
+├── __init__.py       # Package exports
+├── core/             # Core simulation engine
+├── agents/           # Agent system
+├── state/            # State management
+├── cost/             # Cost optimization layer
+└── api/              # Developer API
 ```
 
 **Development Experience:**
 - .env configuration via pydantic-settings
-- GitHub Actions CI on push/PR
+- Type checking with mypy
+- Pre-commit hooks optional
 
 ## Core Architectural Decisions
 
 ### Data Architecture
 
-**JSONL Storage Location:**
-- Decision: Configurable via `LOG_DIR` setting with default `./logs/`
-- Rationale: Flexibility for different environments (dev vs CI)
+**Storage Strategy:**
+- Folder-based storage (`./db/`) for development speed
+- Structure: `db/{simulation_name}/{agents|sessions|responses}/`
+- Format: JSON files for human readability, indexed by signature
 
-**Session Naming Convention:**
-- Decision: Named + auto-increment (`{name}_{001}.jsonl`)
-- Rationale: Human-readable, prevents overwrites, supports multiple test sessions
+**Hashing:**
+- xxHash for all signature computation (speed over crypto)
+- Signatures combine: agent_name + situation_type + state_bucket + input_intent
 
-### Mode Management
+**Response Caching:**
+- Pre-generated responses stored by structural signature
+- Multiple responses collected per signature for variety
+- Random selection from cached options when serving
 
-**Mode Switching Pattern:**
-- Decision: Global mode only (LIVE/REPLAY/HYBRID)
-- Rationale: Simpler implementation, sufficient for testing needs
-- Implementation: Single `Settings.mode` controls all LLM calls
+**State Bucketing:**
+- Continuous values bucketed into ranges (approval: 60-70 → "medium")
+- Enables response sharing across similar-but-not-identical situations
 
-### Replay System
+### Cost Optimization Architecture
 
-**Replay Matching Strategy:**
-- Decision: Sequential by agent name
-- Rationale: Deterministic, simple, aligns with test execution order
+**DB-First Lookup Flow:**
+1. Compute structural signature for incoming interaction
+2. Check DB for matching signatures
+3. If match: return pre-generated response (random from options)
+4. If no match: call LLM, store response with signature
 
-**Missing Replay Data Behavior:**
-- Decision: Configurable strict mode
-- Options: `strict=True` raises exception, `strict=False` falls back to LIVE
-- Default: `strict=True` (fail fast in tests)
+**Prompt Caching (Anthropic):**
+- cache_control on system prompts (shared across all calls)
+- cache_control on agent definitions (shared per agent)
+- Expected savings: 90% token reduction on repeated contexts
+
+**Model Routing:**
+
+| Task Type | Model | Rationale |
+|-----------|-------|-----------|
+| Context compaction | Haiku | Routine summarization |
+| History summarization | Haiku | Non-critical |
+| Agent responses | Sonnet | Core interaction quality |
+| Complex reasoning | Opus | When needed (configurable) |
+
+### Agent Architecture
+
+**Configuration Pattern:**
+- Pydantic models for all agent configuration
+- Validation and serialization built-in
+- Integrates with pydantic-settings
+
+**Memory Policies:**
+- FULL: Retain complete history
+- SUMMARY: Compact after N turns (default)
+- SELECTIVE: Category-based retention
+- NONE: Stateless agent
+
+**Agent Identification:**
+- Explicit routing via situation_type tags
+- Agents declare which situations they handle
+- Multiple agents can respond to same situation (orchestration)
+
+### Developer API
+
+**Design Principles:**
+- Async-first for all LLM operations
+- Context manager for lifecycle management
+- Built-in cost/stats visibility
+- Simple save/load for checkpoints
+
+**Core API Surface:**
+- `Simulation.create()` - Initialize new simulation
+- `Simulation.load()` - Resume from checkpoint
+- `sim.interact()` - Send user input, get agent response
+- `sim.get_stats()` - Cost and performance metrics
+- `sim.save()` - Create checkpoint
 
 ### Decision Summary
 
 | Decision | Choice | Rationale |
 |----------|--------|-----------|
-| Log storage | Configurable `LOG_DIR` | Environment flexibility |
-| Session naming | Named + increment | Human-readable, no conflicts |
-| Mode pattern | Global only | Simplicity |
-| Replay matching | Sequential by agent | Deterministic |
-| Missing data | Configurable strict | Fail fast default |
+| Storage | Folder-based DB | Dev speed, human-readable |
+| Hash | xxHash | Speed for non-crypto use |
+| Matching | Structural signatures | Balance: not too strict, not too complex |
+| Caching | Multi-response collection | Variety + reuse |
+| Config | Pydantic models | Validation + settings integration |
+| API | Async + context manager | Pythonic, explicit lifecycle |
+| Models | Haiku/Sonnet routing | Cost optimization |
 
 ## Implementation Patterns & Consistency Rules
 
 ### Naming Conventions
 
-**Python Code (PEP 8):**
-- Functions/variables: `snake_case`
-- Classes: `PascalCase`
-- Constants: `UPPER_SNAKE_CASE`
-- Private: `_leading_underscore`
+**Python Code (camelCase preference):**
+- Functions/methods: `camelCase` - `getAgent()`, `computeSignature()`
+- Variables: `camelCase` - `agentName`, `currentState`
+- Classes: `PascalCase` - `AgentConfig`, `Simulation`
+- Constants: `UPPER_SNAKE_CASE` - `DEFAULT_MODEL`, `MAX_RETRIES`
+- Private members: `_leadingUnderscore` - `_computeHash()`
+- Module files: `camelCase.py` - `agentConfig.py`, `costTracker.py`
 
-### JSONL Log Format
+**JSON/Data Fields:**
+- All keys: `camelCase`
+- Example: `{"agentName": "pm", "situationType": "crisis"}`
 
-```json
-{
-  "timestamp": "2025-12-15T14:30:22.123Z",
-  "agent_name": "story_agent",
-  "request": {"model": "...", "messages": [...]},
-  "response": {"content": "...", "usage": {...}},
-  "duration_ms": 1234
-}
+### File Organization
+
+**Module Structure:**
+```
+src/pm6/
+├── __init__.py
+├── agents/
+│   ├── __init__.py
+│   ├── agentConfig.py
+│   ├── memoryPolicy.py
+│   └── routing.py
+├── cost/
+│   ├── __init__.py
+│   ├── signatureCompute.py
+│   └── modelRouter.py
+├── state/
+│   ├── __init__.py
+│   ├── storage.py
+│   └── checkpoints.py
+└── core/
+    ├── __init__.py
+    └── simulation.py
 ```
 
-### Module Exports Pattern
-
-```python
-# src/pm6/__init__.py
-from .logger import LLMLogger
-from .replay import LLMReplayProvider
-from .config import Settings
-from .modes import Mode
-
-__all__ = ["LLMLogger", "LLMReplayProvider", "Settings", "Mode"]
-```
+**Test Organization:**
+- Tests mirror src structure in `tests/`
+- Fixtures in `tests/fixtures/`
+- Shared fixtures in `tests/conftest.py`
 
 ### Error Handling Pattern
 
+**Exception Hierarchy:**
 ```python
-# src/pm6/exceptions.py
-class PM6Error(Exception): pass
-class ReplayNotFoundError(PM6Error): pass
-class SessionNotFoundError(PM6Error): pass
+class PM6Error(Exception):
+    """Base pm6 exception"""
+
+class AgentNotFoundError(PM6Error):
+    """Agent doesn't exist"""
+
+class CostLimitError(PM6Error):
+    """Cost limit exceeded"""
+
+class SignatureMatchError(PM6Error):
+    """Signature lookup failed"""
 ```
 
-### Test Organization
+### Logging Pattern
 
-```
-tests/
-├── conftest.py          # Shared fixtures
-├── test_logger.py       # LLMLogger tests
-├── test_replay.py       # LLMReplayProvider tests
-├── test_config.py       # Settings tests
-└── fixtures/            # Test JSONL files
-    └── sample_session.jsonl
-```
+**Logger Setup:**
+- Single logger: `logging.getLogger("pm6")`
+- Submodule loggers: `logging.getLogger("pm6.agents")`
+
+**Log Levels:**
+- DEBUG: Internal details (signatures, hashes)
+- INFO: Normal operations (cache hits, saves)
+- WARNING: Fallbacks, degraded operation
+- ERROR: Failures requiring attention
 
 ### Docstring Pattern (Google Style)
 
 ```python
-def method(self, param: str) -> bool:
-    """Short description.
+def getAgentResponse(self, agentName: str, userInput: str) -> Response:
+    """Send user input to an agent and get response.
 
     Args:
-        param: Description of param.
+        agentName: Name of the agent to interact with.
+        userInput: User's input text.
 
     Returns:
-        Description of return value.
+        Response object containing agent's reply and metadata.
 
     Raises:
-        ReplayNotFoundError: When replay data missing.
+        AgentNotFoundError: If agent doesn't exist in simulation.
+        CostLimitError: If cost limit would be exceeded.
     """
 ```
+
+### Type Hints
+
+**Required on all public API:**
+```python
+def interact(self, agent: str, userInput: str) -> Response:
+async def save(self, name: str) -> Path:
+def getStats(self) -> Stats:
+```
+
+### Enforcement
+
+**All AI Agents MUST:**
+- Use camelCase for functions, variables, file names
+- Use PascalCase for classes only
+- Use type hints on all public functions
+- Include Google-style docstrings on public API
+- Use the PM6Error hierarchy for exceptions
+- Use camelCase for all JSON keys
 
 ## Project Structure & Boundaries
 
@@ -224,79 +326,176 @@ pm6/
 ├── .gitignore
 ├── .github/
 │   └── workflows/
-│       └── tests.yml
+│       └── ci.yml
 ├── src/
 │   └── pm6/
-│       ├── __init__.py          # Package exports
-│       ├── modes.py             # Mode enum (LIVE/REPLAY/HYBRID)
-│       ├── config.py            # Settings class (pydantic-settings)
-│       ├── logger.py            # LLMLogger class
-│       ├── replay.py            # LLMReplayProvider class
-│       └── exceptions.py        # Custom exceptions
+│       ├── __init__.py                 # Package exports
+│       ├── exceptions.py               # PM6Error hierarchy
+│       │
+│       ├── core/
+│       │   ├── __init__.py
+│       │   ├── simulation.py           # Simulation class (main entry)
+│       │   ├── response.py             # Response model
+│       │   └── stats.py                # Stats tracking
+│       │
+│       ├── agents/
+│       │   ├── __init__.py
+│       │   ├── agentConfig.py          # AgentConfig Pydantic model
+│       │   ├── memoryPolicy.py         # Memory policy enum + logic
+│       │   ├── routing.py              # Agent identification/routing
+│       │   └── generator.py            # Natural language → agent
+│       │
+│       ├── state/
+│       │   ├── __init__.py
+│       │   ├── storage.py              # Folder-based DB operations
+│       │   ├── checkpoints.py          # Save/load functionality
+│       │   ├── compaction.py           # Context summarization
+│       │   └── tokenBudget.py          # Token management
+│       │
+│       ├── cost/
+│       │   ├── __init__.py
+│       │   ├── signatureCompute.py     # xxHash signature generation
+│       │   ├── stateBucketing.py       # State value bucketing
+│       │   ├── responseCache.py        # Multi-response storage
+│       │   ├── modelRouter.py          # Haiku/Sonnet routing
+│       │   ├── promptCache.py          # Anthropic cache_control
+│       │   └── costTracker.py          # Usage metrics
+│       │
+│       ├── llm/
+│       │   ├── __init__.py
+│       │   ├── anthropicClient.py      # Anthropic API wrapper
+│       │   └── tools.py                # Claude Skills integration
+│       │
+│       └── config/
+│           ├── __init__.py
+│           └── settings.py             # pydantic-settings config
+│
 ├── tests/
-│   ├── conftest.py              # Shared pytest fixtures
-│   ├── test_modes.py
-│   ├── test_config.py
-│   ├── test_logger.py
-│   ├── test_replay.py
+│   ├── conftest.py                     # Shared fixtures
+│   ├── test_core/
+│   │   ├── test_simulation.py
+│   │   └── test_stats.py
+│   ├── test_agents/
+│   │   ├── test_agentConfig.py
+│   │   ├── test_memoryPolicy.py
+│   │   └── test_routing.py
+│   ├── test_state/
+│   │   ├── test_storage.py
+│   │   ├── test_checkpoints.py
+│   │   └── test_compaction.py
+│   ├── test_cost/
+│   │   ├── test_signatureCompute.py
+│   │   ├── test_responseCache.py
+│   │   └── test_modelRouter.py
 │   └── fixtures/
-│       └── sample_session.jsonl
-└── logs/                        # Default log directory (gitignored)
+│       ├── sampleAgents.json
+│       └── sampleResponses.json
+│
+├── db/                                  # Default storage (gitignored)
+│   └── .gitkeep
+│
+└── docs/                               # Project documentation
+    ├── prd.md
+    └── architecture.md
 ```
 
 ### Requirements to Structure Mapping
 
-| PRD Category | Module | Purpose |
-|--------------|--------|---------|
-| FR1-5 (Logging) | `logger.py` | LLMLogger class |
-| FR6-12 (Replay) | `replay.py` | LLMReplayProvider class |
-| FR13-15 (Agent Config) | `config.py` | Settings with mode |
-| FR16-20 (Env Config) | `config.py` | pydantic-settings |
-| FR21-26 (Testing/CI) | `tests/`, `.github/` | pytest + GitHub Actions |
+| PRD Category | Module | Files |
+|--------------|--------|-------|
+| FR1-4 (Simulation Creation) | `core/` | `simulation.py`, `response.py` |
+| FR5-11 (Agent System) | `agents/` | `agentConfig.py`, `memoryPolicy.py`, `routing.py`, `generator.py` |
+| FR12-18 (State Management) | `state/` | `storage.py`, `checkpoints.py`, `compaction.py`, `tokenBudget.py` |
+| FR19-24 (Cost Optimization) | `cost/` | `signatureCompute.py`, `responseCache.py`, `modelRouter.py`, `costTracker.py` |
+| FR25-29 (Session Management) | `state/` + `core/` | `checkpoints.py`, `simulation.py` |
+| FR30-35 (Developer API) | `core/` | `simulation.py` (public API surface) |
+| FR36-39 (Configuration) | `config/` | `settings.py` |
+| FR40-47 (Testing) | `tests/` | All test files |
 
 ### Module Boundaries
 
-- **User code** imports from `pm6` package exports
-- **logger.py** depends on `modes.py`, `config.py`
-- **replay.py** depends on `modes.py`, `config.py`, `exceptions.py`
-- **config.py** depends on `modes.py`
-- **modes.py** and **exceptions.py** have no internal dependencies
+**User code imports from:**
+```python
+from pm6 import Simulation, AgentConfig, MemoryPolicy
+from pm6.exceptions import PM6Error, AgentNotFoundError
+```
+
+**Internal dependencies:**
+- `core/` → depends on `agents/`, `state/`, `cost/`, `llm/`
+- `agents/` → depends on `config/`
+- `state/` → depends on `config/`
+- `cost/` → depends on `state/`, `config/`
+- `llm/` → depends on `config/`
+- `config/` → no internal dependencies
+- `exceptions.py` → no internal dependencies
+
+### Data Flow
+
+```
+User Input
+    │
+    ▼
+Simulation.interact()
+    │
+    ├──► Agent Routing (which agent?)
+    │
+    ├──► Signature Compute (xxHash)
+    │
+    ├──► Response Cache Check (DB-first)
+    │       │
+    │       ├── HIT ──► Return cached response
+    │       │
+    │       └── MISS ──► Continue to LLM
+    │
+    ├──► Prompt Cache (Anthropic cache_control)
+    │
+    ├──► Model Router (Haiku/Sonnet/Opus)
+    │
+    └──► Anthropic API Call
+            │
+            ▼
+        Store Response + Return
+```
 
 ## Architecture Validation Results
 
 ### Coherence Validation ✅
 
-**Decision Compatibility:** All technology choices work together without conflicts. Python 3.12 + Anthropic SDK + pytest 8.x + pydantic-settings form a coherent, modern Python stack.
+**Decision Compatibility:** All technology choices (Python 3.10+, Pydantic, Anthropic SDK, xxHash) work together without conflicts. Async-first design aligns with SDK patterns.
 
-**Pattern Consistency:** Implementation patterns (PEP 8 naming, Google docstrings, JSONL format) align with Python ecosystem standards.
+**Pattern Consistency:** camelCase naming applied consistently across code, files, and JSON. Implementation patterns support all architectural decisions.
 
-**Structure Alignment:** src/ layout supports clean imports; module boundaries are clear with minimal dependencies.
+**Structure Alignment:** src/ layout with modular boundaries supports clean dependency flow and testability.
 
 ### Requirements Coverage ✅
 
-**Functional Requirements:** All 26 FRs mapped to specific modules:
-- FR1-5 → logger.py
-- FR6-12 → replay.py
-- FR13-20 → config.py
-- FR21-26 → tests/, .github/
+**Functional Requirements:** All 47 FRs mapped to specific modules:
+- FR1-4 → `core/`
+- FR5-11 → `agents/`
+- FR12-18 → `state/`
+- FR19-24 → `cost/`
+- FR25-29 → `state/` + `core/`
+- FR30-35 → `core/` (API surface)
+- FR36-39 → `config/`
+- FR40-47 → `tests/`
 
-**Non-Functional Requirements:** All 12 NFRs addressed:
-- Code quality via black + ruff
-- Deterministic testing via replay system
-- <30s test execution (unit tests only)
-- Security via env-only secrets
+**Non-Functional Requirements:** All 18 NFRs addressed:
+- NFR1-5 (Performance) → `cost/costTracker.py`, `core/stats.py`
+- NFR6-10 (Integration) → `llm/anthropicClient.py`, `cost/promptCache.py`
+- NFR11-15 (Reliability) → Exception hierarchy, state persistence
+- NFR16-18 (Security) → pydantic-settings (env-based), cost limits
 
 ### Implementation Readiness ✅
 
 **Decision Completeness:** All critical decisions documented with rationale
-**Structure Completeness:** Full directory tree specified
-**Pattern Completeness:** Naming, error handling, JSONL format defined
+**Structure Completeness:** Full directory tree with 30+ specific files
+**Pattern Completeness:** Naming, error handling, logging, docstrings defined
 
 ### Gap Analysis
 
 **Critical Gaps:** None identified
 **Important Gaps:** None identified
-**Minor Suggestions:** Type stubs could be added post-MVP
+**Minor Suggestions:** Type stubs, API docs (post-MVP)
 
 ### Architecture Readiness Assessment
 
@@ -305,31 +504,32 @@ pm6/
 **Confidence Level:** High
 
 **Key Strengths:**
-- Simple, focused scope (4 modules)
+- Simple, focused scope (6 modules)
 - Clear separation of concerns
-- Deterministic testing capability
-- No external dependencies beyond Anthropic SDK
+- Cost optimization as first-class architectural concern
+- Comprehensive testing structure
 
 **First Implementation Priority:**
 1. Project setup (pyproject.toml, directory structure)
-2. modes.py + exceptions.py (no dependencies)
-3. config.py (depends on modes)
-4. logger.py (core functionality)
-5. replay.py (depends on all above)
-6. Tests + CI/CD
+2. `config/` + `exceptions.py` (no dependencies)
+3. `agents/agentConfig.py` + `memoryPolicy.py`
+4. `cost/signatureCompute.py` + `responseCache.py`
+5. `state/storage.py` + `checkpoints.py`
+6. `llm/anthropicClient.py`
+7. `core/simulation.py` (ties everything together)
 
 ## Architecture Completion Summary
 
-**Architecture Workflow:** COMPLETED ✅
-**Date:** 2025-12-15
+**Architecture Workflow:** COMPLETED
+**Date:** 2025-12-16
 **Document:** [docs/architecture.md](docs/architecture.md)
 
 ### Deliverables
 
-- 5 core architectural decisions documented
-- 6 implementation patterns defined
-- 5 modules specified with clear boundaries
-- 26 FRs + 12 NFRs fully supported
+- 7 core architectural decisions documented
+- 6 implementation patterns defined (naming, errors, logging, docstrings, types, enforcement)
+- 6 modules specified with clear boundaries
+- 47 FRs + 18 NFRs fully supported
 
 ### Next Steps
 
@@ -340,4 +540,4 @@ pm6/
 
 ---
 
-**Architecture Status:** ✅ READY FOR IMPLEMENTATION
+**Architecture Status:** READY FOR IMPLEMENTATION

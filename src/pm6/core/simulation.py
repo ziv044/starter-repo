@@ -25,8 +25,10 @@ from pm6.agents import (
     RelevanceScore,
 )
 from pm6.config import getSettings
+from pm6.core.events import EventBus, Events
 from pm6.core.response import AgentResponse, InteractionResult
 from pm6.core.rules import SimulationRules
+from pm6.core.types import Event
 from pm6.cost import (
     CostEstimate,
     CostEstimator,
@@ -121,6 +123,7 @@ class Simulation:
         self._performanceTracker = PerformanceTracker()
         self._toolRegistry = ToolRegistry()
         self._rules = rules or SimulationRules()
+        self._eventBus = EventBus()
         self._turnCount = 0
         self._autoApplyStateUpdates = True  # Auto-apply updates after interactions
 
@@ -172,6 +175,43 @@ class Simulation:
         self._storage.saveAgent(config.name, config.model_dump())
 
         logger.info(f"Registered agent: {config.name}")
+
+    def removeAgent(self, name: str) -> None:
+        """Remove an agent from the simulation.
+
+        Args:
+            name: Agent name to remove.
+
+        Raises:
+            AgentNotFoundError: If agent not found.
+        """
+        if name not in self._agents:
+            raise AgentNotFoundError(name)
+
+        del self._agents[name]
+        self._agentRouter.removeAgent(name)
+        self._storage.deleteAgent(name)
+
+        logger.info(f"Removed agent: {name}")
+
+    def updateAgent(self, config: AgentConfig) -> None:
+        """Update an existing agent's configuration.
+
+        Args:
+            config: New agent configuration.
+
+        Raises:
+            AgentNotFoundError: If agent not found.
+        """
+        if config.name not in self._agents:
+            raise AgentNotFoundError(config.name)
+
+        self._agents[config.name] = config
+        self._agentRouter.removeAgent(config.name)
+        self._agentRouter.addAgent(config)
+        self._storage.saveAgent(config.name, config.model_dump())
+
+        logger.info(f"Updated agent: {config.name}")
 
     def getAgent(self, name: str) -> AgentConfig:
         """Get an agent configuration.
@@ -420,6 +460,58 @@ class Simulation:
     def stateUpdater(self) -> AgentStateUpdater:
         """Get the state updater for advanced configuration."""
         return self._stateUpdater
+
+    # Event Bus Methods
+
+    def injectEvent(
+        self,
+        eventName: str,
+        data: dict[str, Any] | None = None,
+        source: str = "admin",
+    ) -> Event:
+        """Inject an event into the simulation.
+
+        Args:
+            eventName: Name of the event to inject.
+            data: Event payload data.
+            source: Source identifier (default "admin").
+
+        Returns:
+            The Event that was emitted.
+        """
+        event = self._eventBus.emit(eventName, data or {}, source)
+        logger.info(f"Injected event: {eventName} from {source}")
+        return event
+
+    def subscribeToEvent(
+        self,
+        eventName: str,
+        handler: Callable[[Event], None],
+    ) -> None:
+        """Subscribe to simulation events.
+
+        Args:
+            eventName: Event name to subscribe to.
+            handler: Callback function.
+        """
+        self._eventBus.subscribe(eventName, handler)
+
+    def getEventHistory(self, limit: int = 50) -> list[dict[str, Any]]:
+        """Get recent event history.
+
+        Args:
+            limit: Maximum events to return.
+
+        Returns:
+            List of event dictionaries.
+        """
+        events = self._eventBus.getHistory(limit)
+        return [e.toDict() for e in events]
+
+    @property
+    def eventBus(self) -> EventBus:
+        """Get the event bus for advanced configuration."""
+        return self._eventBus
 
     # World State Management
 

@@ -36,3 +36,6 @@ logs/*.jsonl
 # OS
 .DS_Store
 Thumbs.db
+
+# PM6 runtime data
+db/

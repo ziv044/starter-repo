@@ -143,6 +143,15 @@ class Storage:
         files = self.listFiles(self.agentsPath)
         return [f.stem for f in files]
 
+    def deleteAgent(self, agentName: str) -> None:
+        """Delete an agent configuration.
+
+        Args:
+            agentName: Name of the agent to delete.
+        """
+        path = self.agentsPath / f"{agentName}.json"
+        self.delete(path)
+
     # State-specific methods
 
     def saveState(self, stateName: str, data: dict[str, Any]) -> None:

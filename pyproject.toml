@@ -28,7 +28,11 @@ dependencies = [
     "pydantic>=2.0.0",
     "pydantic-settings>=2.0.0",
     "xxhash>=3.4.0",
+    "pyyaml>=6.0.0",
 ]
+
+[project.scripts]
+pm6 = "pm6.__main__:main"
 
 [project.optional-dependencies]
 dev = [
@@ -37,6 +41,9 @@ dev = [
     "pytest-cov>=4.0.0",
     "ruff>=0.1.0",
     "mypy>=1.0.0",
+]
+gui = [
+    "flask>=3.0.0",
 ]
 
 [project.urls]

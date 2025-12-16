@@ -26,6 +26,10 @@ __all__ = [
     "SimulationRules",
     "Rule",
     "RuleType",
+    # Events
+    "Event",
+    "EventBus",
+    "Events",
     # Agents
     "AgentConfig",
     "MemoryPolicy",
@@ -79,6 +83,11 @@ def __getattr__(name: str):
         from pm6.core import rules
 
         return getattr(rules, name)
+    elif name in ("Event", "EventBus", "Events"):
+        from pm6.core import events, types
+        if name == "Event":
+            return types.Event
+        return getattr(events, name)
     elif name == "AgentConfig":
         from pm6.agents.agentConfig import AgentConfig
 

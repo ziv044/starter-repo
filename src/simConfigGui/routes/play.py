@@ -86,7 +86,7 @@ def step_turn(sim_name: str):
     """Execute a turn in Play Mode.
 
     Returns:
-        JSON with PlayModeOutput data.
+        JSON with PlayModeOutput data and parsed action items.
     """
     engine = _get_or_create_engine(sim_name)
     if engine is None:
@@ -107,9 +107,48 @@ def step_turn(sim_name: str):
         # Execute turn
         output = engine.stepPlayMode(formatConfig=format_config)
 
+        # Parse agent responses through CosParser to extract structured action items
+        action_items = []
+        try:
+            from pm6.core.cos_parser import CosParser
+
+            manager = _get_action_items_manager(sim_name)
+            parser = CosParser()
+
+            # Parse each agent response
+            for agent_action in output.agentResponses:
+                agent_name = agent_action.agentName
+                response_text = agent_action.content
+
+                if response_text:
+                    # Get agent role from simulation if available
+                    sim = current_app.simulations[sim_name]
+                    agent_config = sim.getAgentConfig(agent_name)
+                    agent_role = agent_config.get("role", "") if agent_config else ""
+
+                    # Parse agent response into structured action items
+                    parsed_items = parser.parse_response(
+                        agent_name=agent_name,
+                        agent_role=agent_role,
+                        response=response_text,
+                        use_llm=False  # Rule-based extraction
+                    )
+
+                    # Add parsed items to manager
+                    for item in parsed_items:
+                        manager.add_item(item)
+                        action_items.append(item.to_dict())
+
+            logger.info(f"Play Mode: Parsed {len(action_items)} action items from {len(output.agentResponses)} agent responses")
+
+        except Exception as parse_error:
+            logger.warning(f"Failed to parse action items in Play Mode: {parse_error}")
+            # Continue without action items - don't block the output
+
         return jsonify({
             "success": True,
             "output": output.toDict(),
+            "action_items": action_items,
         })
 
     except Exception as e:
@@ -330,7 +369,7 @@ def cos_step_turn(sim_name: str):
     """Execute a turn in CoS Mode.
 
     Returns:
-        JSON with CosBriefingOutput data.
+        JSON with CosBriefingOutput data and parsed action items.
     """
     engine = _get_or_create_cos_engine(sim_name)
     if engine is None:
@@ -340,10 +379,46 @@ def cos_step_turn(sim_name: str):
         # Execute turn and get briefing
         briefing = engine.stepCosMode()
 
+        # Parse agent briefs through CosParser to extract structured action items
+        action_items = []
+        try:
+            from pm6.core.cos_parser import CosParser
+
+            manager = _get_action_items_manager(sim_name)
+            parser = CosParser()
+
+            # Parse each agent brief
+            for agent_brief in briefing.agentBriefs:
+                agent_name = agent_brief.agentName
+                agent_role = agent_brief.agentRole
+                response_text = agent_brief.fullResponse or agent_brief.summary
+
+                if response_text:
+                    # Parse agent response into structured action items
+                    # Uses improved rule-based extraction (LLM client not wired up)
+                    parsed_items = parser.parse_response(
+                        agent_name=agent_name,
+                        agent_role=agent_role,
+                        response=response_text,
+                        use_llm=False  # Rule-based: detects DEMANDS, RECOMMENDATIONS, OPERATIONS
+                    )
+
+                    # Add parsed items to manager
+                    for item in parsed_items:
+                        manager.add_item(item)
+                        action_items.append(item.to_dict())
+
+            logger.info(f"Parsed {len(action_items)} action items from {len(briefing.agentBriefs)} agent briefs")
+
+        except Exception as parse_error:
+            logger.warning(f"Failed to parse action items: {parse_error}")
+            # Continue without action items - don't block the briefing
+
         return jsonify({
             "success": True,
             "briefing": briefing.toDict(),
             "phase": engine.cosPhase.value if engine.cosPhase else "unknown",
+            "action_items": action_items,
         })
 
     except Exception as e:
@@ -414,10 +489,35 @@ def cos_send_message(sim_name: str):
 
         meeting = engine.cosGetCurrentMeeting()
 
+        # Parse action items from agent response
+        action_items = []
+        if response and meeting:
+            try:
+                from pm6.core.cos_parser import CosParser
+                manager = _get_action_items_manager(sim_name)
+                parser = CosParser()
+
+                agent_name = meeting.agentName
+                agent_role = meeting.agentRole
+
+                parsed_items = parser.parse_response(
+                    agent_name=agent_name,
+                    agent_role=agent_role,
+                    response=response,
+                    use_llm=False
+                )
+                for item in parsed_items:
+                    manager.add_item(item)
+                    action_items.append(item.to_dict())
+
+            except Exception as parse_error:
+                logger.warning(f"Failed to parse action items from meeting: {parse_error}")
+
         return jsonify({
             "success": True,
             "response": response,
             "meeting": meeting.toDict() if meeting else None,
+            "action_items": action_items,
         })
 
     except RuntimeError as e:
@@ -607,4 +707,437 @@ def cos_reset(sim_name: str):
 
     except Exception as e:
         logger.error(f"Error resetting CoS mode: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+# =============================================================================
+# Action Items API Routes
+# =============================================================================
+
+
+def _get_action_items_manager(sim_name: str):
+    """Get or create an ActionItemsManager for the simulation.
+
+    Args:
+        sim_name: Simulation name.
+
+    Returns:
+        ActionItemsManager instance or None if sim not found.
+    """
+    if not hasattr(current_app, "action_managers"):
+        current_app.action_managers = {}
+
+    if sim_name not in current_app.action_managers:
+        from pm6.core.cos_parser import ActionItemsManager
+        current_app.action_managers[sim_name] = ActionItemsManager()
+        logger.info(f"Created ActionItemsManager for {sim_name}")
+
+    return current_app.action_managers[sim_name]
+
+
+def _get_operations_tracker(sim_name: str):
+    """Get or create an OperationsTracker for the simulation.
+
+    Args:
+        sim_name: Simulation name.
+
+    Returns:
+        OperationsTracker instance or None if sim not found.
+    """
+    if not hasattr(current_app, "operations_trackers"):
+        current_app.operations_trackers = {}
+
+    if sim_name not in current_app.operations_trackers:
+        from pm6.core.operations_tracker import OperationsTracker
+        current_app.operations_trackers[sim_name] = OperationsTracker()
+        logger.info(f"Created OperationsTracker for {sim_name}")
+
+    return current_app.operations_trackers[sim_name]
+
+
+@play_bp.route("/play/<sim_name>/cos/action-item/approval", methods=["POST"])
+def cos_handle_approval(sim_name: str):
+    """Handle approval/denial of an action item.
+
+    Expects JSON: {"item_id": "abc123", "approved": true}
+
+    Returns:
+        JSON with updated world state.
+    """
+    engine = _get_or_create_cos_engine(sim_name)
+    if engine is None:
+        return jsonify({"error": "Simulation not found"}), 404
+
+    data = request.json
+    if not data or "item_id" not in data or "approved" not in data:
+        return jsonify({"error": "Missing item_id or approved"}), 400
+
+    try:
+        item_id = data["item_id"]
+        approved = data["approved"]
+
+        manager = _get_action_items_manager(sim_name)
+        sim = current_app.simulations[sim_name]
+
+        # Get impacts for the approval decision
+        impacts = manager.get_impacts_for_approval(item_id, approved)
+
+        # Apply impacts to world state
+        world_state = sim.getWorldState()
+        for key, value in impacts.items():
+            if key in world_state and isinstance(world_state[key], (int, float)):
+                world_state[key] = world_state[key] + value
+            elif key not in world_state:
+                world_state[key] = value
+        sim.setWorldState(world_state)
+
+        # Resolve the item
+        from pm6.core.action_items import ActionItemStatus
+        new_status = ActionItemStatus.APPROVED if approved else ActionItemStatus.DENIED
+        manager.resolve_item(item_id, new_status)
+
+        return jsonify({
+            "success": True,
+            "world_state": sim.getWorldState(),
+            "impacts_applied": impacts,
+        })
+
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        logger.error(f"Error handling approval: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@play_bp.route("/play/<sim_name>/cos/action-item/authorize-operation", methods=["POST"])
+def cos_authorize_operation(sim_name: str):
+    """Authorize an operation to begin execution.
+
+    Expects JSON: {"item_id": "abc123"}
+
+    Returns:
+        JSON with updated action items.
+    """
+    engine = _get_or_create_cos_engine(sim_name)
+    if engine is None:
+        return jsonify({"error": "Simulation not found"}), 404
+
+    data = request.json
+    if not data or "item_id" not in data:
+        return jsonify({"error": "Missing item_id"}), 400
+
+    try:
+        item_id = data["item_id"]
+
+        manager = _get_action_items_manager(sim_name)
+        tracker = _get_operations_tracker(sim_name)
+
+        # Get the item
+        item = manager.get_item(item_id)
+        if item is None:
+            return jsonify({"error": "Item not found"}), 404
+
+        # Authorize the operation
+        operation = tracker.authorize_operation(item, engine.currentTurn)
+
+        # Update the item with the active operation reference
+        from pm6.core.action_items import ActionItemStatus
+        item.status = ActionItemStatus.IN_PROGRESS
+        item.active_operation = operation
+
+        # Get all current action items
+        action_items = [i.to_dict() for i in manager.get_pending_items()]
+
+        return jsonify({
+            "success": True,
+            "operation": operation.to_dict(),
+            "action_items": action_items,
+        })
+
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        logger.error(f"Error authorizing operation: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@play_bp.route("/play/<sim_name>/cos/action-item/cancel-operation", methods=["POST"])
+def cos_cancel_operation(sim_name: str):
+    """Cancel/abort an active operation.
+
+    Expects JSON: {"item_id": "abc123"}
+
+    Returns:
+        JSON with updated action items.
+    """
+    engine = _get_or_create_cos_engine(sim_name)
+    if engine is None:
+        return jsonify({"error": "Simulation not found"}), 404
+
+    data = request.json
+    if not data or "item_id" not in data:
+        return jsonify({"error": "Missing item_id"}), 400
+
+    try:
+        item_id = data["item_id"]
+
+        manager = _get_action_items_manager(sim_name)
+        tracker = _get_operations_tracker(sim_name)
+
+        # Get the item
+        item = manager.get_item(item_id)
+        if item is None:
+            return jsonify({"error": "Item not found"}), 404
+
+        # Cancel the operation
+        if item.active_operation:
+            tracker.cancel_operation(item.active_operation.id, "Aborted by player")
+
+        # Update item status
+        from pm6.core.action_items import ActionItemStatus
+        manager.resolve_item(item_id, ActionItemStatus.CANCELLED)
+
+        # Get all current action items
+        action_items = [i.to_dict() for i in manager.get_pending_items()]
+
+        return jsonify({
+            "success": True,
+            "action_items": action_items,
+        })
+
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        logger.error(f"Error cancelling operation: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@play_bp.route("/play/<sim_name>/cos/action-item/demands", methods=["POST"])
+def cos_handle_demands(sim_name: str):
+    """Handle responses to demand items.
+
+    Expects JSON: {"item_id": "abc123", "responses": {"demand1": "agree", "demand2": "disagree"}}
+
+    Returns:
+        JSON with updated world state.
+    """
+    engine = _get_or_create_cos_engine(sim_name)
+    if engine is None:
+        return jsonify({"error": "Simulation not found"}), 404
+
+    data = request.json
+    if not data or "item_id" not in data:
+        return jsonify({"error": "Missing item_id"}), 400
+
+    try:
+        item_id = data["item_id"]
+        responses = data.get("responses", {})
+
+        manager = _get_action_items_manager(sim_name)
+        sim = current_app.simulations[sim_name]
+
+        # Get impacts for the demand responses
+        impacts = manager.get_impacts_for_demands(item_id, responses)
+
+        # Apply impacts to world state
+        world_state = sim.getWorldState()
+        for key, value in impacts.items():
+            if key in world_state and isinstance(world_state[key], (int, float)):
+                world_state[key] = world_state[key] + value
+            elif key not in world_state:
+                world_state[key] = value
+        sim.setWorldState(world_state)
+
+        # Resolve the item
+        from pm6.core.action_items import ActionItemStatus
+        manager.resolve_item(item_id, ActionItemStatus.RESOLVED)
+
+        return jsonify({
+            "success": True,
+            "world_state": sim.getWorldState(),
+            "impacts_applied": impacts,
+        })
+
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        logger.error(f"Error handling demands: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@play_bp.route("/play/<sim_name>/cos/action-item/acknowledge", methods=["POST"])
+def cos_acknowledge_info(sim_name: str):
+    """Acknowledge an info item (marks as read).
+
+    Expects JSON: {"item_id": "abc123"}
+
+    Returns:
+        JSON with success status.
+    """
+    engine = _get_or_create_cos_engine(sim_name)
+    if engine is None:
+        return jsonify({"error": "Simulation not found"}), 404
+
+    data = request.json
+    if not data or "item_id" not in data:
+        return jsonify({"error": "Missing item_id"}), 400
+
+    try:
+        item_id = data["item_id"]
+
+        manager = _get_action_items_manager(sim_name)
+
+        # Mark as acknowledged
+        from pm6.core.action_items import ActionItemStatus
+        manager.resolve_item(item_id, ActionItemStatus.ACKNOWLEDGED)
+
+        return jsonify({
+            "success": True,
+        })
+
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        logger.error(f"Error acknowledging info: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@play_bp.route("/play/<sim_name>/cos/action-item/defer", methods=["POST"])
+def cos_defer_item(sim_name: str):
+    """Defer an action item to the next turn.
+
+    Expects JSON: {"item_id": "abc123"}
+
+    Returns:
+        JSON with success status.
+    """
+    engine = _get_or_create_cos_engine(sim_name)
+    if engine is None:
+        return jsonify({"error": "Simulation not found"}), 404
+
+    data = request.json
+    if not data or "item_id" not in data:
+        return jsonify({"error": "Missing item_id"}), 400
+
+    try:
+        item_id = data["item_id"]
+
+        manager = _get_action_items_manager(sim_name)
+
+        # Mark as deferred
+        from pm6.core.action_items import ActionItemStatus
+        item = manager.get_item(item_id)
+        if item:
+            item.status = ActionItemStatus.DEFERRED
+
+        return jsonify({
+            "success": True,
+        })
+
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        logger.error(f"Error deferring item: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@play_bp.route("/play/<sim_name>/cos/action-item/option", methods=["POST"])
+def cos_select_option(sim_name: str):
+    """Select an option from an OPTIONS action item.
+
+    Expects JSON: {"item_id": "abc123", "option_id": "0"}
+
+    Returns:
+        JSON with success status and updated world state.
+    """
+    engine = _get_or_create_cos_engine(sim_name)
+    if engine is None:
+        return jsonify({"error": "Simulation not found"}), 404
+
+    data = request.json
+    if not data or "item_id" not in data or "option_id" not in data:
+        return jsonify({"error": "Missing item_id or option_id"}), 400
+
+    try:
+        item_id = data["item_id"]
+        option_id = data["option_id"]
+
+        manager = _get_action_items_manager(sim_name)
+
+        # Get impacts for selected option
+        impacts = manager.get_impacts_for_option(item_id, option_id)
+
+        # Apply impacts to world state
+        world_state = engine.getWorldState()
+        for key, value in impacts.items():
+            if key in world_state:
+                world_state[key] = world_state.get(key, 0) + value
+            else:
+                world_state[key] = value
+        engine.setWorldState(world_state)
+
+        # Resolve the item
+        from pm6.core.action_items import ActionItemStatus
+        manager.resolve_item(item_id, ActionItemStatus.RESOLVED)
+
+        return jsonify({
+            "success": True,
+            "impacts_applied": impacts,
+            "world_state": world_state,
+        })
+
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        logger.error(f"Error selecting option: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@play_bp.route("/play/<sim_name>/cos/action-items")
+def cos_get_action_items(sim_name: str):
+    """Get all pending action items.
+
+    Returns:
+        JSON with list of pending action items.
+    """
+    engine = _get_or_create_cos_engine(sim_name)
+    if engine is None:
+        return jsonify({"error": "Simulation not found"}), 404
+
+    try:
+        manager = _get_action_items_manager(sim_name)
+        items = manager.get_pending_items()
+
+        return jsonify({
+            "success": True,
+            "action_items": [i.to_dict() for i in items],
+        })
+
+    except Exception as e:
+        logger.error(f"Error getting action items: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@play_bp.route("/play/<sim_name>/cos/operations")
+def cos_get_operations(sim_name: str):
+    """Get all active operations.
+
+    Returns:
+        JSON with list of active operations.
+    """
+    engine = _get_or_create_cos_engine(sim_name)
+    if engine is None:
+        return jsonify({"error": "Simulation not found"}), 404
+
+    try:
+        tracker = _get_operations_tracker(sim_name)
+        operations = tracker.get_active_operations()
+
+        return jsonify({
+            "success": True,
+            "operations": [op.to_dict() for op in operations],
+        })
+
+    except Exception as e:
+        logger.error(f"Error getting operations: {e}")
         return jsonify({"error": str(e)}), 500

@@ -7,6 +7,7 @@
 
 <div class="actions refresh-btn">
     <a href="{{ url_for('play.play_view', sim_name=sim_name) }}" class="btn btn-success" style="font-weight: bold;">Play Simulation</a>
+    <a href="{{ url_for('play.cos_view', sim_name=sim_name) }}" class="btn btn-primary" style="font-weight: bold;">CoS Mode</a>
     <button onclick="refreshStats('{{ sim_name }}')" class="btn btn-secondary">Refresh</button>
     <a href="{{ url_for('agents.list_agents_view', sim_name=sim_name) }}" class="btn">Manage Agents</a>
     <a href="{{ url_for('events.events_page', sim_name=sim_name) }}" class="btn">Events</a>

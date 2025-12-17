@@ -146,34 +146,60 @@ class ChiefOfStaffMode:
             except (ValueError, TypeError):
                 pass
 
-        # Generate agent briefs
+        # Generate agent briefs - now includes ALL agents who responded
+        # Enemy agents appear as "intelligence reports" (meetable=False)
         agentBriefs = []
         meetableAgents = []
 
+        # Process ALL agents with responses (friendlies + enemies)
+        if agentResponses:
+            for agentName, responseText in agentResponses.items():
+                # Get agent config
+                agentConfig = self._simulation.getAgent(agentName)
+                if not agentConfig:
+                    continue
+
+                # Skip system agents (orchestrator, narrator)
+                faction = agentConfig.metadata.get("faction", "friendly") if agentConfig.metadata else "friendly"
+                if faction == "system":
+                    continue
+
+                # Create brief with full response and faction
+                brief = AgentBrief(
+                    agentName=agentName,
+                    agentRole=agentConfig.role,
+                    summary=responseText[:200] + "..." if len(responseText) > 200 else responseText,
+                    recommendation="",
+                    urgency="high" if faction == "enemy" else "medium",
+                    meetable=agentConfig.meetable,
+                    fullResponse=responseText,
+                    faction=faction,
+                )
+                agentBriefs.append(brief)
+
+                # Only add to meetableAgents if truly meetable
+                if agentConfig.meetable:
+                    meetableAgents.append(agentName)
+
+                self._cachedAgentBriefs[agentName] = brief
+
+        # Also include meetable agents who didn't respond yet
         for agentConfig in self.getMeetableAgents():
-            agentName = agentConfig.name
-
-            # Get summary from provided responses or cache
-            summary = ""
-            if agentResponses and agentName in agentResponses:
-                summary = agentResponses[agentName]
-            elif agentName in self._cachedAgentBriefs:
-                agentBriefs.append(self._cachedAgentBriefs[agentName])
-                meetableAgents.append(agentName)
-                continue
-
-            # Create brief
-            brief = AgentBrief(
-                agentName=agentName,
-                agentRole=agentConfig.role,
-                summary=summary or f"Awaiting input from {agentConfig.role}",
-                recommendation="",
-                urgency="medium",
-                meetable=True,
-            )
-            agentBriefs.append(brief)
-            meetableAgents.append(agentName)
-            self._cachedAgentBriefs[agentName] = brief
+            if agentConfig.name not in [b.agentName for b in agentBriefs]:
+                faction = agentConfig.metadata.get("faction", "friendly") if agentConfig.metadata else "friendly"
+                brief = AgentBrief(
+                    agentName=agentConfig.name,
+                    agentRole=agentConfig.role,
+                    summary=f"Awaiting input from {agentConfig.role}",
+                    recommendation="",
+                    urgency="medium",
+                    meetable=True,
+                    fullResponse="",
+                    faction=faction,
+                )
+                agentBriefs.append(brief)
+                meetableAgents.append(agentConfig.name)
+                self._cachedAgentBriefs[agentConfig.name] = brief
 
         # Generate CoS narrative
         cosNarrative = self._generateCosNarrative(
@@ -219,11 +245,22 @@ class ChiefOfStaffMode:
         if eventSummary:
             lines.append(f"\n{eventSummary}")
 
-        lines.append("\n**Your advisors' positions:**")
+        # Separate briefs by faction
+        enemy_briefs = [b for b in briefs if b.faction == "enemy"]
+        friendly_briefs = [b for b in briefs if b.faction in ("friendly", "ally")]
 
-        for brief in briefs:
-            met_marker = " *(met)*" if brief.agentName in agentsMet else ""
-            lines.append(f"• **{brief.agentRole}**{met_marker}: {brief.summary}")
+        # Enemy intelligence section - presented as intel reports, not direct communication
+        if enemy_briefs:
+            lines.append("\n**🔴 INTELLIGENCE REPORTS - Enemy Activity:**")
+            for brief in enemy_briefs:
+                lines.append(f"• **[INTEL] {brief.agentRole}**: {brief.summary}")
+
+        # Friendly advisors section - these can be met
+        if friendly_briefs:
+            lines.append("\n**Your advisors' positions:**")
+            for brief in friendly_briefs:
+                met_marker = " *(met)*" if brief.agentName in agentsMet else ""
+                lines.append(f"• **{brief.agentRole}**{met_marker}: {brief.summary}")
 
         if agentsMet:
             lines.append(f"\n*Time spent in consultations: {self._state.totalHoursSpent} hours*")

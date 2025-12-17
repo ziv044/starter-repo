@@ -700,6 +700,110 @@
 }
 
 /* ========================================
+   Options Card Styles
+   ======================================== */
+
+.option-header-bar {
+    background: #1a5f7a;
+}
+
+.option-header-bar .entity-type {
+    color: #7dd3fc;
+}
+
+.option-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #1e3a5f;
+    margin-bottom: 8px;
+}
+
+.option-intro {
+    font-size: 13px;
+    color: #6c757d;
+    margin-bottom: 15px;
+}
+
+.options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.option-item {
+    background: white;
+    border: 2px solid #dee2e6;
+    border-radius: 8px;
+    padding: 15px;
+    transition: all 0.2s;
+}
+
+.option-item:hover {
+    border-color: #1a5f7a;
+    box-shadow: 0 2px 8px rgba(26, 95, 122, 0.15);
+}
+
+.option-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.option-number {
+    font-weight: bold;
+    color: #1a5f7a;
+    font-size: 16px;
+    min-width: 24px;
+}
+
+.option-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1e3a5f;
+}
+
+.option-description {
+    font-size: 12px;
+    color: #6c757d;
+    margin-bottom: 10px;
+    padding-left: 34px;
+}
+
+.option-impacts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+    padding-left: 34px;
+}
+
+.btn-select-option {
+    background: #1a5f7a;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: auto;
+    display: block;
+}
+
+.btn-select-option:hover {
+    background: #145a6f;
+}
+
+.option-item.selected {
+    border-color: #28a745;
+    background: #f0fff4;
+}
+
+.option-item.selected .btn-select-option {
+    background: #28a745;
+}
+
+/* ========================================
    Action Items Container
    ======================================== */
 

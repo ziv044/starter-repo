@@ -15,6 +15,45 @@
             </div>
         </div>
 
+        <!-- Action Items Section -->
+        <div id="action-items-container">
+            <!-- Approvals -->
+            <div id="approvals-section" class="action-items-section" style="display: none;">
+                <div class="section-header approval-header-bar">
+                    <span class="section-icon">&#128221;</span>
+                    <span class="section-title">AWAITING YOUR APPROVAL</span>
+                </div>
+                <div id="approvals-list" class="action-items-list"></div>
+            </div>
+
+            <!-- Demands -->
+            <div id="demands-section" class="action-items-section" style="display: none;">
+                <div class="section-header demand-header-bar">
+                    <span class="section-icon">&#128680;</span>
+                    <span class="section-title">DEMANDS REQUIRING RESPONSE</span>
+                </div>
+                <div id="demands-list" class="action-items-list"></div>
+            </div>
+
+            <!-- Options -->
+            <div id="options-section" class="action-items-section" style="display: none;">
+                <div class="section-header option-header-bar">
+                    <span class="section-icon">&#128203;</span>
+                    <span class="section-title">OPTIONS TO CONSIDER</span>
+                </div>
+                <div id="options-list" class="action-items-list"></div>
+            </div>
+
+            <!-- Operations -->
+            <div id="operations-section" class="action-items-section" style="display: none;">
+                <div class="section-header operation-header-bar">
+                    <span class="section-icon">&#9881;</span>
+                    <span class="section-title">OPERATIONS AWAITING AUTHORIZATION</span>
+                </div>
+                <div id="operations-list" class="action-items-list"></div>
+            </div>
+        </div>
+
         <!-- Choices Panel -->
         <div id="choices-panel" class="card choices-panel" style="display: none;">
             <div class="card-header">Your Response</div>
@@ -106,6 +145,12 @@ stepBtn.addEventListener('click', async () => {
         const data = await response.json();
         if (data.success) {
             renderOutput(data.output);
+            // Render parsed action items
+            if (data.action_items && data.action_items.length > 0) {
+                renderActionItems(data.action_items);
+            } else {
+                hideAllActionSections();
+            }
         } else {
             showError(data.error);
         }
@@ -345,5 +390,408 @@ function addToHistory(output) {
 // Show error
 function showError(message) {
     narrativeContent.innerHTML = `<p style="color: var(--danger);">Error: ${message}</p>`;
+}
+
+// ============================================================================
+// Action Items Rendering
+// ============================================================================
+
+// Render action items by type
+function renderActionItems(actionItems) {
+    console.log('Rendering action items:', actionItems);
+
+    if (!actionItems || actionItems.length === 0) {
+        hideAllActionSections();
+        return;
+    }
+
+    // Group items by type
+    const approvals = actionItems.filter(i => i.type === 'APPROVAL');
+    const demands = actionItems.filter(i => i.type === 'DEMAND');
+    const options = actionItems.filter(i => i.type === 'OPTIONS');
+    const operations = actionItems.filter(i => i.type === 'OPERATION');
+
+    // Render each type
+    renderApprovals(approvals);
+    renderDemands(demands);
+    renderOptions(options);
+    renderOperations(operations);
+}
+
+function hideAllActionSections() {
+    document.getElementById('approvals-section').style.display = 'none';
+    document.getElementById('demands-section').style.display = 'none';
+    document.getElementById('options-section').style.display = 'none';
+    document.getElementById('operations-section').style.display = 'none';
+}
+
+// Render APPROVAL items
+function renderApprovals(items) {
+    const section = document.getElementById('approvals-section');
+    const list = document.getElementById('approvals-list');
+
+    if (!items || items.length === 0) {
+        section.style.display = 'none';
+        return;
+    }
+
+    list.innerHTML = '';
+    items.forEach(item => {
+        const card = renderApprovalCard(item);
+        list.appendChild(card);
+    });
+    section.style.display = 'block';
+}
+
+function renderApprovalCard(item) {
+    const card = document.createElement('div');
+    card.className = 'action-item approval-item';
+    card.dataset.itemId = item.id;
+
+    card.innerHTML = `
+        <div class="item-header">
+            <span class="item-source">${item.source_agent || 'Unknown'}</span>
+            <span class="item-urgency urgency-${item.urgency || 'medium'}">${(item.urgency || 'MEDIUM').toUpperCase()}</span>
+        </div>
+        <div class="item-content">
+            <p class="item-title">${item.title || ''}</p>
+            <p class="item-description">${item.description || ''}</p>
+        </div>
+        <div class="item-actions">
+            <button class="btn-approve" onclick="handleApproval('${item.id}', true)">APPROVE</button>
+            <button class="btn-deny" onclick="handleApproval('${item.id}', false)">DENY</button>
+            <button class="btn-defer" onclick="deferItem('${item.id}')">DEFER</button>
+        </div>
+    `;
+
+    return card;
+}
+
+// Render DEMAND items
+function renderDemands(items) {
+    const section = document.getElementById('demands-section');
+    const list = document.getElementById('demands-list');
+
+    if (!items || items.length === 0) {
+        section.style.display = 'none';
+        return;
+    }
+
+    list.innerHTML = '';
+    items.forEach(item => {
+        const card = renderDemandCard(item);
+        list.appendChild(card);
+    });
+    section.style.display = 'block';
+}
+
+function renderDemandCard(item) {
+    const card = document.createElement('div');
+    card.className = 'action-item demand-item';
+    card.dataset.itemId = item.id;
+
+    let demandsHtml = '';
+    if (item.demands && item.demands.length > 0) {
+        demandsHtml = '<div class="demands-list">';
+        item.demands.forEach((demand, idx) => {
+            const demandId = demand.id || `demand_${idx}`;
+            demandsHtml += `
+                <div class="demand-entry" data-demand-id="${demandId}">
+                    <p class="demand-text">${demand.text || demand}</p>
+                    <div class="demand-response-buttons">
+                        <button class="btn-agree" onclick="selectDemandResponse('${item.id}', '${demandId}', 'agree')">AGREE</button>
+                        <button class="btn-disagree" onclick="selectDemandResponse('${item.id}', '${demandId}', 'disagree')">DISAGREE</button>
+                    </div>
+                </div>
+            `;
+        });
+        demandsHtml += '</div>';
+    }
+
+    card.innerHTML = `
+        <div class="item-header">
+            <span class="item-source">${item.source_agent || 'Unknown'}</span>
+            <span class="item-urgency urgency-${item.urgency || 'high'}">${(item.urgency || 'HIGH').toUpperCase()}</span>
+        </div>
+        <div class="item-content">
+            <p class="item-title">${item.title || ''}</p>
+            <p class="item-description">${item.description || ''}</p>
+            ${demandsHtml}
+        </div>
+        <div class="item-actions">
+            <button class="btn-submit-demands" onclick="submitDemandResponses('${item.id}')" disabled>SUBMIT RESPONSES</button>
+            <button class="btn-defer" onclick="deferItem('${item.id}')">DEFER</button>
+        </div>
+    `;
+
+    return card;
+}
+
+// Render OPTIONS items
+function renderOptions(items) {
+    const section = document.getElementById('options-section');
+    const list = document.getElementById('options-list');
+
+    if (!items || items.length === 0) {
+        section.style.display = 'none';
+        return;
+    }
+
+    list.innerHTML = '';
+    items.forEach(item => {
+        const card = renderOptionCard(item);
+        list.appendChild(card);
+    });
+    section.style.display = 'block';
+}
+
+function renderOptionCard(item) {
+    const card = document.createElement('div');
+    card.className = 'action-item option-item';
+    card.dataset.itemId = item.id;
+
+    let optionsHtml = '';
+    if (item.options && item.options.length > 0) {
+        optionsHtml = '<div class="options-list">';
+        item.options.forEach((option, idx) => {
+            const optionId = option.id || `${idx}`;
+            let impactsHtml = '';
+            if (option.impacts) {
+                impactsHtml = '<div class="option-impacts">';
+                Object.entries(option.impacts).forEach(([key, val]) => {
+                    const sign = val > 0 ? '+' : '';
+                    const cls = val > 0 ? 'impact-positive' : 'impact-negative';
+                    impactsHtml += `<span class="${cls}">${key}: ${sign}${val}</span>`;
+                });
+                impactsHtml += '</div>';
+            }
+            optionsHtml += `
+                <div class="option-entry">
+                    <p class="option-text"><strong>Option ${parseInt(optionId) + 1}:</strong> ${option.text || option}</p>
+                    ${impactsHtml}
+                    <button class="btn-select-option" onclick="selectOption('${item.id}', '${optionId}')">SELECT</button>
+                </div>
+            `;
+        });
+        optionsHtml += '</div>';
+    }
+
+    card.innerHTML = `
+        <div class="item-header">
+            <span class="item-source">${item.source_agent || 'Unknown'}</span>
+            <span class="item-urgency urgency-${item.urgency || 'medium'}">${(item.urgency || 'MEDIUM').toUpperCase()}</span>
+        </div>
+        <div class="item-content">
+            <p class="item-title">${item.title || ''}</p>
+            <p class="item-description">${item.description || ''}</p>
+            ${optionsHtml}
+        </div>
+    `;
+
+    return card;
+}
+
+// Render OPERATION items
+function renderOperations(items) {
+    const section = document.getElementById('operations-section');
+    const list = document.getElementById('operations-list');
+
+    if (!items || items.length === 0) {
+        section.style.display = 'none';
+        return;
+    }
+
+    list.innerHTML = '';
+    items.forEach(item => {
+        const card = renderOperationCard(item);
+        list.appendChild(card);
+    });
+    section.style.display = 'block';
+}
+
+function renderOperationCard(item) {
+    const card = document.createElement('div');
+    card.className = 'action-item operation-item';
+    card.dataset.itemId = item.id;
+
+    card.innerHTML = `
+        <div class="item-header">
+            <span class="item-source">${item.source_agent || 'Unknown'}</span>
+            <span class="item-urgency urgency-${item.urgency || 'high'}">${(item.urgency || 'HIGH').toUpperCase()}</span>
+        </div>
+        <div class="item-content">
+            <p class="item-title">${item.title || ''}</p>
+            <p class="item-description">${item.description || ''}</p>
+        </div>
+        <div class="item-actions">
+            <button class="btn-authorize" onclick="authorizeOperation('${item.id}')">AUTHORIZE</button>
+            <button class="btn-cancel" onclick="cancelOperation('${item.id}')">CANCEL</button>
+            <button class="btn-defer" onclick="deferItem('${item.id}')">DEFER</button>
+        </div>
+    `;
+
+    return card;
+}
+
+// ============================================================================
+// Action Items API Handlers
+// ============================================================================
+
+// Track demand responses
+const demandResponses = {};
+
+function selectDemandResponse(itemId, demandId, response) {
+    if (!demandResponses[itemId]) {
+        demandResponses[itemId] = {};
+    }
+    demandResponses[itemId][demandId] = response;
+
+    // Update button states
+    const entry = document.querySelector(`[data-demand-id="${demandId}"]`);
+    if (entry) {
+        entry.querySelectorAll('.btn-agree, .btn-disagree').forEach(btn => btn.classList.remove('selected'));
+        entry.querySelector(response === 'agree' ? '.btn-agree' : '.btn-disagree').classList.add('selected');
+    }
+
+    // Enable submit button if all demands responded
+    const card = document.querySelector(`[data-item-id="${itemId}"]`);
+    if (card) {
+        const demandEntries = card.querySelectorAll('.demand-entry');
+        const responseCount = Object.keys(demandResponses[itemId] || {}).length;
+        const submitBtn = card.querySelector('.btn-submit-demands');
+        if (submitBtn && responseCount >= demandEntries.length) {
+            submitBtn.disabled = false;
+        }
+    }
+}
+
+async function handleApproval(itemId, approved) {
+    try {
+        const response = await fetch(`/play/${simName}/cos/action-item/approval`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({item_id: itemId, approved})
+        });
+        const data = await response.json();
+        if (data.success) {
+            removeActionItem(itemId);
+            refreshWorldState(data.world_state);
+        } else {
+            showError(data.error);
+        }
+    } catch (err) {
+        showError(err.message);
+    }
+}
+
+async function submitDemandResponses(itemId) {
+    try {
+        const responses = demandResponses[itemId] || {};
+        const response = await fetch(`/play/${simName}/cos/action-item/demands`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({item_id: itemId, responses})
+        });
+        const data = await response.json();
+        if (data.success) {
+            removeActionItem(itemId);
+            refreshWorldState(data.world_state);
+            delete demandResponses[itemId];
+        } else {
+            showError(data.error);
+        }
+    } catch (err) {
+        showError(err.message);
+    }
+}
+
+async function selectOption(itemId, optionId) {
+    try {
+        const response = await fetch(`/play/${simName}/cos/action-item/option`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({item_id: itemId, option_id: optionId})
+        });
+        const data = await response.json();
+        if (data.success) {
+            removeActionItem(itemId);
+            refreshWorldState(data.world_state);
+        } else {
+            showError(data.error);
+        }
+    } catch (err) {
+        showError(err.message);
+    }
+}
+
+async function authorizeOperation(itemId) {
+    try {
+        const response = await fetch(`/play/${simName}/cos/action-item/authorize-operation`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({item_id: itemId})
+        });
+        const data = await response.json();
+        if (data.success) {
+            removeActionItem(itemId);
+            // Could show operation started notification
+        } else {
+            showError(data.error);
+        }
+    } catch (err) {
+        showError(err.message);
+    }
+}
+
+async function cancelOperation(itemId) {
+    try {
+        const response = await fetch(`/play/${simName}/cos/action-item/cancel-operation`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({item_id: itemId})
+        });
+        const data = await response.json();
+        if (data.success) {
+            removeActionItem(itemId);
+        } else {
+            showError(data.error);
+        }
+    } catch (err) {
+        showError(err.message);
+    }
+}
+
+async function deferItem(itemId) {
+    try {
+        const response = await fetch(`/play/${simName}/cos/action-item/defer`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({item_id: itemId})
+        });
+        const data = await response.json();
+        if (data.success) {
+            removeActionItem(itemId);
+        } else {
+            showError(data.error);
+        }
+    } catch (err) {
+        showError(err.message);
+    }
+}
+
+function removeActionItem(itemId) {
+    const card = document.querySelector(`[data-item-id="${itemId}"]`);
+    if (card) {
+        card.remove();
+    }
+
+    // Hide empty sections
+    ['approvals', 'demands', 'options', 'operations'].forEach(type => {
+        const section = document.getElementById(`${type}-section`);
+        const list = document.getElementById(`${type}-list`);
+        if (section && list && list.children.length === 0) {
+            section.style.display = 'none';
+        }
+    });
 }
 {% endblock %}

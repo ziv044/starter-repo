@@ -55,6 +55,12 @@
                     <div id="operations-list" class="action-items-container"></div>
                 </div>
 
+                <!-- Options Section -->
+                <div id="options-section" class="action-items-section hidden">
+                    <h4>Recommended Actions (Select One)</h4>
+                    <div id="options-list" class="action-items-container"></div>
+                </div>
+
                 <!-- Demands Section -->
                 <div id="demands-section" class="action-items-section hidden">
                     <h4>Demands Requiring Response</h4>
@@ -224,17 +230,63 @@
     margin-bottom: 15px;
 }
 
+.briefs-section-header {
+    font-weight: bold;
+    padding: 10px 0;
+    margin-top: 15px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.briefs-section-header.enemy-header {
+    color: #e74c3c;
+}
+
+.briefs-section-header.friendly-header {
+    color: var(--primary);
+}
+
 .brief-item {
     background: var(--bg);
     padding: 15px;
     border-radius: 8px;
     margin-bottom: 10px;
     border-left: 4px solid var(--primary);
+    position: relative;
 }
 
 .brief-item.met {
     border-left-color: var(--success);
     opacity: 0.8;
+}
+
+.brief-item.enemy-brief {
+    border-left-color: #e74c3c;
+    background: rgba(231, 76, 60, 0.1);
+}
+
+.brief-item.ally-brief {
+    border-left-color: #3498db;
+}
+
+.brief-faction-tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-bottom: 5px;
+}
+
+.brief-faction-tag.enemy {
+    background: rgba(231, 76, 60, 0.2);
+    color: #e74c3c;
+}
+
+.brief-faction-tag.ally {
+    background: rgba(52, 152, 219, 0.2);
+    color: #3498db;
 }
 
 .brief-role {
@@ -470,6 +522,11 @@ async function startTurn() {
             currentPhase = 'briefing';
             updatePhase('BRIEFING');
             document.getElementById('proceed-btn').disabled = false;
+
+            // Update action items from parsed agent responses
+            if (result.action_items && result.action_items.length > 0) {
+                updateActionItems(result.action_items);
+            }
         } else {
             alert('Error: ' + result.error);
         }
@@ -492,19 +549,43 @@ function updateBriefing(briefing) {
     document.getElementById('narrative-area').innerHTML =
         `<div class="cos-narrative">${briefing.chiefOfStaffNarrative.replace(/\n/g, '<br>')}</div>`;
 
-    // Update agent briefs
+    // Separate briefs by faction
+    const enemyBriefs = (briefing.agentBriefs || []).filter(b => b.faction === 'enemy');
+    const friendlyBriefs = (briefing.agentBriefs || []).filter(b => b.faction !== 'enemy');
+
+    // Update agent briefs list
     const briefsList = document.getElementById('briefs-list');
     briefsList.innerHTML = '';
 
-    briefing.agentBriefs.forEach(brief => {
-        const met = briefing.hoursElapsed > 0 && brief.agentName in (briefing.agentsMet || []);
-        briefsList.innerHTML += `
-            <div class="brief-item ${met ? 'met' : ''}">
-                <div class="brief-role">${brief.agentRole}</div>
-                <div class="brief-summary">${brief.summary}</div>
-            </div>
-        `;
-    });
+    // Enemy intelligence reports (displayed first, in red)
+    if (enemyBriefs.length > 0) {
+        briefsList.innerHTML += `<div class="briefs-section-header enemy-header">🔴 INTELLIGENCE REPORTS - Enemy Activity</div>`;
+        enemyBriefs.forEach(brief => {
+            briefsList.innerHTML += `
+                <div class="brief-item enemy-brief">
+                    <div class="brief-faction-tag enemy">[INTEL]</div>
+                    <div class="brief-role">${brief.agentRole}</div>
+                    <div class="brief-summary">${brief.summary}</div>
+                </div>
+            `;
+        });
+    }
+
+    // Friendly advisor positions
+    if (friendlyBriefs.length > 0) {
+        briefsList.innerHTML += `<div class="briefs-section-header friendly-header">Your Advisors' Positions</div>`;
+        friendlyBriefs.forEach(brief => {
+            const met = briefing.hoursElapsed > 0 && (briefing.agentsMet || []).includes(brief.agentName);
+            const factionClass = brief.faction === 'ally' ? 'ally-brief' : '';
+            briefsList.innerHTML += `
+                <div class="brief-item ${met ? 'met' : ''} ${factionClass}">
+                    ${brief.faction === 'ally' ? '<div class="brief-faction-tag ally">[ALLY]</div>' : ''}
+                    <div class="brief-role">${brief.agentRole}</div>
+                    <div class="brief-summary">${brief.summary}</div>
+                </div>
+            `;
+        });
+    }
 
     document.getElementById('agent-briefs').classList.remove('hidden');
 
@@ -770,12 +851,16 @@ function updateActionItems(actionItems) {
     // Group items by type
     const approvals = actionItems.filter(i => i.type === 'approval');
     const operations = actionItems.filter(i => i.type === 'operation');
+    const options = actionItems.filter(i => i.type === 'option');
     const demands = actionItems.filter(i => i.type === 'demand');
     const infos = actionItems.filter(i => i.type === 'info');
+
+    console.log('Action items parsed:', { approvals, operations, options, demands, infos });
 
     // Render each section
     renderApprovals(approvals);
     renderOperations(operations);
+    renderOptions(options);
     renderDemands(demands);
     renderInfos(infos);
 }
@@ -929,6 +1014,86 @@ function renderOperationCard(item) {
             `}
         </div>
     </div>`;
+}
+
+function renderOptions(items) {
+    const section = document.getElementById('options-section');
+    const list = document.getElementById('options-list');
+
+    if (items.length === 0) {
+        section.classList.add('hidden');
+        return;
+    }
+
+    section.classList.remove('hidden');
+    list.innerHTML = items.map(item => renderOptionCard(item)).join('');
+}
+
+let selectedOptions = {}; // Track selected option per item
+
+function renderOptionCard(item) {
+    const options = item.options || [];
+
+    const optionsHtml = options.map((opt, idx) => {
+        const impactsHtml = Object.entries(opt.impacts || {}).map(([key, value]) => {
+            const cls = value > 0 ? 'positive' : 'negative';
+            const prefix = value > 0 ? '+' : '';
+            return `<span class="impact-badge ${cls}">${key.replace(/_/g, ' ')}: ${prefix}${value}</span>`;
+        }).join('');
+
+        return `
+        <div class="option-item" data-option-id="${opt.id || idx}">
+            <div class="option-header">
+                <span class="option-number">${idx + 1}.</span>
+                <span class="option-text">${opt.text}</span>
+            </div>
+            ${opt.description ? `<div class="option-description">${opt.description}</div>` : ''}
+            <div class="option-impacts">${impactsHtml}</div>
+            <button class="btn btn-select-option" onclick="selectOption('${item.id}', '${opt.id || idx}')">SELECT</button>
+        </div>`;
+    }).join('');
+
+    return `
+    <div class="action-card option-card" data-item-id="${item.id}">
+        <div class="card-header-bar option-header-bar">
+            <div class="entity-badge">
+                <div class="entity-logo">
+                    <span class="logo-text">${(item.source_role || 'ADV').substring(0, 3).toUpperCase()}</span>
+                </div>
+                <div class="entity-info">
+                    <div class="entity-role">${item.source_role || 'Advisor'}</div>
+                    <div class="entity-type">RECOMMENDATIONS</div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="option-title">${item.title}</div>
+            <div class="option-intro">${item.content || 'Select one of the following recommended actions:'}</div>
+            <div class="divider"></div>
+            <div class="options-list">${optionsHtml}</div>
+        </div>
+    </div>`;
+}
+
+async function selectOption(itemId, optionId) {
+    try {
+        const result = await apiCall('/action-item/option', 'POST', {
+            item_id: itemId,
+            option_id: optionId
+        });
+
+        if (result.success) {
+            document.querySelector(`.action-card[data-item-id="${itemId}"]`).remove();
+            if (result.world_state) {
+                updateWorldState(result.world_state);
+            }
+            showNotification('Option selected and impacts applied', 'success');
+        } else {
+            showNotification('Error: ' + result.error, 'error');
+        }
+    } catch (e) {
+        showNotification('Error selecting option: ' + e.message, 'error');
+    }
 }
 
 function renderDemands(items) {

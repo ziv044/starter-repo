@@ -71,7 +71,7 @@ def _load_existing_simulations(app: Flask) -> None:
                     sim = Simulation(
                         name=sim_dir.name,
                         dbPath=app.db_path,
-                        testMode=True,  # Default to test mode on reload
+                        testMode=False,  # Use real LLM for Play Mode
                         enableCache=False,
                     )
                     app.simulations[sim_dir.name] = sim

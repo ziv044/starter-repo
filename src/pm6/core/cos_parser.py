@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING, Any
 
 from pm6.core.action_items import (
     ActionItem,
+    ActionItemStatus,
     ActionItemType,
     ClassificationLevel,
     DemandItem,
@@ -329,111 +330,341 @@ class CosParser:
         """Parse response using rule-based extraction (fallback).
 
         Uses keyword matching and pattern recognition.
-        Less accurate than LLM but works without API calls.
+        Optimized for crisis simulation agent response patterns.
         """
         items: list[ActionItem] = []
+        response_lower = response.lower()
 
-        # Split into sentences/paragraphs for analysis
-        lines = [l.strip() for l in response.split('\n') if l.strip()]
+        # First pass: Look for RECOMMENDATIONS with numbered items (OPTIONS)
+        # Pattern: "RECOMMENDATIONS:" followed by numbered items
+        if re.search(r'recommendations?\s*:', response_lower):
+            option_items = self._extract_numbered_options(response, agent_name, agent_role)
+            if option_items:
+                items.extend(option_items)
 
-        # Patterns for different item types
-        approval_patterns = [
-            r'(?:recommend|request|authorize|approval|deploy|mobilize|callup)',
-            r'(?:immediate|urgent|authorization|permission)',
+        # Second pass: Look for DEMANDS (may or may not have numbered items)
+        # Pattern: "We demand" or emotional appeal language
+        if re.search(r'we\s+demand|demand\s+you|demands?\s+immediate', response_lower):
+            demand_items = self._extract_demands(response, agent_name, agent_role)
+            if demand_items:
+                items.extend(demand_items)
+
+        # Third pass: Look for AUTHORIZATION patterns
+        # Matches: "AUTHORIZATION REQUESTED", "AUTHORIZATION REQUESTS:", "awaiting authorization"
+        auth_patterns = [
+            r'authorization\s+request(?:ed|s)?[:\s]*([^.\n]*)',
+            r'await(?:ing)?\s+(?:government\s+)?authorization\s+(?:to\s+)?([^.\n]*)',
+            r'request(?:ing|s)?\s+authorization\s+(?:for|to)\s+([^.\n]*)',
         ]
-        operation_patterns = [
-            r'(?:operation|op\s+\w+|infiltration|mission)',
-            r'(?:\d+[-–]\d+\s*(?:hours?|h)|within\s+\d+)',
-        ]
-        demand_patterns = [
-            r'(?:demand|insist|require|must|need\s+to)',
-            r'(?:we\s+(?:want|need|demand)|families)',
-        ]
-        option_patterns = [
-            r'(?:option\s*[1-9]|alternative|choice)',
-            r'(?:either|or\s+we\s+can)',
-        ]
-        metric_patterns = [
-            r'(\d+)\s*(?:hostages?|casualties|percent|%)',
-            r'(?:confirmed|verified|current)\s*:?\s*(\d+)',
-        ]
-
-        current_section = ""
-        collected_content = []
-
-        for line in lines:
-            line_lower = line.lower()
-
-            # Check for operation proposals
-            if any(re.search(p, line_lower) for p in operation_patterns):
-                # Extract duration if present
-                duration_match = re.search(r'(\d+)[-–]?(\d+)?\s*(?:hours?|h)', line_lower)
-                duration = 48  # default
-                if duration_match:
-                    d1 = int(duration_match.group(1))
-                    d2 = int(duration_match.group(2)) if duration_match.group(2) else d1
-                    duration = (d1 + d2) // 2
-
-                # Extract codename if present
-                codename_match = re.search(r'(?:operation|op)\s+([A-Z][A-Z\s]+)', line, re.IGNORECASE)
-                codename = codename_match.group(1).strip() if codename_match else "UNNAMED"
-
-                items.append(create_operation_proposal(
-                    agent_name,
-                    agent_role,
-                    codename.upper().replace(" ", "_"),
-                    OperationCategory.RECON,
-                    line,
-                    duration,
-                    "Operation outcome pending",
-                ))
-
-            # Check for approval requests
-            elif any(re.search(p, line_lower) for p in approval_patterns):
+        for auth_pattern in auth_patterns:
+            auth_match = re.search(auth_pattern, response, re.IGNORECASE)
+            if auth_match:
+                auth_context = auth_match.group(1).strip() if auth_match.group(1) else auth_match.group(0).strip()
                 items.append(create_approval_request(
                     agent_name,
                     agent_role,
-                    self._extract_title(line),
-                    line,
-                    {"impact": 10},  # Default impact
-                    UrgencyLevel.MEDIUM,
+                    f"Authorization Request from {agent_role}",
+                    auth_context or "Awaiting your authorization to proceed",
+                    self._estimate_impacts(auth_context or response[:200], agent_role),
+                    UrgencyLevel.CRITICAL,
                 ))
+                break  # Only create one approval per response
 
-            # Check for demands
-            elif any(re.search(p, line_lower) for p in demand_patterns):
-                items.append(create_demand_item(
-                    agent_name,
-                    agent_role,
-                    "Stakeholder Demand",
-                    [{"text": line, "agree_impacts": {}, "disagree_impacts": {}}],
-                ))
+        # Third pass: Look for OPERATION proposals
+        # Pattern: "Operation [NAME]" or "48-72 hour" duration mentions
+        op_match = re.search(
+            r'(?:operation|op)\s+([A-Z][A-Z\s_]+)|(\d+)[-–](\d+)\s*(?:hours?|h)\s+(?:operation|mission|infiltration)',
+            response,
+            re.IGNORECASE
+        )
+        if op_match:
+            codename = op_match.group(1) or "TACTICAL_OP"
+            # Extract duration
+            duration_match = re.search(r'(\d+)[-–](\d+)\s*(?:hours?|h)', response_lower)
+            duration = 48
+            if duration_match:
+                d1, d2 = int(duration_match.group(1)), int(duration_match.group(2))
+                duration = (d1 + d2) // 2
 
-            # Check for metric updates
-            elif metric_match := re.search(r'(\d+)\s*(hostages?|casualties)', line_lower):
-                value = int(metric_match.group(1))
-                metric = "hostage_count" if "hostage" in metric_match.group(2) else "casualties"
+            # Find operation description
+            op_context = self._extract_operation_context(response)
+            items.append(create_operation_proposal(
+                agent_name,
+                agent_role,
+                codename.strip().upper().replace(" ", "_"),
+                self._guess_operation_category(response_lower, agent_role),
+                op_context,
+                duration,
+                "Objective completion pending assessment",
+            ))
+
+        # Fourth pass: Look for metric updates (concrete numbers)
+        # Pattern: "X hostages", "X casualties", "X% ready"
+        metric_patterns = [
+            (r'(\d+)\s*hostages?', 'hostage_count'),
+            (r'(\d+)\s*(?:civilian\s+)?casualties', 'civilian_casualties'),
+            (r'(\d+)\s*(?:soldiers?|troops?)\s+(?:killed|casualties)', 'military_casualties'),
+            (r'(\d+)[%\s]+(?:readiness|ready|mobilized)', 'military_readiness'),
+        ]
+        for pattern, metric_key in metric_patterns:
+            match = re.search(pattern, response_lower)
+            if match:
+                value = int(match.group(1))
+                context_line = self._extract_context_line(response, match.start())
                 items.append(create_metric_update(
                     agent_name,
                     agent_role,
-                    metric,
+                    metric_key,
                     value,
-                    content=line,
+                    content=context_line,
                 ))
 
-            # Default to info item for substantial content
-            elif len(line) > 50:
-                items.append(create_info_item(
-                    agent_name,
-                    agent_role,
-                    line,
-                    "Status Update",
-                ))
+        # Fifth pass: If no structured items found, create INFO item for substantive responses
+        if not items and len(response) > 100:
+            # Create a summary info item
+            summary = response[:300] + "..." if len(response) > 300 else response
+            items.append(create_info_item(
+                agent_name,
+                agent_role,
+                summary,
+                f"Briefing from {agent_role}",
+            ))
 
-        # Deduplicate similar items
+        # Deduplicate
         items = self._deduplicate_items(items)
 
         logger.info(f"Rule-based parsed {len(items)} items from {agent_name}")
         return items
+
+    def _extract_numbered_options(
+        self,
+        response: str,
+        agent_name: str,
+        agent_role: str,
+    ) -> list[ActionItem]:
+        """Extract numbered recommendations as OPTIONS.
+
+        Pattern: "IMMEDIATE RECOMMENDATIONS:" followed by numbered items
+        Creates an OPTION card where player picks one.
+        """
+        # First, strip markdown formatting for cleaner extraction
+        clean_response = re.sub(r'\*\*([^*]+)\*\*', r'\1', response)  # **bold** -> bold
+        clean_response = re.sub(r'\*([^*]+)\*', r'\1', clean_response)  # *italic* -> italic
+
+        # Find numbered items: "1. ...", "2. ...", "1) ...", etc.
+        # Capture everything after the number until end of line
+        numbered_matches = re.findall(
+            r'(?:^|\n)\s*(\d+)[.)]\s*(.+?)(?=\n\s*\d+[.)]|\n\n|\n[A-Z]|\Z)',
+            clean_response,
+            re.MULTILINE | re.DOTALL
+        )
+
+        if not numbered_matches or len(numbered_matches) < 2:
+            return []
+
+        # Build options
+        options = []
+        for num, text in numbered_matches:
+            # Clean up the text
+            text = text.strip()
+            # Take first line if multi-line
+            text = text.split('\n')[0].strip()
+            if len(text) > 10:  # Filter out noise
+                options.append({
+                    "text": text,
+                    "description": "",
+                    "risk_level": "medium",
+                    "impacts": self._estimate_impacts(text, agent_role),
+                })
+
+        if options:
+            return [create_option_item(
+                agent_name,
+                agent_role,
+                f"Recommendations from {agent_role}",
+                "Select one of the following recommended actions:",
+                options,
+            )]
+
+        return []
+
+    def _extract_demands(
+        self,
+        response: str,
+        agent_name: str,
+        agent_role: str,
+    ) -> list[ActionItem]:
+        """Extract demands from response.
+
+        Handles both numbered demands and paragraph-style demands.
+        """
+        # Strip markdown formatting for cleaner extraction
+        clean_response = re.sub(r'\*\*([^*]+)\*\*', r'\1', response)
+        clean_response = re.sub(r'\*([^*]+)\*', r'\1', clean_response)
+
+        # First try numbered demands
+        numbered_matches = re.findall(
+            r'(?:^|\n)\s*(\d+)[.)]\s*(.+?)(?=\n\s*\d+[.)]|\n\n|\n[A-Z]|\Z)',
+            clean_response,
+            re.MULTILINE | re.DOTALL
+        )
+
+        demands = []
+
+        # Check for numbered format
+        if numbered_matches and len(numbered_matches) >= 2:
+            for num, text in numbered_matches:
+                text = text.strip().split('\n')[0].strip()
+                if len(text) > 10:
+                    demands.append({
+                        "text": text,
+                        "agree_impacts": self._estimate_demand_impacts(text, True),
+                        "disagree_impacts": self._estimate_demand_impacts(text, False),
+                    })
+        else:
+            # Extract key demand phrases from paragraph
+            demand_phrases = []
+
+            # Look for "We demand [action]" pattern
+            demand_match = re.search(
+                r'we\s+demand\s+(?:you\s+)?(.+?)(?:\.|!|$)',
+                response,
+                re.IGNORECASE
+            )
+            if demand_match:
+                demand_phrases.append(demand_match.group(1).strip())
+
+            # Look for imperative sentences
+            imperative_patterns = [
+                r'(?:launch|start|begin)\s+(.+?)(?:immediately|now|today)',
+                r'(?:mobilize|deploy)\s+(.+?)(?:\.|!)',
+                r'pay\s+whatever\s+price',
+                r'use\s+every\s+(.+?)(?:\.|!)',
+            ]
+            for pattern in imperative_patterns:
+                match = re.search(pattern, response, re.IGNORECASE)
+                if match:
+                    phrase = match.group(0).strip()
+                    if phrase and phrase not in [d.get("text", "") for d in demands]:
+                        demand_phrases.append(phrase)
+
+            # Create demands from phrases (max 3)
+            for phrase in demand_phrases[:3]:
+                if len(phrase) > 10:
+                    demands.append({
+                        "text": phrase,
+                        "agree_impacts": self._estimate_demand_impacts(phrase, True),
+                        "disagree_impacts": self._estimate_demand_impacts(phrase, False),
+                    })
+
+        if demands:
+            # Find warning text
+            warning_match = re.search(
+                r'(?:will\s+not|cannot|won\'t|not\s+accept|watching|clock\s+is\s+ticking)',
+                response,
+                re.IGNORECASE
+            )
+            warning = ""
+            if warning_match:
+                warning = self._extract_context_line(response, warning_match.start())
+
+            return [create_demand_item(
+                agent_name,
+                agent_role,
+                f"Demands from {agent_role}",
+                demands,
+                warning,
+            )]
+
+        return []
+
+    def _estimate_impacts(self, text: str, agent_role: str) -> dict[str, int]:
+        """Estimate impacts based on text content and agent role."""
+        impacts = {}
+        text_lower = text.lower()
+
+        # Military-related
+        if re.search(r'mobiliz|deploy|troops|reserve|military', text_lower):
+            impacts['military_readiness'] = 15
+        if re.search(r'strike|attack|offensive|assault', text_lower):
+            impacts['international_pressure'] = 10
+
+        # Coalition/political
+        if re.search(r'coalition|cabinet|minister', text_lower):
+            impacts['coalition_stability'] = 10
+
+        # Hostage-related
+        if re.search(r'hostage|rescue|negoti', text_lower):
+            impacts['hostage_risk'] = -5
+
+        # Role-based defaults
+        if 'idf' in agent_role.lower() or 'military' in agent_role.lower():
+            impacts.setdefault('military_readiness', 10)
+        elif 'hostage' in agent_role.lower() or 'families' in agent_role.lower():
+            impacts.setdefault('public_morale', -5)
+        elif 'mossad' in agent_role.lower() or 'intelligence' in agent_role.lower():
+            impacts.setdefault('intelligence_quality', 10)
+
+        return impacts or {"general_impact": 10}
+
+    def _estimate_demand_impacts(self, text: str, agreed: bool) -> dict[str, int]:
+        """Estimate impacts for agreeing/disagreeing with a demand."""
+        text_lower = text.lower()
+        multiplier = 1 if agreed else -1
+
+        if re.search(r'negotiat|talks|dialog', text_lower):
+            return {"diplomatic_progress": 15 * multiplier, "military_momentum": -10 * multiplier}
+        if re.search(r'rescue|extract|save', text_lower):
+            return {"hostage_risk": -10 * multiplier, "military_risk": 5 * multiplier}
+        if re.search(r'deploy|attack|strike', text_lower):
+            return {"military_readiness": 10 * multiplier, "international_pressure": 5 * multiplier}
+
+        return {"stakeholder_relations": 10 * multiplier}
+
+    def _guess_operation_category(self, text: str, agent_role: str) -> OperationCategory:
+        """Guess operation category from text and agent role."""
+        if re.search(r'cyber|hack|network|digital', text):
+            return OperationCategory.CYBER
+        if re.search(r'strike|bomb|missile|kinetic', text):
+            return OperationCategory.KINETIC
+        if re.search(r'asset|agent|source|humint', text):
+            return OperationCategory.HUMINT
+        if re.search(r'intercept|signal|comm|sigint', text):
+            return OperationCategory.SIGINT
+        if re.search(r'rescue|extract|hostage', text):
+            return OperationCategory.RESCUE
+        if re.search(r'recon|surveillance|observe', text):
+            return OperationCategory.RECON
+
+        # Agent role fallback
+        if 'mossad' in agent_role.lower():
+            return OperationCategory.HUMINT
+        if 'idf' in agent_role.lower() or 'military' in agent_role.lower():
+            return OperationCategory.KINETIC
+
+        return OperationCategory.RECON
+
+    def _extract_operation_context(self, response: str) -> str:
+        """Extract operation description from response."""
+        # Look for lines with operation context
+        lines = response.split('\n')
+        for line in lines:
+            if re.search(r'operation|mission|objective|target', line, re.IGNORECASE):
+                return line.strip()
+        # Fallback: first substantial line
+        for line in lines:
+            if len(line.strip()) > 50:
+                return line.strip()[:200]
+        return "Operation details pending"
+
+    def _extract_context_line(self, response: str, position: int) -> str:
+        """Extract the line containing a match position."""
+        # Find line boundaries
+        start = response.rfind('\n', 0, position) + 1
+        end = response.find('\n', position)
+        if end == -1:
+            end = len(response)
+        return response[start:end].strip()
 
     def _extract_title(self, text: str) -> str:
         """Extract a short title from text."""
@@ -520,6 +751,10 @@ class ActionItemsManager:
         """Get a pending item by ID."""
         return self._pending.get(item_id)
 
+    def get_pending_items(self) -> list[ActionItem]:
+        """Get all pending action items (alias for pending_items property)."""
+        return list(self._pending.values())
+
     def resolve_item(
         self,
         item_id: str,
@@ -569,13 +804,13 @@ class ActionItemsManager:
     def get_impacts_for_demands(
         self,
         item_id: str,
-        responses: dict[str, bool],  # demand_id -> agreed
+        responses: dict[str, str | bool],  # demand_id -> 'agree'/'disagree' or True/False
     ) -> dict[str, int | float]:
         """Get impacts for demand responses.
 
         Args:
             item_id: ID of demand item.
-            responses: Dict mapping demand_id to agreed (True) or disagreed (False).
+            responses: Dict mapping demand_id to 'agree'/'disagree' (or True/False for agreed).
 
         Returns:
             Combined dict of metric changes.
@@ -587,7 +822,13 @@ class ActionItemsManager:
         combined: dict[str, int | float] = {}
         for demand in item.demands:
             if demand.id in responses:
-                agreed = responses[demand.id]
+                response = responses[demand.id]
+                # Handle both string ('agree'/'disagree') and boolean formats
+                if isinstance(response, str):
+                    agreed = response.lower() == 'agree'
+                else:
+                    agreed = bool(response)
+
                 impacts = demand.agree_impacts if agreed else demand.disagree_impacts
                 for impact in impacts:
                     combined[impact.metric] = combined.get(impact.metric, 0) + impact.change

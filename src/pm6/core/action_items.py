@@ -40,6 +40,10 @@ class ActionItemStatus(str, Enum):
     SELECTED = "selected"
     DEFERRED = "deferred"
     APPLIED = "applied"  # For metric updates
+    ACKNOWLEDGED = "acknowledged"  # For info items
+    CANCELLED = "cancelled"  # For cancelled operations
+    RESOLVED = "resolved"  # Generic resolution
+    IN_PROGRESS = "in_progress"  # For active operations
 
 
 class OperationStatus(str, Enum):
@@ -188,6 +192,9 @@ class ActionItem:
     operation_description: str = ""
     operation_expected_outcome: str = ""
 
+    # Reference to active operation (set when authorized)
+    active_operation: ActiveOperation | None = None
+
     def resolve(self, status: ActionItemStatus) -> None:
         """Mark this item as resolved with given status."""
         self.status = status
@@ -212,19 +219,30 @@ class ActionItem:
             "urgency": self.urgency.value,
             "classification": self.classification.value,
             "impacts": [i.toDict() for i in self.impacts],
+            "approval_impacts": {i.metric: i.change for i in self.impacts},  # Flat dict for UI
             "demands": [d.toDict() for d in self.demands],
+            "demand_items": [d.toDict() for d in self.demands],  # Alias for UI
             "warning_text": self.warning_text,
+            "deadline_warning": self.warning_text,  # Alias for UI
             "options": [o.toDict() for o in self.options],
             "option_group_id": self.option_group_id,
             "metric_key": self.metric_key,
             "metric_value": self.metric_value,
             "metric_old_value": self.metric_old_value,
             "operation_codename": self.operation_codename,
+            "operation_name": self.title,  # Alias for UI
             "operation_category": self.operation_category.value if self.operation_category else None,
+            "operation_duration": self.operation_duration_hours,  # Alias for UI
             "operation_duration_hours": self.operation_duration_hours,
             "operation_description": self.operation_description,
             "operation_expected_outcome": self.operation_expected_outcome,
+            "active_operation": self.active_operation.toDict() if self.active_operation else None,
         }
+
+    # Snake case alias for API consistency
+    def to_dict(self) -> dict[str, Any]:
+        """Snake case alias for toDict()."""
+        return self.toDict()
 
     @classmethod
     def fromDict(cls, data: dict[str, Any]) -> ActionItem:
@@ -402,6 +420,11 @@ class ActiveOperation:
             "current_milestone": self.current_milestone,
             "eta_hours": self.get_eta_hours(),
         }
+
+    # Snake case alias for API consistency
+    def to_dict(self) -> dict[str, Any]:
+        """Snake case alias for toDict()."""
+        return self.toDict()
 
     @classmethod
     def fromActionItem(cls, item: ActionItem, turn: int) -> ActiveOperation:

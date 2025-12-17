@@ -516,6 +516,8 @@ class AgentBrief:
     recommendation: str = ""
     urgency: str = "medium"
     meetable: bool = True
+    fullResponse: str = ""
+    faction: str = "friendly"  # friendly, enemy, ally, system
 
     def toDict(self) -> dict[str, Any]:
         """Convert to dictionary."""
@@ -526,6 +528,8 @@ class AgentBrief:
             "recommendation": self.recommendation,
             "urgency": self.urgency,
             "meetable": self.meetable,
+            "fullResponse": self.fullResponse,
+            "faction": self.faction,
         }
 
     @classmethod
@@ -538,6 +542,8 @@ class AgentBrief:
             recommendation=data.get("recommendation", ""),
             urgency=data.get("urgency", "medium"),
             meetable=data.get("meetable", True),
+            fullResponse=data.get("fullResponse", ""),
+            faction=data.get("faction", "friendly"),
         )
 
 

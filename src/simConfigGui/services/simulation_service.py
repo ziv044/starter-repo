@@ -38,15 +38,21 @@ def delete_simulation(name: str) -> bool:
 
 def list_simulations() -> list[dict[str, Any]]:
     """List all simulations with basic info."""
-    return [
-        {
-            "name": name,
-            "agentCount": len(sim.listAgents()),
-            "turnCount": sim.turnCount,
-            "isTestMode": sim.isTestMode,
-        }
-        for name, sim in current_app.simulations.items()
-    ]
+    import logging
+    logger = logging.getLogger("simConfigGui.services.simulation_service")
+    logger.info(f"list_simulations called, simulations in app: {list(current_app.simulations.keys())}")
+    result = []
+    for name, sim in current_app.simulations.items():
+        try:
+            result.append({
+                "name": name,
+                "agentCount": len(sim.listAgents()),
+                "turnCount": sim.turnCount,
+                "isTestMode": sim.isTestMode,
+            })
+        except Exception as e:
+            logger.error(f"Error processing simulation {name}: {e}")
+    return result
 
 
 def get_simulation_state(name: str) -> dict[str, Any] | None:

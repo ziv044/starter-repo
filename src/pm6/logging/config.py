@@ -5,7 +5,9 @@ Provides structured logging with consistent formatting and debug modes.
 
 import logging
 import sys
+from datetime import datetime
 from enum import Enum
+from pathlib import Path
 from typing import Any
 
 # pm6 logger hierarchy
@@ -66,11 +68,39 @@ class PM6LogFormatter(logging.Formatter):
         return super().format(record)
 
 
+def _getLogsDirectory() -> Path:
+    """Get the logs directory path and ensure it exists.
+
+    Returns:
+        Path to the logs directory (project_root/logs).
+    """
+    # Find the project root (3 levels up from this file: logging/config.py -> pm6 -> src -> root)
+    thisFile = Path(__file__).resolve()
+    projectRoot = thisFile.parent.parent.parent.parent
+    logsDir = projectRoot / "logs"
+
+    # Create logs directory if it doesn't exist
+    logsDir.mkdir(exist_ok=True)
+
+    return logsDir
+
+
+def _generateLogFilename() -> str:
+    """Generate a timestamped log filename.
+
+    Returns:
+        Filename in format: pm6_YYYY-MM-DD_HH-MM-SS.log
+    """
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    return f"pm6_{timestamp}.log"
+
+
 def configureLogging(
     level: LogLevel | str = LogLevel.INFO,
     useColors: bool = True,
     includeTimestamp: bool = True,
     logFile: str | None = None,
+    enableFileLogging: bool = True,
     format: str | None = None,
 ) -> logging.Logger:
     """Configure pm6 logging.
@@ -79,7 +109,9 @@ def configureLogging(
         level: Log level (DEBUG, INFO, WARNING, ERROR, CRITICAL).
         useColors: Whether to use colored output in terminal.
         includeTimestamp: Whether to include timestamps.
-        logFile: Optional file path for log output.
+        logFile: Optional explicit file path for log output.
+        enableFileLogging: Whether to auto-create timestamped log files in logs/.
+            Ignored if logFile is provided. Defaults to True.
         format: Optional custom format string.
 
     Returns:
@@ -107,9 +139,15 @@ def configureLogging(
         )
     logger.addHandler(consoleHandler)
 
-    # File handler if specified
-    if logFile:
-        fileHandler = logging.FileHandler(logFile, encoding="utf-8")
+    # File handler - either explicit path or auto-generated
+    actualLogFile = logFile
+    if actualLogFile is None and enableFileLogging:
+        # Auto-generate log file with timestamp
+        logsDir = _getLogsDirectory()
+        actualLogFile = str(logsDir / _generateLogFilename())
+
+    if actualLogFile:
+        fileHandler = logging.FileHandler(actualLogFile, encoding="utf-8")
         fileHandler.setFormatter(
             PM6LogFormatter(useColors=False, includeTimestamp=True)
         )

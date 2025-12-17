@@ -1,0 +1,168 @@
+{
+  "simulation": "fantasy_rpg_adventure",
+  "runType": "play-turn-5",
+  "timestamp": "2025-12-17T00:06:09.758144",
+  "result": {
+    "turnNumber": 1,
+    "steps": [
+      {
+        "stepName": "turn_start",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 0,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "previousTurnResult": null
+        },
+        "outputs": {
+          "event": {
+            "name": "turn_start",
+            "data": {
+              "turn": 1
+            },
+            "source": "system",
+            "timestamp": "2025-12-17T00:05:57.615735"
+          }
+        },
+        "duration": 1.9550323486328125e-05,
+        "error": null,
+        "timestamp": "2025-12-17T00:05:57.615728"
+      },
+      {
+        "stepName": "gather_events",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 1,
+          "stepConfig": {},
+          "turnNumber": 1,
+          "scheduledEvents": 0
+        },
+        "outputs": {
+          "eventsGathered": 1
+        },
+        "duration": 3.0994415283203125e-06,
+        "error": null,
+        "timestamp": "2025-12-17T00:05:57.615749"
+      },
+      {
+        "stepName": "orchestrator_decide",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 2,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "events": [
+            {
+              "name": "turn_start",
+              "data": {
+                "turn": 1
+              },
+              "source": "system",
+              "timestamp": "2025-12-17T00:05:57.615735"
+            }
+          ],
+          "worldState": {
+            "actors": [
+              "cpu_agent",
+              "player_agent"
+            ],
+            "currentActor": "cpu_agent",
+            "turnIndex": 0
+          },
+          "availableAgents": [
+            {
+              "name": "mysterious_merchant",
+              "role": "Enigmatic trader with rare wares and hidden knowledge"
+            },
+            {
+              "name": "narrator",
+              "role": "Game Master narrator who describes scenes, controls NPCs, and manages world events"
+            }
+          ],
+          "orchestratorName": "orchestrator"
+        },
+        "outputs": {
+          "decision": {
+            "agentsToWake": [
+              "narrator"
+            ],
+            "instructions": {
+              "narrator": "Begin the game by setting the initial scene and introducing the hero's starting environment. Describe the basic context and first location of the hero's journey."
+            },
+            "reasoning": "Since this is Turn 0 (initialization), the narrator should establish the foundational narrative context for the game, introducing the world and setting the initial stage for the hero's adventure.",
+            "skipPlayerTurn": false
+          },
+          "agentsSelected": [
+            "narrator"
+          ]
+        },
+        "duration": 2.9284048080444336,
+        "error": null,
+        "timestamp": "2025-12-17T00:05:57.615766"
+      },
+      {
+        "stepName": "execute_agents",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 3,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "agentsToWake": [
+            "narrator"
+          ],
+          "instructions": {
+            "narrator": "Begin the game by setting the initial scene and introducing the hero's starting environment. Describe the basic context and first location of the hero's journey."
+          }
+        },
+        "outputs": {
+          "actions": [
+            {
+              "agentName": "narrator",
+              "actionType": "speak",
+              "content": "**The Village of Millhaven - Dawn**\n\nThe first rays of sunlight pierce through the morning mist as you stand at the edge of Millhaven, a modest farming village nestled in the rolling hills of the Greenvale. Thatched-roof cottages line the cobblestone main road, their chimneys already puffing wisps of smoke into the crisp air. The scent of fresh bread mingles with the earthy smell of dew-laden fields stretching toward distant forests.\n\nYou are a traveling adventurer who arrived in Millhaven late last night, seeking rest at the **Prancing Pony Inn**. The innkeeper, a stout woman named Martha, provided you with a simple room and mentioned troubling rumors over your evening meal - livestock have been disappearing from the outlying farms, and strange howls echo from the **Thornwood Forest** to the north.\n\nAs you step outside the inn this morning, you notice the village is unusually quiet. A few early risers hurry past with worried expressions, and you spot **Old Henrik** sitting on his porch, nervously whittling a piece of wood while glancing toward the forest path.\n\nThe village square lies ahead with several paths branching off - north toward the mysterious Thornwood, east to the farming homesteads, west toward the river crossing, and south back toward the main trade road.\n\nWhat do you choose to do?",
+              "target": "hero",
+              "metadata": {
+                "instruction": "Begin the game by setting the initial scene and introducing the hero's starting environment. Describe the basic context and first location of the hero's journey."
+              },
+              "timestamp": "2025-12-17T00:06:09.756808"
+            }
+          ],
+          "agentsExecuted": 1
+        },
+        "duration": 9.21265697479248,
+        "error": null,
+        "timestamp": "2025-12-17T00:06:00.544170"
+      },
+      {
+        "stepName": "player_turn",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 4,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "playerAgent": "hero",
+          "skipPlayerTurn": false
+        },
+        "outputs": {
+          "playerPending": true,
+          "playerAgent": "hero"
+        },
+        "duration": 9.5367431640625e-06,
+        "error": null,
+        "timestamp": "2025-12-17T00:06:09.756841"
+      }
+    ],
+    "totalDuration": 12.141133785247803,
+    "success": true,
+    "orchestratorDecision": {
+      "agentsToWake": [
+        "narrator"
+      ],
+      "instructions": {
+        "narrator": "Begin the game by setting the initial scene and introducing the hero's starting environment. Describe the basic context and first location of the hero's journey."
+      },
+      "reasoning": "Since this is Turn 0 (initialization), the narrator should establish the foundational narrative context for the game, introducing the world and setting the initial stage for the hero's adventure.",
+      "skipPlayerTurn": false
+    }
+  }
+}

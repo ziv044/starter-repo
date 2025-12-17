@@ -9,7 +9,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Callable
 
-from pm6.testing.mockClient import MockAnthropicClient, MockResponse
+from pm6.testing.mockClient import MockResponse
 
 logger = logging.getLogger("pm6.testing")
 
@@ -449,7 +449,6 @@ class ScenarioTester:
         Returns:
             ScenarioResult with test results.
         """
-        import re
         import time
 
         startTime = time.time()
@@ -508,7 +507,6 @@ class ScenarioTester:
         Returns:
             StepResult with step results.
         """
-        import re
 
         stepResult = StepResult(step=step)
 

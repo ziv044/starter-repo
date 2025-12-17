@@ -1,0 +1,141 @@
+{# Operation Card Component - Mossad-style operation proposal with progress tracking #}
+{# Usage: {% include 'play/partials/operation_card.html' with item=action_item, operation=active_operation %} #}
+
+<div class="action-card operation-card" data-item-id="{{ item.id }}" data-item-type="operation"
+     {% if operation %}data-operation-id="{{ operation.id }}"{% endif %}>
+    {# Header Bar with Entity Branding #}
+    <div class="card-header-bar operation-header">
+        <div class="entity-badge">
+            <div class="entity-logo operation-logo">
+                {% if 'MOSSAD' in item.source_role|upper %}
+                    <span class="logo-text">M</span>
+                {% elif 'IDF' in item.source_role|upper %}
+                    <span class="logo-text">IDF</span>
+                {% elif 'UNIT 8200' in item.source_role|upper %}
+                    <span class="logo-text">8200</span>
+                {% else %}
+                    <span class="logo-text">OP</span>
+                {% endif %}
+            </div>
+            <div class="entity-info">
+                <div class="entity-role">{{ item.source_role }}</div>
+                <div class="entity-type">OPERATION PROPOSAL</div>
+            </div>
+        </div>
+        <div class="classification-badge top-secret">
+            TOP SECRET
+        </div>
+    </div>
+
+    {# Operation Content #}
+    <div class="card-body">
+        <div class="operation-name">{{ item.operation_name or item.title }}</div>
+
+        {# Category Badge #}
+        <div class="operation-badges">
+            <span class="category-badge {{ item.operation_category|lower if item.operation_category else 'intel' }}">
+                {{ item.operation_category|upper if item.operation_category else 'INTEL' }}
+            </span>
+            {% if operation and operation.status %}
+            <span class="status-badge {{ operation.status|lower }}">
+                {{ operation.status|upper }}
+            </span>
+            {% endif %}
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="operation-description">{{ item.content }}</div>
+
+        {# Timeline Section #}
+        <div class="timeline-section">
+            <div class="timeline-label">OPERATION TIMELINE</div>
+            <div class="timeline-container">
+                <div class="duration-info">
+                    <div class="duration-icon">&#9202;</div>
+                    <div class="duration-details">
+                        <div class="duration-phase">Initial Phase</div>
+                        <div class="duration-time">{{ item.operation_duration or 48 }}-{{ (item.operation_duration or 48) + 24 }} hours</div>
+                    </div>
+                </div>
+
+                {% if operation %}
+                {# Active Operation Progress #}
+                <div class="progress-section">
+                    <div class="progress-label">Progress:</div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill" style="width: {{ operation.progress_percent }}%"></div>
+                        </div>
+                        <span class="progress-text">{{ operation.progress_percent|int }}%</span>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {# Expected Outcome #}
+        {% if item.operation_expected_outcome %}
+        <div class="outcome-section">
+            <div class="outcome-label">EXPECTED OUTCOME</div>
+            <div class="outcome-container">
+                {{ item.operation_expected_outcome }}
+            </div>
+        </div>
+        {% endif %}
+
+        {# Impact Preview for Authorization #}
+        {% if item.approval_impacts and not operation %}
+        <div class="impact-section">
+            <div class="impact-label">RESOURCE COMMITMENT</div>
+            <div class="impact-grid">
+                {% for key, value in item.approval_impacts.items() %}
+                <div class="impact-item {{ 'positive' if value > 0 else 'negative' }}">
+                    <span class="impact-metric">{{ key.replace('_', ' ').title() }}</span>
+                    <span class="impact-value">{{ '+' if value > 0 else '' }}{{ value }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {# Operation Milestones (for active operations) #}
+        {% if operation and operation.milestones %}
+        <div class="milestones-section">
+            <div class="milestones-label">MILESTONES</div>
+            <div class="milestones-list">
+                {% for milestone in operation.milestones %}
+                <div class="milestone-item {{ 'completed' if milestone.completed else 'pending' }}">
+                    <span class="milestone-icon">{{ '&#10003;' if milestone.completed else '&#9675;' }}</span>
+                    <span class="milestone-text">{{ milestone.description }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    {# Action Buttons #}
+    <div class="card-actions">
+        {% if operation %}
+            {# Active operation controls #}
+            {% if operation.status == 'in_progress' %}
+            <button class="btn btn-cancel" onclick="cancelOperation('{{ operation.id }}')">
+                ABORT OPERATION
+            </button>
+            {% else %}
+            <span class="status-display {{ operation.status|lower }}">
+                {{ operation.status|upper }}
+            </span>
+            {% endif %}
+        {% else %}
+            {# Authorization buttons #}
+            <button class="btn btn-authorize" onclick="authorizeOperation('{{ item.id }}')">
+                <span class="btn-icon">&#10003;</span> AUTHORIZE OP
+            </button>
+            <button class="btn btn-defer" onclick="deferItem('{{ item.id }}')">
+                DEFER
+            </button>
+        {% endif %}
+    </div>
+</div>

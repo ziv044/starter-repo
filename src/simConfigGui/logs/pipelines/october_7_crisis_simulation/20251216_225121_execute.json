@@ -1,0 +1,261 @@
+{
+  "simulation": "october_7_crisis_simulation",
+  "runType": "execute",
+  "timestamp": "2025-12-16T22:51:21.015903",
+  "result": {
+    "turnNumber": 1,
+    "steps": [
+      {
+        "stepName": "turn_start",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 0,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "previousTurnResult": null
+        },
+        "outputs": {
+          "event": {
+            "name": "turn_start",
+            "data": {
+              "turn": 1
+            },
+            "source": "system",
+            "timestamp": "2025-12-16T22:50:43.973037"
+          }
+        },
+        "duration": 3.457069396972656e-05,
+        "error": null,
+        "timestamp": "2025-12-16T22:50:43.973026"
+      },
+      {
+        "stepName": "gather_events",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 1,
+          "stepConfig": {},
+          "turnNumber": 1,
+          "scheduledEvents": 0
+        },
+        "outputs": {
+          "eventsGathered": 1
+        },
+        "duration": 4.291534423828125e-06,
+        "error": null,
+        "timestamp": "2025-12-16T22:50:43.973057"
+      },
+      {
+        "stepName": "orchestrator_decide",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 2,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "events": [
+            {
+              "name": "turn_start",
+              "data": {
+                "turn": 1
+              },
+              "source": "system",
+              "timestamp": "2025-12-16T22:50:43.973037"
+            }
+          ],
+          "worldState": {},
+          "availableAgents": [
+            {
+              "name": "crisis_narrator",
+              "role": "Dramatic narrator for major events and situation updates"
+            },
+            {
+              "name": "defense_minister",
+              "role": "Senior cabinet member overseeing defense policy and military coordination"
+            },
+            {
+              "name": "far_right_ministers",
+              "role": "Far-right coalition partners pushing for maximum force and settlement expansion"
+            },
+            {
+              "name": "hamas_leadership",
+              "role": "Palestinian militant leadership coordinating multi-front resistance"
+            },
+            {
+              "name": "hezbollah_command",
+              "role": "Lebanese militant group threatening northern front escalation"
+            },
+            {
+              "name": "hostage_families_representative",
+              "role": "Spokesperson for families demanding immediate hostage rescue"
+            },
+            {
+              "name": "idf_chief_of_staff",
+              "role": "Military commander providing operational assessments and recommendations"
+            },
+            {
+              "name": "intelligence_briefer",
+              "role": "Provides situation reports and intelligence updates"
+            },
+            {
+              "name": "iranian_revolutionary_guard",
+              "role": "Regional power coordinating proxy warfare against Israel"
+            },
+            {
+              "name": "israeli_public_opinion",
+              "role": "Domestic pressure reflecting public mood and electoral concerns"
+            },
+            {
+              "name": "mossad_director",
+              "role": "Intelligence chief focused on covert operations and strategic intelligence"
+            },
+            {
+              "name": "shabak_director",
+              "role": "Internal security chief focused on domestic threats and counterterrorism"
+            },
+            {
+              "name": "us_secretary_of_state",
+              "role": "American diplomatic pressure for restraint and civilian protection"
+            }
+          ],
+          "orchestratorName": "orchestrator"
+        },
+        "outputs": {
+          "decision": {
+            "agentsToWake": [
+              "crisis_narrator",
+              "idf_chief_of_staff",
+              "defense_minister",
+              "intelligence_briefer"
+            ],
+            "instructions": {
+              "crisis_narrator": "Provide a dramatic initial overview of the October 7 surprise attack, setting the narrative stage for the crisis",
+              "idf_chief_of_staff": "Assess initial military damage, casualties, and recommend immediate operational response",
+              "defense_minister": "Convene emergency security cabinet meeting to coordinate initial national response",
+              "intelligence_briefer": "Present initial intelligence assessment of Hamas attack origin, scale, and potential follow-up threats"
+            },
+            "reasoning": "The October 7 attack represents a massive strategic surprise requiring immediate multi-level assessment and response. Key leadership must be activated to understand the scope of the crisis, assess immediate military vulnerabilities, and begin formulating a comprehensive national security strategy. The crisis narrator will help establish the dramatic context and emotional stakes of the unfolding situation.",
+            "skipPlayerTurn": false
+          },
+          "agentsSelected": [
+            "crisis_narrator",
+            "idf_chief_of_staff",
+            "defense_minister",
+            "intelligence_briefer"
+          ]
+        },
+        "duration": 5.474736928939819,
+        "error": null,
+        "timestamp": "2025-12-16T22:50:43.973092"
+      },
+      {
+        "stepName": "execute_agents",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 3,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "agentsToWake": [
+            "crisis_narrator",
+            "idf_chief_of_staff",
+            "defense_minister",
+            "intelligence_briefer"
+          ],
+          "instructions": {
+            "crisis_narrator": "Provide a dramatic initial overview of the October 7 surprise attack, setting the narrative stage for the crisis",
+            "idf_chief_of_staff": "Assess initial military damage, casualties, and recommend immediate operational response",
+            "defense_minister": "Convene emergency security cabinet meeting to coordinate initial national response",
+            "intelligence_briefer": "Present initial intelligence assessment of Hamas attack origin, scale, and potential follow-up threats"
+          }
+        },
+        "outputs": {
+          "actions": [
+            {
+              "agentName": "crisis_narrator",
+              "actionType": "speak",
+              "content": "Breaking News - Unprecedented Attack on Israel\n\nAt approximately 6:30 AM local time, Hamas militants launched a shocking, multi-pronged assault on southern Israel from the Gaza Strip, breaching the heavily fortified border in an operation of stunning coordination and brutality. Thousands of rockets saturated Israeli defensive positions while hundreds of armed fighters penetrated multiple locations using paragliders, motorcycles, and breached border fence sections.\n\nInitial reports indicate over 250 Israeli civilians and soldiers killed, with dozens more taken hostage - potentially the largest hostage situation in the region's modern history. Major Israeli towns like Sderot and kibbutzim near Gaza have been overrun, with graphic scenes of civilian casualties emerging.\n\nThe Israeli Defense Forces are scrambling to respond, with emergency mobilization of reservists already underway. Prime Minister Benjamin Netanyahu has declared a \"state of war\" and promised a devastating counteroffensive.\n\nThis is not merely a border skirmish, but a fundamental challenge to Israel's national security doctrine - a catastrophic intelligence failure that will reshape regional dynamics for years to come.\n\nCasualty estimates are still provisional. The full human and strategic consequences are yet to be understood.",
+              "target": "pm_netanyahu",
+              "metadata": {
+                "instruction": "Provide a dramatic initial overview of the October 7 surprise attack, setting the narrative stage for the crisis"
+              },
+              "timestamp": "2025-12-16T22:50:56.632750"
+            },
+            {
+              "agentName": "idf_chief_of_staff",
+              "actionType": "speak",
+              "content": "**IMMEDIATE TACTICAL ASSESSMENT - URGENT**\n\n**Current Status:**\nWithout specific intelligence on the nature and scope of the attack, I cannot provide detailed damage assessment. I require immediate sitreps from all regional commands and intelligence units.\n\n**Immediate Actions Ordered:**\n1. **ALERT STATUS:** Raising all forces to highest readiness level\n2. **CASUALTY ASSESSMENT:** Deploying medical teams and damage assessment units\n3. **FORCE PROTECTION:** Securing critical infrastructure and military installations\n4. **INTELLIGENCE GATHERING:** Activating all surveillance assets to identify threat source\n\n**Operational Recommendations:**\n- Mobilize reserves immediately\n- Prepare rapid response units for potential counter-operations\n- Coordinate with Home Front Command for civilian protection\n- Establish secure communication with political leadership\n\n**Resource Requirements:**\n- Emergency medical supplies and personnel\n- Enhanced intelligence collection capabilities\n- Fuel and ammunition reserves to sustained readiness\n\nI need concrete intelligence on the threat nature, location, and scope within the next 30 minutes to formulate appropriate tactical response. Current posture is defensive while gathering actionable intelligence.\n\n**Recommendation:** Hold fire until we have clear picture of enemy capabilities and intentions. Premature action could escalate unnecessarily or waste critical resources.",
+              "target": "pm_netanyahu",
+              "metadata": {
+                "instruction": "Assess initial military damage, casualties, and recommend immediate operational response"
+              },
+              "timestamp": "2025-12-16T22:51:05.977840"
+            },
+            {
+              "agentName": "defense_minister",
+              "actionType": "speak",
+              "content": "**URGENT SECURITY CABINET CONVOCATION**\n\nPrime Minister, I am immediately convening an emergency security cabinet session. All relevant ministers and security chiefs must attend within the hour.\n\n**IMMEDIATE AGENDA:**\n- Assessment of current threat level and intelligence briefings\n- Activation of emergency protocols and civil defense measures\n- Military readiness status and force deployment options\n- Coordination with allied nations and international partners\n- Resource allocation and budget authorization for crisis response\n- Public communication strategy and information security\n\n**ATTENDEES REQUIRED:**\n- Prime Minister\n- Foreign Minister  \n- Internal Security Minister\n- Finance Minister\n- IDF Chief of Staff\n- Mossad Director\n- Shin Bet Director\n- National Security Advisor\n\nGiven the urgency, I'm authorizing preliminary defensive measures and placing all military units on heightened alert status pending cabinet decisions. \n\nWe need immediate clarity on the nature of this crisis to formulate our coordinated national response. Time is critical.\n\n**Location:** Secure conference room, Kirya Defense Ministry\n**Time:** Within 60 minutes",
+              "target": "pm_netanyahu",
+              "metadata": {
+                "instruction": "Convene emergency security cabinet meeting to coordinate initial national response"
+              },
+              "timestamp": "2025-12-16T22:51:14.727008"
+            },
+            {
+              "agentName": "intelligence_briefer",
+              "actionType": "speak",
+              "content": "INTELLIGENCE ASSESSMENT\nClassification: IMMEDIATE - URGENT \n\nInitial Analysis - Hamas Mass Attack, 7 October 2023\n\nORIGIN:\n- Multiple infiltration points across Gaza-Israel border\n- Coordinated ground, air, and maritime attack vectors\n- Unprecedented scale and sophistication of operation\n\nATTACK SCALE:\n- Estimated 1000-1500 Hamas operatives involved\n- Breached multiple strategic border positions\n- Significant civilian population targeted in southern Israeli communities\n\nPOTENTIAL FOLLOW-UP THREATS:\n- High probability of additional rocket barrages\n- Potential secondary infiltration attempts\n- Risk of strategic infrastructure targeting\n\nIMMEDIATE RECOMMENDATIONS:\n1. Maximum military mobilization\n2. Secure civilian population centers\n3. Prepare for comprehensive military response\n4. Anticipate potential multi-front conflict risk (Hezbollah/Lebanon)\n\nTHREAT LEVEL: CRITICAL\n\nPrepared by: Intelligence Coordination Unit\nTime: Early Morning, 7 October 2023",
+              "target": "pm_netanyahu",
+              "metadata": {
+                "instruction": "Present initial intelligence assessment of Hamas attack origin, scale, and potential follow-up threats"
+              },
+              "timestamp": "2025-12-16T22:51:21.015259"
+            }
+          ],
+          "agentsExecuted": 4
+        },
+        "duration": 31.567477703094482,
+        "error": null,
+        "timestamp": "2025-12-16T22:50:49.447823"
+      },
+      {
+        "stepName": "player_turn",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 4,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "playerAgent": "pm_netanyahu",
+          "skipPlayerTurn": false
+        },
+        "outputs": {
+          "playerPending": true,
+          "playerAgent": "pm_netanyahu"
+        },
+        "duration": 5.4836273193359375e-05,
+        "error": null,
+        "timestamp": "2025-12-16T22:51:21.015365"
+      }
+    ],
+    "totalDuration": 37.04239821434021,
+    "success": true,
+    "orchestratorDecision": {
+      "agentsToWake": [
+        "crisis_narrator",
+        "idf_chief_of_staff",
+        "defense_minister",
+        "intelligence_briefer"
+      ],
+      "instructions": {
+        "crisis_narrator": "Provide a dramatic initial overview of the October 7 surprise attack, setting the narrative stage for the crisis",
+        "idf_chief_of_staff": "Assess initial military damage, casualties, and recommend immediate operational response",
+        "defense_minister": "Convene emergency security cabinet meeting to coordinate initial national response",
+        "intelligence_briefer": "Present initial intelligence assessment of Hamas attack origin, scale, and potential follow-up threats"
+      },
+      "reasoning": "The October 7 attack represents a massive strategic surprise requiring immediate multi-level assessment and response. Key leadership must be activated to understand the scope of the crisis, assess immediate military vulnerabilities, and begin formulating a comprehensive national security strategy. The crisis narrator will help establish the dramatic context and emotional stakes of the unfolding situation.",
+      "skipPlayerTurn": false
+    },
+    "_debug": {
+      "isTestMode": false,
+      "isCacheEnabled": true,
+      "llmClientType": "AnthropicClient"
+    }
+  }
+}

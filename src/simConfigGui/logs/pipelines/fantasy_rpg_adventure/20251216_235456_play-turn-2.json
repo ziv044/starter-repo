@@ -1,0 +1,161 @@
+{
+  "simulation": "fantasy_rpg_adventure",
+  "runType": "play-turn-2",
+  "timestamp": "2025-12-16T23:54:56.352749",
+  "result": {
+    "turnNumber": 1,
+    "steps": [
+      {
+        "stepName": "turn_start",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 0,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "previousTurnResult": null
+        },
+        "outputs": {
+          "event": {
+            "name": "turn_start",
+            "data": {
+              "turn": 1
+            },
+            "source": "system",
+            "timestamp": "2025-12-16T23:54:43.251089"
+          }
+        },
+        "duration": 1.621246337890625e-05,
+        "error": null,
+        "timestamp": "2025-12-16T23:54:43.251084"
+      },
+      {
+        "stepName": "gather_events",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 1,
+          "stepConfig": {},
+          "turnNumber": 1,
+          "scheduledEvents": 0
+        },
+        "outputs": {
+          "eventsGathered": 1
+        },
+        "duration": 3.5762786865234375e-06,
+        "error": null,
+        "timestamp": "2025-12-16T23:54:43.251101"
+      },
+      {
+        "stepName": "orchestrator_decide",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 2,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "events": [
+            {
+              "name": "turn_start",
+              "data": {
+                "turn": 1
+              },
+              "source": "system",
+              "timestamp": "2025-12-16T23:54:43.251089"
+            }
+          ],
+          "worldState": {},
+          "availableAgents": [
+            {
+              "name": "mysterious_merchant",
+              "role": "Enigmatic trader with rare wares and hidden knowledge"
+            },
+            {
+              "name": "narrator",
+              "role": "Game Master narrator who describes scenes, controls NPCs, and manages world events"
+            }
+          ],
+          "orchestratorName": "orchestrator"
+        },
+        "outputs": {
+          "decision": {
+            "agentsToWake": [
+              "narrator"
+            ],
+            "instructions": {
+              "narrator": "Begin the hero's journey by describing the initial setting, establishing the starting scene, and preparing for the hero's first moments in the world"
+            },
+            "reasoning": "Since this is Turn 0 and the world state is empty, the narrator should initialize the game world, create the opening scene, and set the stage for the hero's adventure",
+            "skipPlayerTurn": false
+          },
+          "agentsSelected": [
+            "narrator"
+          ]
+        },
+        "duration": 2.86283278465271,
+        "error": null,
+        "timestamp": "2025-12-16T23:54:43.251117"
+      },
+      {
+        "stepName": "execute_agents",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 3,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "agentsToWake": [
+            "narrator"
+          ],
+          "instructions": {
+            "narrator": "Begin the hero's journey by describing the initial setting, establishing the starting scene, and preparing for the hero's first moments in the world"
+          }
+        },
+        "outputs": {
+          "actions": [
+            {
+              "agentName": "narrator",
+              "actionType": "speak",
+              "content": "**The Crossroads Inn**\n\nThunder rumbles overhead as rain pelts the diamond-paned windows of the Crossroads Inn. Inside, amber lamplight flickers across weathered wooden tables where weary travelers nurse their ales and speak in hushed tones. The air is thick with the scent of roasted meat, pipe smoke, and something else\u2014an undercurrent of tension that has settled over the common room like morning fog.\n\nYou sit alone at a corner table, your traveling cloak still damp from the storm outside. The innkeeper, a stout woman with knowing eyes, approaches with a steaming bowl of stew and fresh bread.\n\n\"Dark night to be traveling these roads,\" she murmurs, setting down your meal. \"Especially with all the strange happenings of late. Merchants going missing on the King's Highway, lights dancing in the Whispering Woods where no lights should be...\" She glances toward the rain-streaked windows. \"Course, might just be the storm making folk see things.\"\n\nAt a nearby table, a hooded figure in travel-stained robes suddenly stands, coins clinking as they're hastily scattered across the wooden surface. The stranger hurries toward the door, but pauses and turns back, eyes finding yours across the smoky room.\n\n\"The old tower,\" they whisper urgently, just loud enough for you to hear. \"Three days hence, when the moon goes dark. If you seek purpose... if you seek answers...\"\n\nThe door slams shut behind them, leaving only the sound of rain and crackling fire.\n\nWhat do you do?",
+              "target": "hero",
+              "metadata": {
+                "instruction": "Begin the hero's journey by describing the initial setting, establishing the starting scene, and preparing for the hero's first moments in the world"
+              },
+              "timestamp": "2025-12-16T23:54:56.352212"
+            }
+          ],
+          "agentsExecuted": 1
+        },
+        "duration": 10.238281965255737,
+        "error": null,
+        "timestamp": "2025-12-16T23:54:46.113952"
+      },
+      {
+        "stepName": "player_turn",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 4,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "playerAgent": "hero",
+          "skipPlayerTurn": false
+        },
+        "outputs": {
+          "playerPending": true,
+          "playerAgent": "hero"
+        },
+        "duration": 1.2636184692382812e-05,
+        "error": null,
+        "timestamp": "2025-12-16T23:54:56.352250"
+      }
+    ],
+    "totalDuration": 13.10118556022644,
+    "success": true,
+    "orchestratorDecision": {
+      "agentsToWake": [
+        "narrator"
+      ],
+      "instructions": {
+        "narrator": "Begin the hero's journey by describing the initial setting, establishing the starting scene, and preparing for the hero's first moments in the world"
+      },
+      "reasoning": "Since this is Turn 0 and the world state is empty, the narrator should initialize the game world, create the opening scene, and set the stage for the hero's adventure",
+      "skipPlayerTurn": false
+    }
+  }
+}

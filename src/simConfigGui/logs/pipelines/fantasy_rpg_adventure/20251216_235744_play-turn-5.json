@@ -1,0 +1,161 @@
+{
+  "simulation": "fantasy_rpg_adventure",
+  "runType": "play-turn-5",
+  "timestamp": "2025-12-16T23:57:44.764702",
+  "result": {
+    "turnNumber": 1,
+    "steps": [
+      {
+        "stepName": "turn_start",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 0,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "previousTurnResult": null
+        },
+        "outputs": {
+          "event": {
+            "name": "turn_start",
+            "data": {
+              "turn": 1
+            },
+            "source": "system",
+            "timestamp": "2025-12-16T23:57:28.959418"
+          }
+        },
+        "duration": 1.52587890625e-05,
+        "error": null,
+        "timestamp": "2025-12-16T23:57:28.959413"
+      },
+      {
+        "stepName": "gather_events",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 1,
+          "stepConfig": {},
+          "turnNumber": 1,
+          "scheduledEvents": 0
+        },
+        "outputs": {
+          "eventsGathered": 1
+        },
+        "duration": 3.0994415283203125e-06,
+        "error": null,
+        "timestamp": "2025-12-16T23:57:28.959430"
+      },
+      {
+        "stepName": "orchestrator_decide",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 2,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "events": [
+            {
+              "name": "turn_start",
+              "data": {
+                "turn": 1
+              },
+              "source": "system",
+              "timestamp": "2025-12-16T23:57:28.959418"
+            }
+          ],
+          "worldState": {},
+          "availableAgents": [
+            {
+              "name": "mysterious_merchant",
+              "role": "Enigmatic trader with rare wares and hidden knowledge"
+            },
+            {
+              "name": "narrator",
+              "role": "Game Master narrator who describes scenes, controls NPCs, and manages world events"
+            }
+          ],
+          "orchestratorName": "orchestrator"
+        },
+        "outputs": {
+          "decision": {
+            "agentsToWake": [
+              "narrator"
+            ],
+            "instructions": {
+              "narrator": "Begin the game by introducing the hero's starting scenario. Create an immersive opening scene that establishes the initial setting, hints at potential adventures, and provides a sense of the world's atmosphere. Prepare to introduce the hero to their first potential challenge or opportunity."
+            },
+            "reasoning": "As this is Turn 0 (game start), the narrator needs to set up the initial game world and create the opening narrative context. No other agents are required at this moment, as the game is just beginning and needs an introductory scene to orient the player.",
+            "skipPlayerTurn": false
+          },
+          "agentsSelected": [
+            "narrator"
+          ]
+        },
+        "duration": 4.928662538528442,
+        "error": null,
+        "timestamp": "2025-12-16T23:57:28.959446"
+      },
+      {
+        "stepName": "execute_agents",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 3,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "agentsToWake": [
+            "narrator"
+          ],
+          "instructions": {
+            "narrator": "Begin the game by introducing the hero's starting scenario. Create an immersive opening scene that establishes the initial setting, hints at potential adventures, and provides a sense of the world's atmosphere. Prepare to introduce the hero to their first potential challenge or opportunity."
+          }
+        },
+        "outputs": {
+          "actions": [
+            {
+              "agentName": "narrator",
+              "actionType": "speak",
+              "content": "**The Crossroads Tavern - Evening**\n\nThe heavy oak door of the Whispering Griffin tavern creaks as you push it open, escaping the cold mountain drizzle that has been your companion for the last three days of travel. Warm amber light spills across weathered floorboards, and the comforting aroma of roasted meat and ale fills your nostrils.\n\nThe tavern buzzes with quiet conversation - merchants counting coin at corner tables, local farmers nursing their drinks, and a hooded figure sitting alone near the great stone hearth. Behind the bar, a stout dwarf with braided silver beard polishes mugs while eyeing the room with practiced caution.\n\nAs you step inside, shaking droplets from your cloak, several conversations pause. Strangers are noticed in the mountain village of Millhaven, especially ones bearing the worn leather and steel that mark you as more than a simple traveler.\n\nThe tavern keeper nods in your direction. \"Room's two silver, hot meal's another. Storm's getting worse out there - might be wise to stay the night.\"\n\nThrough the rain-streaked windows, you catch glimpses of flickering torches moving unusually through the village streets. Something has the locals stirred up tonight.\n\n*What do you do?*",
+              "target": "hero",
+              "metadata": {
+                "instruction": "Begin the game by introducing the hero's starting scenario. Create an immersive opening scene that establishes the initial setting, hints at potential adventures, and provides a sense of the world's atmosphere. Prepare to introduce the hero to their first potential challenge or opportunity."
+              },
+              "timestamp": "2025-12-16T23:57:44.764262"
+            }
+          ],
+          "agentsExecuted": 1
+        },
+        "duration": 10.876164674758911,
+        "error": null,
+        "timestamp": "2025-12-16T23:57:33.888115"
+      },
+      {
+        "stepName": "player_turn",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 4,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "playerAgent": "hero",
+          "skipPlayerTurn": false
+        },
+        "outputs": {
+          "playerPending": true,
+          "playerAgent": "hero"
+        },
+        "duration": 8.58306884765625e-06,
+        "error": null,
+        "timestamp": "2025-12-16T23:57:44.764288"
+      }
+    ],
+    "totalDuration": 15.804891109466553,
+    "success": true,
+    "orchestratorDecision": {
+      "agentsToWake": [
+        "narrator"
+      ],
+      "instructions": {
+        "narrator": "Begin the game by introducing the hero's starting scenario. Create an immersive opening scene that establishes the initial setting, hints at potential adventures, and provides a sense of the world's atmosphere. Prepare to introduce the hero to their first potential challenge or opportunity."
+      },
+      "reasoning": "As this is Turn 0 (game start), the narrator needs to set up the initial game world and create the opening narrative context. No other agents are required at this moment, as the game is just beginning and needs an introductory scene to orient the player.",
+      "skipPlayerTurn": false
+    }
+  }
+}

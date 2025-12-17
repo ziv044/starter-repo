@@ -1,0 +1,183 @@
+{
+  "simulation": "fantasy_rpg_adventure",
+  "runType": "play-turn-1",
+  "timestamp": "2025-12-17T00:36:34.680181",
+  "result": {
+    "turnNumber": 1,
+    "steps": [
+      {
+        "stepName": "turn_start",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 0,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "previousTurnResult": null
+        },
+        "outputs": {
+          "event": {
+            "name": "turn_start",
+            "data": {
+              "turn": 1
+            },
+            "source": "system",
+            "timestamp": "2025-12-17T00:36:21.110290"
+          }
+        },
+        "duration": 3.0517578125e-05,
+        "error": null,
+        "timestamp": "2025-12-17T00:36:21.110282"
+      },
+      {
+        "stepName": "gather_events",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 1,
+          "stepConfig": {},
+          "turnNumber": 1,
+          "scheduledEvents": 0
+        },
+        "outputs": {
+          "eventsGathered": 2,
+          "playerEvents": [
+            {
+              "name": "player_message",
+              "data": {
+                "message": "Millbrook Village"
+              },
+              "source": "hero",
+              "timestamp": "2025-12-17T00:36:20.841809"
+            }
+          ]
+        },
+        "duration": 0.0013527870178222656,
+        "error": null,
+        "timestamp": "2025-12-17T00:36:21.110311"
+      },
+      {
+        "stepName": "orchestrator_decide",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 2,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "events": [
+            {
+              "name": "turn_start",
+              "data": {
+                "turn": 1
+              },
+              "source": "system",
+              "timestamp": "2025-12-17T00:36:21.110290"
+            },
+            {
+              "name": "player_message",
+              "data": {
+                "message": "Millbrook Village"
+              },
+              "source": "hero",
+              "timestamp": "2025-12-17T00:36:21.110326"
+            }
+          ],
+          "worldState": {
+            "_lastEventProcessedTime": "2025-12-17T00:36:20.841809",
+            "currentActor": null,
+            "_playerPending": false
+          },
+          "availableAgents": [
+            {
+              "name": "mysterious_merchant",
+              "role": "Enigmatic trader with rare wares and hidden knowledge"
+            },
+            {
+              "name": "narrator",
+              "role": "Game Master narrator who describes scenes, controls NPCs, and manages world events"
+            }
+          ],
+          "orchestratorName": "orchestrator"
+        },
+        "outputs": {
+          "decision": {
+            "agentsToWake": [
+              "narrator"
+            ],
+            "instructions": {
+              "narrator": "Introduce Millbrook Village scene. Describe the initial environment, set the tone for the hero's potential starting adventure, and prepare the stage for potential interactions or initial quest hooks."
+            },
+            "reasoning": "The scene is just beginning in Millbrook Village, and the narrator is essential to establish the starting context, describe the setting, and provide initial atmospheric details that will engage the player and suggest potential story directions.",
+            "skipPlayerTurn": false
+          },
+          "agentsSelected": [
+            "narrator"
+          ]
+        },
+        "duration": 3.607743978500366,
+        "error": null,
+        "timestamp": "2025-12-17T00:36:21.111700"
+      },
+      {
+        "stepName": "execute_agents",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 3,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "agentsToWake": [
+            "narrator"
+          ],
+          "instructions": {
+            "narrator": "Introduce Millbrook Village scene. Describe the initial environment, set the tone for the hero's potential starting adventure, and prepare the stage for potential interactions or initial quest hooks."
+          }
+        },
+        "outputs": {
+          "actions": [
+            {
+              "agentName": "narrator",
+              "actionType": "speak",
+              "content": "**Millbrook Village - Dawn's First Light**\n\nThe morning mist clings to the cobblestone streets of Millbrook Village as the first rays of sunlight pierce through the ancient oak trees that give the settlement its name. Wisps of smoke curl from chimneys of timber-framed houses, and the gentle sound of the millwheel turning echoes from the brook that winds through the village center.\n\nYou stand at the edge of the village square, where a weathered stone well sits beneath a spreading elm. The *Prancing Pony* inn shows signs of early morning activity\u2014warm light glows from its windows, and the aroma of fresh bread and bacon drifts on the cool air. Across the square, old Henrik the blacksmith is already working his forge, orange sparks dancing in the dim morning light.\n\nBut something feels different today. Worried villagers cluster in small groups, speaking in hushed tones. A travel-worn messenger's horse stands tethered near the inn, its flanks still heaving from a hard ride. The usually cheerful village has an undercurrent of tension, like the calm before a storm.\n\nNear the well, you notice a young woman in a torn green cloak arguing quietly but intensely with the village elder, their conversation punctuated by urgent gestures toward the dark forest beyond the village boundaries.\n\n*What draws your attention first in this scene of brewing unrest?*",
+              "target": "hero",
+              "metadata": {
+                "instruction": "Introduce Millbrook Village scene. Describe the initial environment, set the tone for the hero's potential starting adventure, and prepare the stage for potential interactions or initial quest hooks."
+              },
+              "timestamp": "2025-12-17T00:36:34.679706"
+            }
+          ],
+          "agentsExecuted": 1
+        },
+        "duration": 9.960291624069214,
+        "error": null,
+        "timestamp": "2025-12-17T00:36:24.719434"
+      },
+      {
+        "stepName": "player_turn",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 4,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "playerAgent": "hero",
+          "skipPlayerTurn": false
+        },
+        "outputs": {
+          "playerPending": true,
+          "playerAgent": "hero"
+        },
+        "duration": 1.1920928955078125e-05,
+        "error": null,
+        "timestamp": "2025-12-17T00:36:34.679740"
+      }
+    ],
+    "totalDuration": 13.569487571716309,
+    "success": true,
+    "orchestratorDecision": {
+      "agentsToWake": [
+        "narrator"
+      ],
+      "instructions": {
+        "narrator": "Introduce Millbrook Village scene. Describe the initial environment, set the tone for the hero's potential starting adventure, and prepare the stage for potential interactions or initial quest hooks."
+      },
+      "reasoning": "The scene is just beginning in Millbrook Village, and the narrator is essential to establish the starting context, describe the setting, and provide initial atmospheric details that will engage the player and suggest potential story directions.",
+      "skipPlayerTurn": false
+    }
+  }
+}

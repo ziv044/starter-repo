@@ -1,0 +1,621 @@
+2025-12-17 11:44:10 [INFO] pm6.logging: Exported trace to C:\Users\ziv04\AppData\Local\Temp\pytest-of-ziv04\pytest-30\test_export0\trace.json
+2025-12-17 11:44:10 [INFO] pm6.metrics: Created baseline: v1.0
+2025-12-17 11:44:10 [INFO] pm6.metrics: Created baseline: baseline
+2025-12-17 11:44:10 [INFO] pm6.metrics: Cleared performance metrics
+2025-12-17 11:44:10 [INFO] pm6.metrics: Created baseline: good
+2025-12-17 11:44:10 [INFO] pm6.metrics: Cleared performance metrics
+2025-12-17 11:44:10 [INFO] pm6.metrics: Created baseline: baseline
+2025-12-17 11:44:10 [INFO] pm6.metrics: Cleared performance metrics
+2025-12-17 11:44:10 [INFO] pm6.metrics: Created baseline: b
+2025-12-17 11:44:10 [INFO] pm6.metrics: Cleared performance metrics
+2025-12-17 11:44:10 [INFO] pm6.metrics: Created baseline: b
+2025-12-17 11:44:10 [INFO] pm6.metrics: Cleared performance baselines
+2025-12-17 11:44:10 [INFO] pm6.metrics: Created baseline: v1
+2025-12-17 11:44:10 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:10 [INFO] pm6.core: Registered agent: test
+2025-12-17 11:44:10 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:10 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:10 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:10 [INFO] pm6.core: LLM response (first 100 chars): Response 1
+2025-12-17 11:44:10 [INFO] pm6.state: Started session: 20251217_114410
+2025-12-17 11:44:10 [INFO] pm6.core: Generated response for test
+2025-12-17 11:44:10 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:10 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:10 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:10 [INFO] pm6.core: LLM response (first 100 chars): Response 2
+2025-12-17 11:44:10 [INFO] pm6.core: Generated response for test
+2025-12-17 11:44:10 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:10 [INFO] pm6.core: Registered agent: agent1
+2025-12-17 11:44:10 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:10 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:10 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:10 [INFO] pm6.core: LLM response (first 100 chars): R1
+2025-12-17 11:44:10 [INFO] pm6.state: Started session: 20251217_114410
+2025-12-17 11:44:10 [INFO] pm6.core: Generated response for agent1
+2025-12-17 11:44:10 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:10 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:10 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:10 [INFO] pm6.core: LLM response (first 100 chars): R2
+2025-12-17 11:44:10 [INFO] pm6.core: Generated response for agent1
+2025-12-17 11:44:10 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:10 [INFO] pm6.core: Registered agent: test
+2025-12-17 11:44:10 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:10 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:10 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:10 [INFO] pm6.core: LLM response (first 100 chars): Response
+2025-12-17 11:44:10 [INFO] pm6.state: Started session: 20251217_114410
+2025-12-17 11:44:10 [INFO] pm6.core: Generated response for test
+2025-12-17 11:44:10 [INFO] pm6.metrics: Created baseline: v1.0
+2025-12-17 11:44:10 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:10 [INFO] pm6.core: Registered agent: test
+2025-12-17 11:44:10 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:10 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:10 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:10 [INFO] pm6.core: LLM response (first 100 chars): R1
+2025-12-17 11:44:10 [INFO] pm6.state: Started session: 20251217_114410
+2025-12-17 11:44:10 [INFO] pm6.core: Generated response for test
+2025-12-17 11:44:10 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:10 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:10 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:10 [INFO] pm6.core: LLM response (first 100 chars): R2
+2025-12-17 11:44:10 [INFO] pm6.core: Generated response for test
+2025-12-17 11:44:10 [INFO] pm6.metrics: Created baseline: baseline
+2025-12-17 11:44:10 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:10 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:10 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:10 [INFO] pm6.core: LLM response (first 100 chars): R3
+2025-12-17 11:44:10 [INFO] pm6.core: Generated response for test
+2025-12-17 11:44:10 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:10 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:10 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:10 [INFO] pm6.core: LLM response (first 100 chars): R4
+2025-12-17 11:44:10 [INFO] pm6.core: Generated response for test
+2025-12-17 11:44:10 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:10 [INFO] pm6.core: Registered agent: test
+2025-12-17 11:44:10 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:10 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:10 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:10 [INFO] pm6.core: LLM response (first 100 chars): R1
+2025-12-17 11:44:10 [INFO] pm6.state: Started session: 20251217_114410
+2025-12-17 11:44:10 [INFO] pm6.core: Generated response for test
+2025-12-17 11:44:10 [INFO] pm6.metrics: Created baseline: baseline
+2025-12-17 11:44:10 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:10 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:10 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:10 [INFO] pm6.core: LLM response (first 100 chars): R2
+2025-12-17 11:44:10 [INFO] pm6.core: Generated response for test
+2025-12-17 11:44:10 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:10 [INFO] pm6.core: Registered agent: test
+2025-12-17 11:44:10 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:10 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:10 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:10 [INFO] pm6.core: LLM response (first 100 chars): Response
+2025-12-17 11:44:10 [INFO] pm6.state: Started session: 20251217_114410
+2025-12-17 11:44:10 [INFO] pm6.core: Generated response for test
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:11 [INFO] pm6.core: Registered agent: test
+2025-12-17 11:44:11 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:11 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:11 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:11 [INFO] pm6.core: LLM response (first 100 chars): Response
+2025-12-17 11:44:11 [INFO] pm6.state: Started session: 20251217_114411
+2025-12-17 11:44:11 [INFO] pm6.core: Generated response for test
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: epic2_test
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: israeli_pm
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test_sim
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test_verify
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: play_test
+2025-12-17 11:44:11 [INFO] pm6.core: Registered agent: cpu_agent
+2025-12-17 11:44:11 [INFO] pm6.core: Registered agent: player_agent
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: epic2_test
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: israeli_pm
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test_sim
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test_verify
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: play_test
+2025-12-17 11:44:11 [INFO] pm6.core: Registered agent: cpu_agent
+2025-12-17 11:44:11 [INFO] pm6.core: Registered agent: player_agent
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: epic2_test
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: israeli_pm
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test_sim
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test_verify
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: play_test
+2025-12-17 11:44:11 [INFO] pm6.core: Registered agent: cpu_agent
+2025-12-17 11:44:11 [INFO] pm6.core: Registered agent: player_agent
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: epic2_test
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: israeli_pm
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test_sim
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test_verify
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: empty_sim
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: epic2_test
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: israeli_pm
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test_sim
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test_verify
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: play_test
+2025-12-17 11:44:11 [INFO] pm6.core: Registered agent: cpu_agent
+2025-12-17 11:44:11 [INFO] pm6.core: Registered agent: player_agent
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: epic2_test
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: israeli_pm
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test_sim
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test_verify
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: epic2_test
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: israeli_pm
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test_sim
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test_verify
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: play_test
+2025-12-17 11:44:11 [INFO] pm6.core: Registered agent: cpu_agent
+2025-12-17 11:44:11 [INFO] pm6.core: Registered agent: player_agent
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: epic2_test
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: israeli_pm
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test_sim
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test_verify
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: play_test
+2025-12-17 11:44:11 [INFO] pm6.core: Registered agent: cpu_agent
+2025-12-17 11:44:11 [INFO] pm6.core: Registered agent: player_agent
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: epic2_test
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: israeli_pm
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test_sim
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test_verify
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: play_test
+2025-12-17 11:44:11 [INFO] pm6.core: Registered agent: cpu_agent
+2025-12-17 11:44:11 [INFO] pm6.core: Registered agent: player_agent
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: epic2_test
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: israeli_pm
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test_sim
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test_verify
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: play_test
+2025-12-17 11:44:11 [INFO] pm6.core: Registered agent: cpu_agent
+2025-12-17 11:44:11 [INFO] pm6.core: Registered agent: player_agent
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: epic2_test
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: israeli_pm
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test_sim
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test_verify
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: play_test
+2025-12-17 11:44:11 [INFO] pm6.core: Registered agent: cpu_agent
+2025-12-17 11:44:11 [INFO] pm6.core: Registered agent: player_agent
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: epic2_test
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: israeli_pm
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test_sim
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test_verify
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: epic2_test
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: israeli_pm
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test_sim
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: test_verify
+2025-12-17 11:44:11 [INFO] pm6.core: Initialized simulation: play_test
+2025-12-17 11:44:11 [INFO] pm6.core: Registered agent: cpu_agent
+2025-12-17 11:44:11 [INFO] pm6.core: Registered agent: player_agent
+2025-12-17 11:44:11 [WARNING] pm6.llm: Retry 1/3 after 0.0s: Temporary failure
+2025-12-17 11:44:11 [WARNING] pm6.llm: Retry 1/3 after 0.0s: Temporary failure
+2025-12-17 11:44:11 [WARNING] pm6.llm: Retry 1/3 after 0.0s: Temporary issue
+2025-12-17 11:44:11 [WARNING] pm6.llm: Retry 1/2 after 0.0s: Persistent failure
+2025-12-17 11:44:11 [WARNING] pm6.llm: Retry 2/2 after 0.0s: Persistent failure
+2025-12-17 11:44:11 [WARNING] pm6.llm: Retry 1/2 after 0.0s: Temporary
+2025-12-17 11:44:11 [WARNING] pm6.llm: Rate limited for 10.0s: Manually set rate limit
+2025-12-17 11:44:11 [WARNING] pm6.llm: Rate limited for 10.0s: Manually set rate limit
+2025-12-17 11:44:11 [WARNING] pm6.llm: Retry 1/3 after 0.0s: Temporary
+2025-12-17 11:44:11 [WARNING] pm6.llm: Retry 1/1 after 0.0s: Persistent failure
+2025-12-17 11:44:11 [WARNING] pm6.llm: Rate limited for 5.0s: Retry after 5 seconds
+2025-12-17 11:44:11 [WARNING] pm6.llm: Retry 1/3 after 0.0s: Retry after 5 seconds
+2025-12-17 11:44:11 [INFO] pm6.llm: Rate limited, waiting 5.0s
+2025-12-17 11:44:16 [WARNING] pm6.llm: Retry 1/3 after 0.0s: Custom failure
+2025-12-17 11:44:16 [WARNING] pm6.llm: Retry 1/3 after 0.0s: Specific
+2025-12-17 11:44:16 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:16 [INFO] pm6.core: Registered agent: finance
+2025-12-17 11:44:16 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:16 [INFO] pm6.core: Registered agent: crisis
+2025-12-17 11:44:16 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:16 [INFO] pm6.core: Registered agent: narrator
+2025-12-17 11:44:16 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:16 [INFO] pm6.core: Registered agent: test
+2025-12-17 11:44:16 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:16 [INFO] pm6.reliability: Rolled back transaction: tx_1_20251217114416
+2025-12-17 11:44:16 [INFO] pm6.reliability: Rolled back transaction: tx_1_20251217114416
+2025-12-17 11:44:16 [INFO] pm6.reliability: Rolled back transaction: tx_2_20251217114416
+2025-12-17 11:44:17 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:17 [INFO] pm6.core: Registered agent: pm
+2025-12-17 11:44:17 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:17 [INFO] pm6.core: Registered agent: pm
+2025-12-17 11:44:17 [INFO] pm6.core: Restored simulation state from snapshot
+2025-12-17 11:44:17 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:17 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:18 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:18 [INFO] pm6.core: Restored simulation state from snapshot
+2025-12-17 11:44:18 [INFO] pm6.reliability: Rolled back transaction: tx_1_20251217114418
+2025-12-17 11:44:18 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:18 [INFO] pm6.core: Registered agent: pm
+2025-12-17 11:44:18 [INFO] pm6.core: Created manual checkpoint
+2025-12-17 11:44:18 [INFO] pm6.core: Restored simulation state from snapshot
+2025-12-17 11:44:18 [INFO] pm6.core: Restored from checkpoint
+2025-12-17 11:44:18 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:18 [INFO] pm6.state: Loaded session for replay: session1
+2025-12-17 11:44:18 [INFO] pm6.state: Loaded session for replay: session2
+2025-12-17 11:44:18 [INFO] pm6.state: Loaded session for replay: session3
+2025-12-17 11:44:18 [INFO] pm6.state: Loaded session for replay: consistent
+2025-12-17 11:44:18 [INFO] pm6.state: Replay verification: consistent - 2/2 matched, drift=0.0%, passed=True
+2025-12-17 11:44:18 [INFO] pm6.state: Loaded session for replay: drifted
+2025-12-17 11:44:18 [INFO] pm6.state: Replay verification: drifted - 0/2 matched, drift=100.0%, passed=False
+2025-12-17 11:44:18 [INFO] pm6.state: Loaded session for replay: partial
+2025-12-17 11:44:18 [INFO] pm6.state: Replay verification: partial - 1/2 matched, drift=50.0%, passed=True
+2025-12-17 11:44:18 [INFO] pm6.state: Loaded session for replay: partial
+2025-12-17 11:44:18 [INFO] pm6.state: Replay verification: partial - 1/2 matched, drift=50.0%, passed=False
+2025-12-17 11:44:18 [INFO] pm6.state: Loaded session for replay: multi_agent
+2025-12-17 11:44:18 [INFO] pm6.state: Replay verification: multi_agent - 2/2 matched, drift=0.0%, passed=True
+2025-12-17 11:44:18 [INFO] pm6.state: Loaded session for replay: multi_agent
+2025-12-17 11:44:18 [INFO] pm6.state: Replay verification: multi_agent - 2/3 matched, drift=33.3%, passed=False
+2025-12-17 11:44:18 [INFO] pm6.state: Loaded session for replay: case_test
+2025-12-17 11:44:18 [INFO] pm6.state: Replay verification: case_test - 0/1 matched, drift=100.0%, passed=False
+2025-12-17 11:44:18 [INFO] pm6.state: Loaded session for replay: case_test
+2025-12-17 11:44:18 [INFO] pm6.state: Replay verification: case_test - 1/1 matched, drift=0.0%, passed=True
+2025-12-17 11:44:18 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:18 [INFO] pm6.core: Registered agent: agent
+2025-12-17 11:44:18 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:18 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:18 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:18 [INFO] pm6.core: LLM response (first 100 chars): Hi there!
+2025-12-17 11:44:18 [INFO] pm6.state: Started session: 20251217_114418
+2025-12-17 11:44:18 [INFO] pm6.core: Generated response for agent
+2025-12-17 11:44:18 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:18 [INFO] pm6.core: Registered agent: agent
+2025-12-17 11:44:18 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:18 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:18 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:18 [INFO] pm6.core: LLM response (first 100 chars): Hi!
+2025-12-17 11:44:18 [INFO] pm6.state: Started session: 20251217_114418
+2025-12-17 11:44:18 [INFO] pm6.core: Generated response for agent
+2025-12-17 11:44:18 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:18 [INFO] pm6.core: Registered agent: agent
+2025-12-17 11:44:18 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:18 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:18 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:18 [INFO] pm6.core: LLM response (first 100 chars): Hi there!
+2025-12-17 11:44:18 [INFO] pm6.state: Started session: 20251217_114418
+2025-12-17 11:44:18 [INFO] pm6.core: Generated response for agent
+2025-12-17 11:44:18 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:18 [INFO] pm6.core: Registered agent: agent
+2025-12-17 11:44:18 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:18 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:18 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:18 [INFO] pm6.core: LLM response (first 100 chars): Hi!
+2025-12-17 11:44:18 [INFO] pm6.state: Started session: 20251217_114418
+2025-12-17 11:44:18 [INFO] pm6.core: Generated response for agent
+2025-12-17 11:44:18 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:18 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:18 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:18 [INFO] pm6.core: LLM response (first 100 chars): Bye!
+2025-12-17 11:44:18 [INFO] pm6.core: Generated response for agent
+2025-12-17 11:44:19 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:19 [INFO] pm6.core: Registered agent: agent
+2025-12-17 11:44:19 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:19 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:19 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:19 [INFO] pm6.core: LLM response (first 100 chars): Hi!
+2025-12-17 11:44:19 [INFO] pm6.state: Started session: 20251217_114419
+2025-12-17 11:44:19 [INFO] pm6.core: Generated response for agent
+2025-12-17 11:44:19 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:19 [INFO] pm6.core: Registered agent: agent
+2025-12-17 11:44:19 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:19 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:19 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:19 [INFO] pm6.core: LLM response (first 100 chars): Hi!
+2025-12-17 11:44:19 [INFO] pm6.state: Started session: 20251217_114419
+2025-12-17 11:44:19 [INFO] pm6.core: Generated response for agent
+2025-12-17 11:44:19 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:19 [INFO] pm6.core: Registered agent: agent
+2025-12-17 11:44:19 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:19 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:19 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:19 [INFO] pm6.core: LLM response (first 100 chars): Hi!
+2025-12-17 11:44:19 [INFO] pm6.state: Started session: 20251217_114419
+2025-12-17 11:44:19 [INFO] pm6.core: Generated response for agent
+2025-12-17 11:44:19 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:19 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:19 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:19 [INFO] pm6.core: Registered agent: agent
+2025-12-17 11:44:19 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:19 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:19 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:19 [INFO] pm6.core: LLM response (first 100 chars): Hi there!
+2025-12-17 11:44:19 [INFO] pm6.state: Started session: 20251217_114419
+2025-12-17 11:44:19 [INFO] pm6.core: Generated response for agent
+2025-12-17 11:44:19 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:19 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:19 [INFO] pm6.core: Registered agent: agent
+2025-12-17 11:44:19 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:19 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:19 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:19 [INFO] pm6.core: LLM response (first 100 chars): Hi!
+2025-12-17 11:44:19 [INFO] pm6.state: Started session: 20251217_114419
+2025-12-17 11:44:19 [INFO] pm6.core: Generated response for agent
+2025-12-17 11:44:19 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:19 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:19 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:19 [INFO] pm6.core: LLM response (first 100 chars): Hi again!
+2025-12-17 11:44:19 [INFO] pm6.core: Generated response for agent
+2025-12-17 11:44:19 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:19 [INFO] pm6.core: Registered agent: agent
+2025-12-17 11:44:19 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:19 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:19 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:19 [INFO] pm6.core: LLM response (first 100 chars): Hi!
+2025-12-17 11:44:19 [INFO] pm6.state: Started session: 20251217_114419
+2025-12-17 11:44:19 [INFO] pm6.core: Generated response for agent
+2025-12-17 11:44:19 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:19 [INFO] pm6.core: Registered agent: agent
+2025-12-17 11:44:19 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:19 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:19 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:19 [INFO] pm6.core: LLM response (first 100 chars): Hi!
+2025-12-17 11:44:19 [INFO] pm6.state: Started session: 20251217_114419
+2025-12-17 11:44:19 [INFO] pm6.core: Generated response for agent
+2025-12-17 11:44:19 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:20 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:20 [INFO] pm6.core: Registered agent: pm
+2025-12-17 11:44:20 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:20 [INFO] pm6.core: Registered agent: pm
+2025-12-17 11:44:20 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:21 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:21 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:21 [INFO] pm6.core: Registered agent: pm
+2025-12-17 11:44:21 [INFO] pm6.state: Saved checkpoint: checkpoint1
+2025-12-17 11:44:21 [INFO] pm6.core: Saved checkpoint: checkpoint1
+2025-12-17 11:44:21 [INFO] pm6.state: Loaded checkpoint: checkpoint1
+2025-12-17 11:44:21 [INFO] pm6.core: Loaded checkpoint: checkpoint1
+2025-12-17 11:44:21 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:21 [INFO] pm6.core: Registered agent: pm
+2025-12-17 11:44:22 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:22 [INFO] pm6.state: Started session: 20251217_114422
+2025-12-17 11:44:22 [INFO] pm6.core: Simulation 'test' started, session: 20251217_114422
+2025-12-17 11:44:22 [INFO] pm6.state: Ended session: 20251217_114422
+2025-12-17 11:44:22 [INFO] pm6.core: Simulation 'test' stopped
+2025-12-17 11:44:22 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:22 [INFO] pm6.core: Registered agent: pm
+2025-12-17 11:44:22 [INFO] pm6.core: Cache enabled: False
+2025-12-17 11:44:22 [INFO] pm6.core: Calling LLM client: MagicMock
+2025-12-17 11:44:22 [INFO] pm6.core: LLM response (first 100 chars): This is a test response.
+2025-12-17 11:44:22 [INFO] pm6.state: Started session: 20251217_114422
+2025-12-17 11:44:22 [INFO] pm6.core: Generated response for pm
+2025-12-17 11:44:22 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:22 [INFO] pm6.core: Registered agent: pm
+2025-12-17 11:44:22 [INFO] pm6.core: Cache enabled: False
+2025-12-17 11:44:22 [INFO] pm6.core: Calling LLM client: MagicMock
+2025-12-17 11:44:22 [INFO] pm6.core: LLM response (first 100 chars): Response with context.
+2025-12-17 11:44:22 [INFO] pm6.state: Started session: 20251217_114422
+2025-12-17 11:44:22 [INFO] pm6.core: Generated response for pm
+2025-12-17 11:44:22 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:22 [INFO] pm6.core: Registered agent: pm
+2025-12-17 11:44:22 [INFO] pm6.state: Saved checkpoint: __save__my_save
+2025-12-17 11:44:22 [INFO] pm6.core: Saved simulation state: my_save
+2025-12-17 11:44:22 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:22 [INFO] pm6.state: Saved checkpoint: __save__autosave
+2025-12-17 11:44:22 [INFO] pm6.core: Saved simulation state: autosave
+2025-12-17 11:44:23 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:23 [INFO] pm6.state: Saved checkpoint: __save__state1
+2025-12-17 11:44:23 [INFO] pm6.core: Saved simulation state: state1
+2025-12-17 11:44:23 [INFO] pm6.state: Loaded checkpoint: __save__state1
+2025-12-17 11:44:23 [INFO] pm6.core: Resumed simulation from: state1
+2025-12-17 11:44:23 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:23 [INFO] pm6.core: Registered agent: pm
+2025-12-17 11:44:23 [INFO] pm6.core: Registered agent: chancellor
+2025-12-17 11:44:23 [INFO] pm6.state: Saved checkpoint: __save__with_agents
+2025-12-17 11:44:23 [INFO] pm6.core: Saved simulation state: with_agents
+2025-12-17 11:44:23 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:23 [INFO] pm6.state: Loaded checkpoint: __save__with_agents
+2025-12-17 11:44:23 [INFO] pm6.core: Resumed simulation from: with_agents
+2025-12-17 11:44:23 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:23 [INFO] pm6.state: Saved checkpoint: __save__save1
+2025-12-17 11:44:23 [INFO] pm6.core: Saved simulation state: save1
+2025-12-17 11:44:23 [INFO] pm6.state: Saved checkpoint: __save__save2
+2025-12-17 11:44:23 [INFO] pm6.core: Saved simulation state: save2
+2025-12-17 11:44:23 [INFO] pm6.state: Saved checkpoint: __save__save3
+2025-12-17 11:44:23 [INFO] pm6.core: Saved simulation state: save3
+2025-12-17 11:44:24 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:24 [INFO] pm6.state: Saved checkpoint: __save__to_delete
+2025-12-17 11:44:24 [INFO] pm6.core: Saved simulation state: to_delete
+2025-12-17 11:44:24 [INFO] pm6.state: Deleted checkpoint: __save__to_delete
+2025-12-17 11:44:24 [INFO] pm6.core: Deleted save: to_delete
+2025-12-17 11:44:24 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:24 [INFO] pm6.state: Saved checkpoint: __save__exists
+2025-12-17 11:44:24 [INFO] pm6.core: Saved simulation state: exists
+2025-12-17 11:44:24 [INFO] pm6.core: Initialized simulation: test_sim
+2025-12-17 11:44:24 [INFO] pm6.core: Registered agent: pm
+2025-12-17 11:44:24 [INFO] pm6.state: Saved checkpoint: __save__my_checkpoint
+2025-12-17 11:44:24 [INFO] pm6.core: Saved simulation state: my_checkpoint
+2025-12-17 11:44:24 [INFO] pm6.core: Initialized simulation: test_sim
+2025-12-17 11:44:24 [INFO] pm6.state: Loaded checkpoint: __save__my_checkpoint
+2025-12-17 11:44:24 [INFO] pm6.core: Resumed simulation from: my_checkpoint
+2025-12-17 11:44:25 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:25 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:25 [INFO] pm6.state: Saved checkpoint: __save__overwrite_test
+2025-12-17 11:44:25 [INFO] pm6.core: Saved simulation state: overwrite_test
+2025-12-17 11:44:25 [INFO] pm6.state: Saved checkpoint: __save__overwrite_test
+2025-12-17 11:44:25 [INFO] pm6.core: Saved simulation state: overwrite_test
+2025-12-17 11:44:25 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:25 [INFO] pm6.state: Loaded checkpoint: __save__overwrite_test
+2025-12-17 11:44:25 [INFO] pm6.core: Resumed simulation from: overwrite_test
+2025-12-17 11:44:26 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:26 [INFO] pm6.state: Saved checkpoint: __save__my_save
+2025-12-17 11:44:26 [INFO] pm6.core: Saved simulation state: my_save
+2025-12-17 11:44:26 [INFO] pm6.state: Saved checkpoint: my_checkpoint
+2025-12-17 11:44:26 [INFO] pm6.core: Saved checkpoint: my_checkpoint
+2025-12-17 11:44:26 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:26 [INFO] pm6.core: Registered agent: pm
+2025-12-17 11:44:26 [INFO] pm6.core: Exported session to C:\Users\ziv04\AppData\Local\Temp\tmpbuozpm98\export.json
+2025-12-17 11:44:26 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:26 [INFO] pm6.core: Exported session to C:\Users\ziv04\AppData\Local\Temp\tmpo_d2e8th\export.csv
+2025-12-17 11:44:27 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:27 [INFO] pm6.core: Exported session to C:\Users\ziv04\AppData\Local\Temp\tmp21dbxzsr\nested\dirs\export.json
+2025-12-17 11:44:27 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:27 [INFO] pm6.core: Exported session to C:\Users\ziv04\AppData\Local\Temp\tmpox5ys3de\export.json
+2025-12-17 11:44:27 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:27 [INFO] pm6.core: Exported history to C:\Users\ziv04\AppData\Local\Temp\tmp_lsq_pt7\history.json
+2025-12-17 11:44:27 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:27 [INFO] pm6.core: Exported history to C:\Users\ziv04\AppData\Local\Temp\tmplx3kcq9a\history.csv
+2025-12-17 11:44:28 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:28 [INFO] pm6.core: Exported history to C:\Users\ziv04\AppData\Local\Temp\tmpydrxdg65\filtered.json
+2025-12-17 11:44:28 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:28 [INFO] pm6.core: Exported cost report to C:\Users\ziv04\AppData\Local\Temp\tmp7g6z69a8\costs.json
+2025-12-17 11:44:28 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:28 [INFO] pm6.core: Exported cost report to C:\Users\ziv04\AppData\Local\Temp\tmpp9d_7rzm\costs.csv
+2025-12-17 11:44:29 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:29 [INFO] pm6.core: Registered agent: pm
+2025-12-17 11:44:29 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:29 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:29 [INFO] pm6.core: Registered agent: test
+2025-12-17 11:44:29 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:29 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:29 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:29 [INFO] pm6.core: LLM response (first 100 chars): Response 1
+2025-12-17 11:44:29 [INFO] pm6.state: Started session: 20251217_114429
+2025-12-17 11:44:29 [INFO] pm6.core: Generated response for test
+2025-12-17 11:44:29 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:29 [INFO] pm6.core: Registered agent: test
+2025-12-17 11:44:29 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:29 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:29 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:29 [INFO] pm6.core: LLM response (first 100 chars): R1
+2025-12-17 11:44:29 [INFO] pm6.state: Started session: 20251217_114429
+2025-12-17 11:44:29 [INFO] pm6.core: Generated response for test
+2025-12-17 11:44:29 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:29 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:29 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:29 [INFO] pm6.core: LLM response (first 100 chars): R2
+2025-12-17 11:44:29 [INFO] pm6.core: Generated response for test
+2025-12-17 11:44:29 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:29 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:29 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:29 [INFO] pm6.core: LLM response (first 100 chars): R3
+2025-12-17 11:44:29 [INFO] pm6.core: Generated response for test
+2025-12-17 11:44:29 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:29 [INFO] pm6.core: Registered agent: test
+2025-12-17 11:44:29 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:29 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:29 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:29 [INFO] pm6.core: LLM response (first 100 chars): I accept your proposal
+2025-12-17 11:44:29 [INFO] pm6.state: Started session: 20251217_114429
+2025-12-17 11:44:29 [INFO] pm6.core: Generated response for test
+2025-12-17 11:44:29 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:29 [INFO] pm6.core: Registered agent: test
+2025-12-17 11:44:29 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:29 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:29 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:29 [INFO] pm6.core: LLM response (first 100 chars): Response
+2025-12-17 11:44:29 [INFO] pm6.state: Started session: 20251217_114429
+2025-12-17 11:44:29 [INFO] pm6.core: Generated response for test
+2025-12-17 11:44:29 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:29 [INFO] pm6.core: Registered agent: test
+2025-12-17 11:44:29 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:29 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:29 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:29 [INFO] pm6.core: LLM response (first 100 chars): Some response text
+2025-12-17 11:44:29 [INFO] pm6.state: Started session: 20251217_114429
+2025-12-17 11:44:29 [INFO] pm6.core: Generated response for test
+2025-12-17 11:44:29 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:29 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:29 [INFO] pm6.core: Initialized simulation: factory_test
+2025-12-17 11:44:29 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:29 [INFO] pm6.core: Registered agent: TestAgent
+2025-12-17 11:44:29 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:29 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:29 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:29 [INFO] pm6.core: LLM response (first 100 chars): Test response
+2025-12-17 11:44:29 [INFO] pm6.state: Started session: 20251217_114429
+2025-12-17 11:44:29 [INFO] pm6.core: Generated response for TestAgent
+2025-12-17 11:44:29 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:29 [INFO] pm6.core: Registered agent: TestAgent
+2025-12-17 11:44:29 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:29 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:29 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:29 [INFO] pm6.core: LLM response (first 100 chars): First
+2025-12-17 11:44:29 [INFO] pm6.state: Started session: 20251217_114429
+2025-12-17 11:44:29 [INFO] pm6.core: Generated response for TestAgent
+2025-12-17 11:44:29 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:29 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:29 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:29 [INFO] pm6.core: LLM response (first 100 chars): Second
+2025-12-17 11:44:29 [INFO] pm6.core: Generated response for TestAgent
+2025-12-17 11:44:29 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:29 [INFO] pm6.core: Registered agent: TestAgent
+2025-12-17 11:44:29 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:29 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:29 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:29 [INFO] pm6.core: LLM response (first 100 chars): R1
+2025-12-17 11:44:29 [INFO] pm6.state: Started session: 20251217_114429
+2025-12-17 11:44:29 [INFO] pm6.core: Generated response for TestAgent
+2025-12-17 11:44:29 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:29 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:29 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:29 [INFO] pm6.core: LLM response (first 100 chars): R2
+2025-12-17 11:44:29 [INFO] pm6.core: Generated response for TestAgent
+2025-12-17 11:44:29 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:29 [INFO] pm6.core: Registered agent: TestAgent
+2025-12-17 11:44:29 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:29 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:29 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:29 [INFO] pm6.core: LLM response (first 100 chars): Response
+2025-12-17 11:44:29 [INFO] pm6.state: Started session: 20251217_114429
+2025-12-17 11:44:29 [INFO] pm6.core: Generated response for TestAgent
+2025-12-17 11:44:29 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:29 [INFO] pm6.core: Registered agent: TestAgent
+2025-12-17 11:44:29 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:29 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:29 [INFO] pm6.cost: Interaction: model=claude-sonnet-4-20250514, cost=$0.0011, tokens=100+50, cached=0
+2025-12-17 11:44:29 [INFO] pm6.core: LLM response (first 100 chars): R1
+2025-12-17 11:44:29 [INFO] pm6.state: Started session: 20251217_114429
+2025-12-17 11:44:29 [INFO] pm6.core: Generated response for TestAgent
+2025-12-17 11:44:29 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:29 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:29 [INFO] pm6.core: Registered agent: TestAgent
+2025-12-17 11:44:29 [INFO] pm6.core: Cache enabled: True
+2025-12-17 11:44:29 [INFO] pm6.core: Calling LLM client: MockAnthropicClient
+2025-12-17 11:44:29 [INFO] pm6.core: LLM response (first 100 chars): Custom client response
+2025-12-17 11:44:29 [INFO] pm6.state: Started session: 20251217_114429
+2025-12-17 11:44:29 [INFO] pm6.core: Generated response for TestAgent
+2025-12-17 11:44:29 [INFO] pm6.tools: Registered tool: test
+2025-12-17 11:44:29 [INFO] pm6.tools: Registered tool: test
+2025-12-17 11:44:29 [INFO] pm6.tools: Registered tool: test
+2025-12-17 11:44:29 [INFO] pm6.tools: Unregistered tool: test
+2025-12-17 11:44:29 [INFO] pm6.tools: Registered tool: tool1
+2025-12-17 11:44:29 [INFO] pm6.tools: Registered tool: tool2
+2025-12-17 11:44:29 [INFO] pm6.tools: Registered tool: alpha
+2025-12-17 11:44:29 [INFO] pm6.tools: Registered tool: beta
+2025-12-17 11:44:29 [INFO] pm6.tools: Registered tool: multiply
+2025-12-17 11:44:29 [ERROR] pm6.tools: Tool not found: unknown
+2025-12-17 11:44:29 [INFO] pm6.tools: Registered tool: failing
+2025-12-17 11:44:29 [ERROR] pm6.tools: Tool failing failed: division by zero
+2025-12-17 11:44:29 [INFO] pm6.tools: Registered tool: double
+2025-12-17 11:44:29 [INFO] pm6.tools: Registered tool: echo
+2025-12-17 11:44:29 [INFO] pm6.tools: Registered tool: ok
+2025-12-17 11:44:29 [INFO] pm6.tools: Registered tool: fail
+2025-12-17 11:44:29 [ERROR] pm6.tools: Tool fail failed: division by zero
+2025-12-17 11:44:29 [INFO] pm6.tools: Registered tool: test
+2025-12-17 11:44:29 [INFO] pm6.tools: Registered tool: test
+2025-12-17 11:44:29 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:29 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:29 [INFO] pm6.tools: Registered tool: greet
+2025-12-17 11:44:29 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:29 [INFO] pm6.tools: Registered tool: add
+2025-12-17 11:44:29 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:29 [INFO] pm6.tools: Registered tool: multiply
+2025-12-17 11:44:29 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:29 [INFO] pm6.tools: Registered tool: temp
+2025-12-17 11:44:29 [INFO] pm6.tools: Unregistered tool: temp
+2025-12-17 11:44:29 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:29 [INFO] pm6.tools: Registered tool: echo
+2025-12-17 11:44:29 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:29 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:29 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:29 [INFO] pm6.core: Initialized simulation: test
+2025-12-17 11:44:29 [INFO] pm6.core: Initialized simulation: test

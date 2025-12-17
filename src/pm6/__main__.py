@@ -139,7 +139,8 @@ def cmdList(args: argparse.Namespace) -> int:
         try:
             config = loader.load(name)
             agentCount = len(config.agents)
-            desc = config.description[:50] + "..." if len(config.description) > 50 else config.description
+            desc = config.description[:50] + "..." if len(config.description) > 50 else \
+                config.description
             print(f"  {name}")
             if desc:
                 print(f"    {desc}")
@@ -153,7 +154,7 @@ def cmdList(args: argparse.Namespace) -> int:
 
 def cmdCreate(args: argparse.Namespace) -> int:
     """Create a new simulation template."""
-    from pm6.cli.loader import SimulationLoader, SimulationConfig, AgentDefinition
+    from pm6.cli.loader import AgentDefinition, SimulationConfig, SimulationLoader
 
     loader = SimulationLoader(args.simulations_dir)
 
@@ -217,7 +218,7 @@ def cmdInfo(args: argparse.Namespace) -> int:
         print(f"    Memory: {agent.memoryPolicy}")
 
     if config.initialState:
-        print(f"\nInitial State:")
+        print("\nInitial State:")
         for key, value in config.initialState.items():
             print(f"  {key}: {value}")
 

@@ -33,12 +33,14 @@ def create_app(config_name: str = "development") -> Flask:
     from simConfigGui.routes.events import events_bp
     from simConfigGui.routes.testing import testing_bp
     from simConfigGui.routes.api import api_bp
+    from simConfigGui.routes.play import play_bp
 
     app.register_blueprint(simulation_bp, url_prefix="/simulations")
     app.register_blueprint(agents_bp)
     app.register_blueprint(events_bp)
     app.register_blueprint(testing_bp)
     app.register_blueprint(api_bp, url_prefix="/api")
+    app.register_blueprint(play_bp)  # Play Mode routes at /play/<sim_name>
 
     # Index route
     @app.route("/")

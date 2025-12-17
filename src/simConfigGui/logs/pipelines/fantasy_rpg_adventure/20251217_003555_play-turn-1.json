@@ -1,0 +1,166 @@
+{
+  "simulation": "fantasy_rpg_adventure",
+  "runType": "play-turn-1",
+  "timestamp": "2025-12-17T00:35:55.744196",
+  "result": {
+    "turnNumber": 1,
+    "steps": [
+      {
+        "stepName": "turn_start",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 0,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "previousTurnResult": null
+        },
+        "outputs": {
+          "event": {
+            "name": "turn_start",
+            "data": {
+              "turn": 1
+            },
+            "source": "system",
+            "timestamp": "2025-12-17T00:35:41.315457"
+          }
+        },
+        "duration": 3.0994415283203125e-05,
+        "error": null,
+        "timestamp": "2025-12-17T00:35:41.315448"
+      },
+      {
+        "stepName": "gather_events",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 1,
+          "stepConfig": {},
+          "turnNumber": 1,
+          "scheduledEvents": 0
+        },
+        "outputs": {
+          "eventsGathered": 1,
+          "playerEvents": []
+        },
+        "duration": 1.7642974853515625e-05,
+        "error": null,
+        "timestamp": "2025-12-17T00:35:41.315477"
+      },
+      {
+        "stepName": "orchestrator_decide",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 2,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "events": [
+            {
+              "name": "turn_start",
+              "data": {
+                "turn": 1
+              },
+              "source": "system",
+              "timestamp": "2025-12-17T00:35:41.315457"
+            }
+          ],
+          "worldState": {
+            "_lastEventProcessedTime": "2025-12-17T00:34:35.996548",
+            "currentActor": "cpu",
+            "_playerPending": false
+          },
+          "availableAgents": [
+            {
+              "name": "mysterious_merchant",
+              "role": "Enigmatic trader with rare wares and hidden knowledge"
+            },
+            {
+              "name": "narrator",
+              "role": "Game Master narrator who describes scenes, controls NPCs, and manages world events"
+            }
+          ],
+          "orchestratorName": "orchestrator"
+        },
+        "outputs": {
+          "decision": {
+            "agentsToWake": [
+              "narrator"
+            ],
+            "instructions": {
+              "narrator": "Begin the initial game scene. Create an opening narrative that introduces the hero and their starting location, providing context for the adventure's first moments. Focus on establishing the initial setting with vivid description and potential first opportunity for exploration."
+            },
+            "reasoning": "Since this is Turn 0 (the game's start), the narrator should set the initial scene, establish the world, and prepare the context for the hero's first actions. No other agents need activation at this moment.",
+            "skipPlayerTurn": false
+          },
+          "agentsSelected": [
+            "narrator"
+          ]
+        },
+        "duration": 3.9501185417175293,
+        "error": null,
+        "timestamp": "2025-12-17T00:35:41.315511"
+      },
+      {
+        "stepName": "execute_agents",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 3,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "agentsToWake": [
+            "narrator"
+          ],
+          "instructions": {
+            "narrator": "Begin the initial game scene. Create an opening narrative that introduces the hero and their starting location, providing context for the adventure's first moments. Focus on establishing the initial setting with vivid description and potential first opportunity for exploration."
+          }
+        },
+        "outputs": {
+          "actions": [
+            {
+              "agentName": "narrator",
+              "actionType": "speak",
+              "content": "**The Crossroads Tavern - Dawn's First Light**\n\nThe creaking wooden sign of the Crossroads Tavern sways gently in the morning breeze, its faded paint depicting a warrior's crossed sword and staff. You sit at a corner table, nursing the last drops of bitter ale from your tankard as pale sunlight filters through grimy windows. The tavern keeper, a burly man named Garrett, wipes down mugs behind the bar while humming an old traveling song.\n\n\"Rough night, friend?\" Garrett calls over, noticing your contemplative stare toward the window. \"You've been nursing that drink since before the rooster crowed.\"\n\nThrough the diamond-paned glass, you can see the cobblestone crossroads that give this establishment its name. Four paths stretch away into the distance: \n\n- North leads toward the **Whispering Woods**, where morning mist still clings to ancient oaks\n- East winds toward **Millbrook Village**, smoke rising from cottage chimneys  \n- South heads into **Thorndale Hills**, rocky and wild\n- West beckons toward the **Old Stone Bridge**, spanning a rushing river\n\nA weathered notice board by the tavern door is covered in parchments - bounties, requests for aid, and rumors from traveling merchants. The morning air carries the scent of adventure and possibility.\n\nWhat draws your attention first, traveler?",
+              "target": "hero",
+              "metadata": {
+                "instruction": "Begin the initial game scene. Create an opening narrative that introduces the hero and their starting location, providing context for the adventure's first moments. Focus on establishing the initial setting with vivid description and potential first opportunity for exploration."
+              },
+              "timestamp": "2025-12-17T00:35:55.743760"
+            }
+          ],
+          "agentsExecuted": 1
+        },
+        "duration": 10.478149652481079,
+        "error": null,
+        "timestamp": "2025-12-17T00:35:45.265630"
+      },
+      {
+        "stepName": "player_turn",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 4,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "playerAgent": "hero",
+          "skipPlayerTurn": false
+        },
+        "outputs": {
+          "playerPending": true,
+          "playerAgent": "hero"
+        },
+        "duration": 1.1205673217773438e-05,
+        "error": null,
+        "timestamp": "2025-12-17T00:35:55.743792"
+      }
+    ],
+    "totalDuration": 14.428374767303467,
+    "success": true,
+    "orchestratorDecision": {
+      "agentsToWake": [
+        "narrator"
+      ],
+      "instructions": {
+        "narrator": "Begin the initial game scene. Create an opening narrative that introduces the hero and their starting location, providing context for the adventure's first moments. Focus on establishing the initial setting with vivid description and potential first opportunity for exploration."
+      },
+      "reasoning": "Since this is Turn 0 (the game's start), the narrator should set the initial scene, establish the world, and prepare the context for the hero's first actions. No other agents need activation at this moment.",
+      "skipPlayerTurn": false
+    }
+  }
+}

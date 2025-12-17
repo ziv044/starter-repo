@@ -1,0 +1,704 @@
+{% extends "base.html" %}
+
+{% block title %}Pipeline Debug - {{ sim_name }}{% endblock %}
+
+{% block content %}
+<h1>Pipeline Debug: {{ sim_name }}</h1>
+
+<div class="card">
+    <h2>Pipeline Configuration</h2>
+    <p><strong>Turn Mode:</strong> {{ pipeline.turnMode }}</p>
+    <p><strong>Orchestrator:</strong> {{ pipeline.orchestratorName }}</p>
+    <p><strong>Current Actor:</strong> <span id="current-actor">{{ current_actor | default('Unknown') }}</span></p>
+    <p><strong>Actor Type:</strong> <span id="actor-type" class="badge {{ 'badge-player' if is_player_turn else 'badge-cpu' }}">{{ 'PLAYER' if is_player_turn else 'CPU/LLM' }}</span></p>
+
+    <h3>Pipeline Steps</h3>
+    <div class="pipeline-steps">
+        {% for step in pipeline.steps %}
+        <div class="pipeline-step" data-index="{{ loop.index0 }}">
+            <span class="step-number">{{ loop.index }}</span>
+            <span class="step-name">{{ step.step }}</span>
+            <button class="btn btn-sm btn-secondary preview-btn" data-step="{{ loop.index0 }}">Preview</button>
+            <button class="btn btn-sm btn-primary execute-btn" data-step="{{ loop.index0 }}">Execute</button>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="actions" style="margin-top: 1rem;">
+        <button id="dry-run-btn" class="btn btn-warning">Dry Run All</button>
+        <a href="{{ url_for('simulation.view_simulation', name=sim_name) }}" class="btn btn-secondary">Back</a>
+    </div>
+</div>
+
+<!-- Game Chat Box -->
+<div class="card" style="margin-top: 1rem;">
+    <h2>Game Narration</h2>
+    <div id="chat-container">
+        <div id="chat-messages">
+            <div class="chat-message narrator">
+                <span class="message-author">Narrator</span>
+                <span class="message-content">Welcome to the simulation. Click "Play" to begin or continue the game.</span>
+            </div>
+        </div>
+        <div id="chat-input-area">
+            <button id="play-btn" class="btn btn-success btn-lg">▶ Play</button>
+            <span id="play-status" class="status-text"></span>
+        </div>
+    </div>
+</div>
+
+<!-- Player Turn Panel - Only shown when it's the player's turn -->
+<div id="player-turn-panel" class="card {% if not is_player_turn %}hidden{% endif %}" style="margin-top: 1rem;">
+    <h2>🎮 Your Turn!</h2>
+    <p>It's your turn to act. Type your action or use quick buttons:</p>
+
+    <!-- Player Text Input -->
+    <div class="player-input-area">
+        <input type="text" id="player-input" placeholder="Type your action (e.g., 'raise 50', 'call', 'fold')..." autocomplete="off">
+        <button id="submit-player-input" class="btn btn-success">Send</button>
+    </div>
+
+    <!-- Quick Action Buttons -->
+    <div class="quick-actions">
+        <span class="quick-label">Quick:</span>
+        <button class="btn btn-sm btn-outline player-action-btn" data-action="call">Call</button>
+        <button class="btn btn-sm btn-outline player-action-btn" data-action="check">Check</button>
+        <button class="btn btn-sm btn-outline player-action-btn" data-action="fold">Fold</button>
+        <button class="btn btn-sm btn-outline player-action-btn" data-action="raise">Raise</button>
+        <button class="btn btn-sm btn-outline player-action-btn" data-action="all_in">All In</button>
+    </div>
+
+    <div id="raise-amount-container" class="hidden" style="margin-top: 1rem;">
+        <label for="raise-amount">Raise Amount:</label>
+        <input type="number" id="raise-amount" min="1" placeholder="Enter amount" style="width: 150px; padding: 0.5rem;">
+        <button id="confirm-raise" class="btn btn-primary btn-sm">Confirm Raise</button>
+    </div>
+</div>
+
+<!-- CPU Turn Panel - Shown when it's CPU's turn -->
+<div id="cpu-turn-panel" class="card {% if is_player_turn %}hidden{% endif %}" style="margin-top: 1rem;">
+    <h2>🤖 CPU Turn</h2>
+    <p>Waiting for CPU/LLM to make a decision...</p>
+    <button id="execute-cpu-turn" class="btn btn-primary">Execute CPU Turn</button>
+    <button id="auto-advance" class="btn btn-secondary">Auto-Advance Until Player Turn</button>
+</div>
+
+<div class="card" style="margin-top: 1rem;">
+    <h2>Execution Results</h2>
+    <pre id="results-output" style="background: #f5f5f5; padding: 1rem; border-radius: 4px; overflow: auto; max-height: 400px;">
+Click a button above to see results...
+    </pre>
+</div>
+
+<div class="card" style="margin-top: 1rem;">
+    <h2>Edit Pipeline Config (JSON)</h2>
+    <form id="config-form">
+        <textarea id="pipeline-config" name="config" rows="15">{{ pipeline_json }}</textarea>
+        <div class="actions" style="margin-top: 0.5rem;">
+            <button type="submit" class="btn btn-primary">Save Config</button>
+        </div>
+    </form>
+</div>
+
+<style>
+.pipeline-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.pipeline-step {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem;
+    background: #f9f9f9;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+.step-number {
+    width: 24px;
+    height: 24px;
+    background: #007bff;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.85rem;
+}
+.step-name {
+    flex: 1;
+    font-weight: 500;
+}
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.85rem;
+}
+.badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 0.85rem;
+}
+.badge-player {
+    background: #28a745;
+    color: white;
+}
+.badge-cpu {
+    background: #6c757d;
+    color: white;
+}
+.player-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+.player-actions .btn {
+    min-width: 80px;
+}
+.hidden {
+    display: none !important;
+}
+#player-turn-panel {
+    border: 2px solid #28a745;
+    background: #f0fff4;
+}
+#cpu-turn-panel {
+    border: 2px solid #6c757d;
+    background: #f8f9fa;
+}
+/* Chat Box Styles */
+#chat-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 500px;
+    max-height: 70vh;
+}
+#chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    background: #1a1a2e;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    min-height: 400px;
+}
+.chat-message {
+    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    animation: fadeIn 0.3s ease-in;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.chat-message.narrator {
+    background: linear-gradient(135deg, #2d2d44 0%, #1a1a2e 100%);
+    border-left: 3px solid #ffd700;
+    color: #e0e0e0;
+}
+.chat-message.player {
+    background: linear-gradient(135deg, #1e4d2b 0%, #0d2818 100%);
+    border-left: 4px solid #4CAF50;
+    border-right: 4px solid #4CAF50;
+    color: #e8f5e9;
+    margin-left: 2rem;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+.chat-message.cpu {
+    background: linear-gradient(135deg, #3d2d44 0%, #2a1a2e 100%);
+    border-left: 3px solid #9c27b0;
+    color: #e0e0e0;
+}
+.chat-message.system {
+    background: #2d3748;
+    border-left: 3px solid #63b3ed;
+    color: #a0aec0;
+    font-style: italic;
+    font-size: 0.9rem;
+}
+.message-author {
+    display: block;
+    font-weight: bold;
+    font-size: 0.85rem;
+    margin-bottom: 0.25rem;
+    color: #ffd700;
+}
+.chat-message.player .message-author { color: #4CAF50; }
+.chat-message.cpu .message-author { color: #ce93d8; }
+.chat-message.system .message-author { color: #63b3ed; }
+.message-content {
+    display: block;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+}
+.message-changes {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    font-size: 0.85rem;
+    color: #a0a0a0;
+}
+.message-changes .change-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.25rem 0;
+}
+.message-changes .change-icon { font-size: 0.9rem; }
+#chat-input-area {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+#play-btn {
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+}
+#play-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+.status-text {
+    color: #666;
+    font-style: italic;
+}
+.btn-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.1rem;
+}
+/* Player Input Styles */
+.player-input-area {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+#player-input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: 2px solid #28a745;
+    border-radius: 8px;
+    background: #fff;
+}
+#player-input:focus {
+    outline: none;
+    border-color: #1e7e34;
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.25);
+}
+.quick-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+.quick-label {
+    color: #666;
+    font-size: 0.9rem;
+}
+.btn-outline {
+    background: transparent;
+    border: 1px solid #ccc;
+    color: #333;
+}
+.btn-outline:hover {
+    background: #f0f0f0;
+    border-color: #999;
+}
+</style>
+
+<script>
+const simName = "{{ sim_name }}";
+const resultsOutput = document.getElementById('results-output');
+
+function showResult(data) {
+    resultsOutput.textContent = JSON.stringify(data, null, 2);
+}
+
+function showError(error) {
+    resultsOutput.textContent = `Error: ${error}`;
+}
+
+// Preview buttons
+document.querySelectorAll('.preview-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+        const stepIndex = btn.dataset.step;
+        try {
+            const response = await fetch(`/simulations/${simName}/pipeline/preview/${stepIndex}`);
+            const data = await response.json();
+            showResult(data);
+        } catch (e) {
+            showError(e.message);
+        }
+    });
+});
+
+// Execute step buttons
+document.querySelectorAll('.execute-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+        const stepIndex = parseInt(btn.dataset.step);
+        try {
+            const response = await fetch(`/simulations/${simName}/pipeline/step`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({stepIndex: stepIndex, dryRun: false})
+            });
+            const data = await response.json();
+            showResult(data);
+        } catch (e) {
+            showError(e.message);
+        }
+    });
+});
+
+// Dry run all
+document.getElementById('dry-run-btn').addEventListener('click', async () => {
+    try {
+        const response = await fetch(`/simulations/${simName}/pipeline/dry-run`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'}
+        });
+        const data = await response.json();
+        showResult(data);
+    } catch (e) {
+        showError(e.message);
+    }
+});
+
+// Chat functionality
+const chatMessages = document.getElementById('chat-messages');
+const playBtn = document.getElementById('play-btn');
+const playStatus = document.getElementById('play-status');
+
+function addChatMessage(type, author, content, changes = null) {
+    const msg = document.createElement('div');
+    msg.className = `chat-message ${type}`;
+
+    // Simple markdown rendering for bold and italic
+    let formattedContent = content
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')  // **bold**
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')              // *italic*
+        .replace(/\\n/g, '<br>');                          // newlines
+
+    let html = `<span class="message-author">${author}</span>`;
+    html += `<span class="message-content">${formattedContent}</span>`;
+
+    if (changes && changes.length > 0) {
+        html += '<div class="message-changes">';
+        changes.forEach(change => {
+            const icon = change.type === 'increase' ? '📈' :
+                        change.type === 'decrease' ? '📉' :
+                        change.type === 'action' ? '⚡' : '📌';
+            html += `<div class="change-item"><span class="change-icon">${icon}</span>${change.text}</div>`;
+        });
+        html += '</div>';
+    }
+
+    msg.innerHTML = html;
+    chatMessages.appendChild(msg);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function setPlayStatus(status, isPlaying = false) {
+    playStatus.textContent = status;
+    playBtn.disabled = isPlaying;
+    playBtn.textContent = isPlaying ? '⏳ Running...' : '▶ Play';
+}
+
+// Play simulation - runs until player turn
+async function playSimulation() {
+    setPlayStatus('Running simulation...', true);
+
+    try {
+        const response = await fetch(`/simulations/${simName}/pipeline/play`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'}
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            // Add narrator messages for each turn
+            if (data.turns && data.turns.length > 0) {
+                data.turns.forEach(turn => {
+                    const turnType = turn.isPlayer ? 'player' : 'cpu';
+                    addChatMessage(
+                        turn.isPlayer ? 'narrator' : 'cpu',
+                        turn.actor || 'Unknown',
+                        turn.narration || `${turn.actor} takes their turn.`,
+                        turn.changes || []
+                    );
+                });
+            }
+
+            // Show player turn notification
+            if (data.isPlayerTurn) {
+                addChatMessage('narrator', 'Narrator',
+                    `It's now ${data.currentActor}'s turn. Choose your action below.`);
+                setPlayStatus(`Waiting for ${data.currentActor}...`, false);
+            } else {
+                setPlayStatus('Ready', false);
+            }
+
+            await refreshTurnState();
+        } else {
+            addChatMessage('system', 'System', `Error: ${data.error || 'Unknown error'}`);
+            setPlayStatus('Error occurred', false);
+        }
+
+        showResult(data);
+    } catch (e) {
+        addChatMessage('system', 'System', `Error: ${e.message}`);
+        setPlayStatus('Error occurred', false);
+        showError(e.message);
+    }
+}
+
+// Play button click handler
+playBtn.addEventListener('click', playSimulation);
+
+// Save config
+document.getElementById('config-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const config = document.getElementById('pipeline-config').value;
+    try {
+        const parsed = JSON.parse(config);
+        const response = await fetch(`/simulations/${simName}/pipeline/config`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(parsed)
+        });
+        const data = await response.json();
+        if (data.success) {
+            alert('Pipeline config saved!');
+            location.reload();
+        } else {
+            showError(data.error);
+        }
+    } catch (e) {
+        showError(`Invalid JSON: ${e.message}`);
+    }
+});
+
+// === Player Turn Handling ===
+const playerTurnPanel = document.getElementById('player-turn-panel');
+const cpuTurnPanel = document.getElementById('cpu-turn-panel');
+const raiseAmountContainer = document.getElementById('raise-amount-container');
+const currentActorSpan = document.getElementById('current-actor');
+const actorTypeSpan = document.getElementById('actor-type');
+
+function updateTurnUI(isPlayerTurn, actorName) {
+    if (isPlayerTurn) {
+        playerTurnPanel.classList.remove('hidden');
+        cpuTurnPanel.classList.add('hidden');
+        actorTypeSpan.textContent = 'PLAYER';
+        actorTypeSpan.className = 'badge badge-player';
+    } else {
+        playerTurnPanel.classList.add('hidden');
+        cpuTurnPanel.classList.remove('hidden');
+        actorTypeSpan.textContent = 'CPU/LLM';
+        actorTypeSpan.className = 'badge badge-cpu';
+    }
+    if (actorName) {
+        currentActorSpan.textContent = actorName;
+    }
+}
+
+async function submitPlayerAction(action, eventData = {}) {
+    const playerName = currentActorSpan.textContent || 'Player';
+
+    try {
+        const response = await fetch(`/simulations/${simName}/events/inject`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: new URLSearchParams({
+                eventName: `player_${action}`,
+                eventData: JSON.stringify(eventData),
+                source: playerName
+            })
+        });
+
+        // Add player action to chat
+        let actionText = action.charAt(0).toUpperCase() + action.slice(1);
+        if (action === 'raise' && eventData.amount) {
+            actionText = `Raises ${eventData.amount}`;
+        } else if (action === 'call') {
+            actionText = 'Calls';
+        } else if (action === 'fold') {
+            actionText = 'Folds';
+        } else if (action === 'check') {
+            actionText = 'Checks';
+        } else if (action === 'all_in') {
+            actionText = 'Goes All In!';
+        } else if (action === 'message' && eventData.message) {
+            // Show the actual player message
+            actionText = eventData.message;
+        }
+
+        addChatMessage('player', playerName, actionText, []);
+
+        // After player action, continue the simulation (CPU turns)
+        await playSimulation();
+    } catch (e) {
+        addChatMessage('system', 'System', `Failed to submit action: ${e.message}`);
+        showError(`Failed to submit action: ${e.message}`);
+    }
+}
+
+async function refreshTurnState() {
+    try {
+        const response = await fetch(`/simulations/${simName}/pipeline/turn-state`);
+        const data = await response.json();
+        if (data.success) {
+            updateTurnUI(data.isPlayerTurn, data.currentActor);
+        }
+    } catch (e) {
+        console.error('Failed to refresh turn state:', e);
+    }
+}
+
+// Parse player text input into action and data
+function parsePlayerInput(input) {
+    const text = input.toLowerCase().trim();
+
+    // Parse "raise X" or "bet X"
+    const raiseMatch = text.match(/^(raise|bet|r)\s*(\d+)?$/i);
+    if (raiseMatch) {
+        const amount = raiseMatch[2] ? parseInt(raiseMatch[2]) : null;
+        return { action: 'raise', data: amount ? { amount } : {}, needsAmount: !amount };
+    }
+
+    // Parse "all in" or "allin"
+    if (text.match(/^(all[\s-]?in|allin|ai)$/i)) {
+        return { action: 'all_in', data: {} };
+    }
+
+    // Simple action keywords
+    const simpleActions = {
+        'call': 'call', 'c': 'call',
+        'fold': 'fold', 'f': 'fold',
+        'check': 'check', 'x': 'check', 'chk': 'check',
+    };
+
+    if (simpleActions[text]) {
+        return { action: simpleActions[text], data: {} };
+    }
+
+    // If no match, treat as custom action text
+    return { action: 'custom', data: { message: input }, raw: input };
+}
+
+// Player text input handling
+const playerInput = document.getElementById('player-input');
+const submitPlayerInputBtn = document.getElementById('submit-player-input');
+
+async function handlePlayerInput() {
+    const inputText = playerInput.value.trim();
+    if (!inputText) return;
+
+    const parsed = parsePlayerInput(inputText);
+
+    if (parsed.needsAmount) {
+        raiseAmountContainer.classList.remove('hidden');
+        document.getElementById('raise-amount').focus();
+        return;
+    }
+
+    if (parsed.action === 'custom') {
+        // Send as free-form message
+        await submitPlayerAction('message', parsed.data);
+    } else {
+        await submitPlayerAction(parsed.action, parsed.data);
+    }
+
+    playerInput.value = '';
+}
+
+submitPlayerInputBtn.addEventListener('click', handlePlayerInput);
+playerInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        handlePlayerInput();
+    }
+});
+
+// Player quick action buttons
+document.querySelectorAll('.player-action-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+        const action = btn.dataset.action;
+
+        if (action === 'raise') {
+            raiseAmountContainer.classList.toggle('hidden');
+            if (!raiseAmountContainer.classList.contains('hidden')) {
+                document.getElementById('raise-amount').focus();
+                return; // Wait for amount input
+            }
+        }
+
+        await submitPlayerAction(action, {});
+    });
+});
+
+// Confirm raise button
+document.getElementById('confirm-raise').addEventListener('click', async () => {
+    const amount = parseInt(document.getElementById('raise-amount').value);
+    if (!amount || amount <= 0) {
+        showError('Please enter a valid raise amount');
+        return;
+    }
+    await submitPlayerAction('raise', { amount: amount });
+    raiseAmountContainer.classList.add('hidden');
+    document.getElementById('raise-amount').value = '';
+});
+
+// Handle Enter key on raise amount input
+document.getElementById('raise-amount').addEventListener('keypress', async (e) => {
+    if (e.key === 'Enter') {
+        const amount = parseInt(e.target.value);
+        if (amount && amount > 0) {
+            await submitPlayerAction('raise', { amount: amount });
+            raiseAmountContainer.classList.add('hidden');
+            e.target.value = '';
+        }
+    }
+});
+
+// CPU Turn controls
+document.getElementById('execute-cpu-turn').addEventListener('click', async () => {
+    try {
+        const response = await fetch(`/simulations/${simName}/pipeline/execute-cpu-turn`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'}
+        });
+        const data = await response.json();
+        showResult(data);
+        await refreshTurnState();
+    } catch (e) {
+        showError(e.message);
+    }
+});
+
+document.getElementById('auto-advance').addEventListener('click', async () => {
+    try {
+        resultsOutput.textContent = 'Auto-advancing until player turn...';
+        const response = await fetch(`/simulations/${simName}/pipeline/auto-advance`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'}
+        });
+        const data = await response.json();
+        showResult(data);
+        await refreshTurnState();
+    } catch (e) {
+        showError(e.message);
+    }
+});
+
+// Refresh turn state on page load
+refreshTurnState();
+</script>
+{% endblock %}

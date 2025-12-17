@@ -1,0 +1,183 @@
+{
+  "simulation": "fantasy_rpg_adventure",
+  "runType": "play-turn-1",
+  "timestamp": "2025-12-17T00:37:07.772748",
+  "result": {
+    "turnNumber": 1,
+    "steps": [
+      {
+        "stepName": "turn_start",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 0,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "previousTurnResult": null
+        },
+        "outputs": {
+          "event": {
+            "name": "turn_start",
+            "data": {
+              "turn": 1
+            },
+            "source": "system",
+            "timestamp": "2025-12-17T00:36:55.233946"
+          }
+        },
+        "duration": 3.147125244140625e-05,
+        "error": null,
+        "timestamp": "2025-12-17T00:36:55.233937"
+      },
+      {
+        "stepName": "gather_events",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 1,
+          "stepConfig": {},
+          "turnNumber": 1,
+          "scheduledEvents": 0
+        },
+        "outputs": {
+          "eventsGathered": 2,
+          "playerEvents": [
+            {
+              "name": "player_message",
+              "data": {
+                "message": "RUN AWAY FAST"
+              },
+              "source": "hero",
+              "timestamp": "2025-12-17T00:36:54.968428"
+            }
+          ]
+        },
+        "duration": 0.0014955997467041016,
+        "error": null,
+        "timestamp": "2025-12-17T00:36:55.233964"
+      },
+      {
+        "stepName": "orchestrator_decide",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 2,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "events": [
+            {
+              "name": "turn_start",
+              "data": {
+                "turn": 1
+              },
+              "source": "system",
+              "timestamp": "2025-12-17T00:36:55.233946"
+            },
+            {
+              "name": "player_message",
+              "data": {
+                "message": "RUN AWAY FAST"
+              },
+              "source": "hero",
+              "timestamp": "2025-12-17T00:36:55.233977"
+            }
+          ],
+          "worldState": {
+            "_lastEventProcessedTime": "2025-12-17T00:36:54.968428",
+            "currentActor": null,
+            "_playerPending": false
+          },
+          "availableAgents": [
+            {
+              "name": "mysterious_merchant",
+              "role": "Enigmatic trader with rare wares and hidden knowledge"
+            },
+            {
+              "name": "narrator",
+              "role": "Game Master narrator who describes scenes, controls NPCs, and manages world events"
+            }
+          ],
+          "orchestratorName": "orchestrator"
+        },
+        "outputs": {
+          "decision": {
+            "agentsToWake": [
+              "narrator"
+            ],
+            "instructions": {
+              "narrator": "Initialize game world and start first scene. Interpret player's 'RUN AWAY FAST' instruction as a potential sign of tension or imminent danger. Begin with an opening scene that provides context and immediate atmosphere."
+            },
+            "reasoning": "Turn 0 is the game initialization moment. The narrator should establish the initial setting, create narrative context, and set up the opening scenario. The player's urgent message suggests an immediate, potentially dramatic starting point.",
+            "skipPlayerTurn": false
+          },
+          "agentsSelected": [
+            "narrator"
+          ]
+        },
+        "duration": 3.6657986640930176,
+        "error": null,
+        "timestamp": "2025-12-17T00:36:55.235498"
+      },
+      {
+        "stepName": "execute_agents",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 3,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "agentsToWake": [
+            "narrator"
+          ],
+          "instructions": {
+            "narrator": "Initialize game world and start first scene. Interpret player's 'RUN AWAY FAST' instruction as a potential sign of tension or imminent danger. Begin with an opening scene that provides context and immediate atmosphere."
+          }
+        },
+        "outputs": {
+          "actions": [
+            {
+              "agentName": "narrator",
+              "actionType": "speak",
+              "content": "**The Whispering Woods - Dawn**\n\nMist clings to the forest floor like ghostly fingers as pale sunlight filters through the ancient canopy above. You find yourself on a narrow dirt path, heart already pounding from some half-remembered nightmare that jolted you awake in your bedroll moments ago. \n\nThe woods around you are unnaturally quiet - no birdsong, no rustle of small creatures. Even your breathing seems too loud in the oppressive silence.\n\nThen you hear it: a low, rhythmic *thrum-thrum-thrum* echoing from somewhere behind you on the path. Getting closer. The ground beneath your feet vibrates slightly with each beat, like the footfalls of something massive.\n\nA murder of crows suddenly explodes from the treeline ahead, cawing in panic as they flee deeper into the forest.\n\n*Thrum-thrum-thrum.*\n\nCloser now.\n\n**What do you do?**\n\n*[The path ahead winds deeper into the misty woods, while thick undergrowth flanks both sides. Your pack and gear are hastily slung over your shoulder from your hurried awakening.]*",
+              "target": "hero",
+              "metadata": {
+                "instruction": "Initialize game world and start first scene. Interpret player's 'RUN AWAY FAST' instruction as a potential sign of tension or imminent danger. Begin with an opening scene that provides context and immediate atmosphere."
+              },
+              "timestamp": "2025-12-17T00:37:07.772160"
+            }
+          ],
+          "agentsExecuted": 1
+        },
+        "duration": 8.870894432067871,
+        "error": null,
+        "timestamp": "2025-12-17T00:36:58.901286"
+      },
+      {
+        "stepName": "player_turn",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 4,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "playerAgent": "hero",
+          "skipPlayerTurn": false
+        },
+        "outputs": {
+          "playerPending": true,
+          "playerAgent": "hero"
+        },
+        "duration": 1.0728836059570312e-05,
+        "error": null,
+        "timestamp": "2025-12-17T00:37:07.772195"
+      }
+    ],
+    "totalDuration": 12.53828477859497,
+    "success": true,
+    "orchestratorDecision": {
+      "agentsToWake": [
+        "narrator"
+      ],
+      "instructions": {
+        "narrator": "Initialize game world and start first scene. Interpret player's 'RUN AWAY FAST' instruction as a potential sign of tension or imminent danger. Begin with an opening scene that provides context and immediate atmosphere."
+      },
+      "reasoning": "Turn 0 is the game initialization moment. The narrator should establish the initial setting, create narrative context, and set up the opening scenario. The player's urgent message suggests an immediate, potentially dramatic starting point.",
+      "skipPlayerTurn": false
+    }
+  }
+}

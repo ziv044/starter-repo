@@ -1,0 +1,183 @@
+{
+  "simulation": "fantasy_rpg_adventure",
+  "runType": "play-turn-1",
+  "timestamp": "2025-12-17T00:31:35.527940",
+  "result": {
+    "turnNumber": 1,
+    "steps": [
+      {
+        "stepName": "turn_start",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 0,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "previousTurnResult": null
+        },
+        "outputs": {
+          "event": {
+            "name": "turn_start",
+            "data": {
+              "turn": 1
+            },
+            "source": "system",
+            "timestamp": "2025-12-17T00:31:22.831665"
+          }
+        },
+        "duration": 2.0265579223632812e-05,
+        "error": null,
+        "timestamp": "2025-12-17T00:31:22.831658"
+      },
+      {
+        "stepName": "gather_events",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 1,
+          "stepConfig": {},
+          "turnNumber": 1,
+          "scheduledEvents": 0
+        },
+        "outputs": {
+          "eventsGathered": 2,
+          "playerEvents": [
+            {
+              "name": "player_message",
+              "data": {
+                "message": "RUN AWAY FAST AS POSSIBLE"
+              },
+              "source": "hero",
+              "timestamp": "2025-12-17T00:31:22.582021"
+            }
+          ]
+        },
+        "duration": 0.0009829998016357422,
+        "error": null,
+        "timestamp": "2025-12-17T00:31:22.831679"
+      },
+      {
+        "stepName": "orchestrator_decide",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 2,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "events": [
+            {
+              "name": "turn_start",
+              "data": {
+                "turn": 1
+              },
+              "source": "system",
+              "timestamp": "2025-12-17T00:31:22.831665"
+            },
+            {
+              "name": "player_message",
+              "data": {
+                "message": "RUN AWAY FAST AS POSSIBLE"
+              },
+              "source": "hero",
+              "timestamp": "2025-12-17T00:31:22.831691"
+            }
+          ],
+          "worldState": {
+            "currentActor": null,
+            "_playerPending": false,
+            "_lastEventProcessedTime": "2025-12-17T00:31:22.582021"
+          },
+          "availableAgents": [
+            {
+              "name": "mysterious_merchant",
+              "role": "Enigmatic trader with rare wares and hidden knowledge"
+            },
+            {
+              "name": "narrator",
+              "role": "Game Master narrator who describes scenes, controls NPCs, and manages world events"
+            }
+          ],
+          "orchestratorName": "orchestrator"
+        },
+        "outputs": {
+          "decision": {
+            "agentsToWake": [
+              "narrator"
+            ],
+            "instructions": {
+              "narrator": "Initialize the game world and create an opening scene. The player's urgent 'RUN AWAY' message suggests they are in immediate danger or a high-stakes situation. Start with a tense, atmospheric introduction that provides context for potential threat."
+            },
+            "reasoning": "Since this is Turn 0 (game initialization), the narrator should set the initial scene and establish the starting context. The player's message implies a need for an urgent, dynamic opening that explains why running might be necessary.",
+            "skipPlayerTurn": false
+          },
+          "agentsSelected": [
+            "narrator"
+          ]
+        },
+        "duration": 4.192663669586182,
+        "error": null,
+        "timestamp": "2025-12-17T00:31:22.832697"
+      },
+      {
+        "stepName": "execute_agents",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 3,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "agentsToWake": [
+            "narrator"
+          ],
+          "instructions": {
+            "narrator": "Initialize the game world and create an opening scene. The player's urgent 'RUN AWAY' message suggests they are in immediate danger or a high-stakes situation. Start with a tense, atmospheric introduction that provides context for potential threat."
+          }
+        },
+        "outputs": {
+          "actions": [
+            {
+              "agentName": "narrator",
+              "actionType": "speak",
+              "content": "**The Ancient Forest - Nightfall**\n\nThe skeletal branches above you creak ominously as shadows dance in the dying light. Your breath comes in ragged gasps, heart pounding against your ribs like a caged animal. Behind you, something massive crashes through the underbrush\u2014splintering wood and snapping branches with terrifying ease.\n\n*CRACK!* \n\nAnother tree falls, closer this time. Much closer.\n\nYou clutch your travel pack tighter and peer desperately through the gloom ahead. Three paths branch before you in the forest floor:\n\n- A **narrow deer trail** winding uphill toward rocky outcroppings\n- A **wider path** leading downhill toward what might be a stream\n- A **gap between two massive oak trees** that disappears into impenetrable darkness\n\nThe thunderous footsteps behind you pause... then start again, faster now. Whatever hunts you has caught your scent.\n\n*THUD. THUD. THUD.*\n\nYou have mere seconds to choose your escape route before the creature breaks through the treeline behind you.\n\n**What do you do?**",
+              "target": "hero",
+              "metadata": {
+                "instruction": "Initialize the game world and create an opening scene. The player's urgent 'RUN AWAY' message suggests they are in immediate danger or a high-stakes situation. Start with a tense, atmospheric introduction that provides context for potential threat."
+              },
+              "timestamp": "2025-12-17T00:31:35.527506"
+            }
+          ],
+          "agentsExecuted": 1
+        },
+        "duration": 8.50216817855835,
+        "error": null,
+        "timestamp": "2025-12-17T00:31:27.025355"
+      },
+      {
+        "stepName": "player_turn",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 4,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "playerAgent": "hero",
+          "skipPlayerTurn": false
+        },
+        "outputs": {
+          "playerPending": true,
+          "playerAgent": "hero"
+        },
+        "duration": 8.106231689453125e-06,
+        "error": null,
+        "timestamp": "2025-12-17T00:31:35.527531"
+      }
+    ],
+    "totalDuration": 12.695891857147217,
+    "success": true,
+    "orchestratorDecision": {
+      "agentsToWake": [
+        "narrator"
+      ],
+      "instructions": {
+        "narrator": "Initialize the game world and create an opening scene. The player's urgent 'RUN AWAY' message suggests they are in immediate danger or a high-stakes situation. Start with a tense, atmospheric introduction that provides context for potential threat."
+      },
+      "reasoning": "Since this is Turn 0 (game initialization), the narrator should set the initial scene and establish the starting context. The player's message implies a need for an urgent, dynamic opening that explains why running might be necessary.",
+      "skipPlayerTurn": false
+    }
+  }
+}

@@ -25,10 +25,11 @@ from pm6.agents import (
     RelevanceScore,
 )
 from pm6.config import getSettings
-from pm6.core.events import EventBus, Events
+from pm6.core.event_config import EventConfig, EventConfigStore
+from pm6.core.events import EventBus
 from pm6.core.response import AgentResponse, InteractionResult
 from pm6.core.rules import SimulationRules
-from pm6.core.types import Event
+from pm6.core.types import Event, PipelineConfig, ResponseFormatConfig, ResponseFormatType
 from pm6.cost import (
     CostEstimate,
     CostEstimator,
@@ -85,6 +86,7 @@ class Simulation:
         rules: Simulation rules and constraints.
         testMode: Enable test mode with mock responses.
         mockClient: Custom mock client for test mode.
+        defaultResponseFormat: Default response format for play mode.
     """
 
     def __init__(
@@ -98,6 +100,7 @@ class Simulation:
         rules: SimulationRules | None = None,
         testMode: bool = False,
         mockClient: MockAnthropicClient | None = None,
+        defaultResponseFormat: ResponseFormatConfig | None = None,
     ):
         settings = getSettings()
         self.name = name
@@ -124,6 +127,7 @@ class Simulation:
         self._toolRegistry = ToolRegistry()
         self._rules = rules or SimulationRules()
         self._eventBus = EventBus()
+        self._eventConfigStore = EventConfigStore(self._dbPath / name / "events")
         self._turnCount = 0
         self._autoApplyStateUpdates = True  # Auto-apply updates after interactions
 
@@ -153,6 +157,14 @@ class Simulation:
         self._isRunning = False
         self._recordingEnabled = True  # Record by default
         self._playerAgentName: str | None = None
+
+        # Pipeline configuration (orchestrator vs initiative mode)
+        self._pipelineConfig: PipelineConfig = PipelineConfig.default()
+
+        # Play mode response format configuration
+        self._defaultResponseFormat: ResponseFormatConfig = (
+            defaultResponseFormat or ResponseFormatConfig()
+        )
 
         # Load existing agents from disk
         self._loadExistingAgents()
@@ -539,6 +551,204 @@ class Simulation:
         """Get the event bus for advanced configuration."""
         return self._eventBus
 
+    # Event Configuration Methods
+
+    def registerEventConfig(self, config: EventConfig) -> None:
+        """Register an event configuration.
+
+        Args:
+            config: Event configuration to register.
+        """
+        self._eventConfigStore.save(config)
+        logger.info(f"Registered event config: {config.name}")
+
+    def getEventConfig(self, name: str) -> EventConfig | None:
+        """Get an event configuration by name.
+
+        Args:
+            name: Event config name (without .json extension).
+
+        Returns:
+            EventConfig or None if not found.
+        """
+        return self._eventConfigStore.load(name)
+
+    def listEventConfigs(self) -> list[str]:
+        """List all available event configurations.
+
+        Returns:
+            List of event config names.
+        """
+        return self._eventConfigStore.list()
+
+    def hasEventConfig(self, name: str) -> bool:
+        """Check if an event config exists.
+
+        Args:
+            name: Event config name.
+
+        Returns:
+            True if the event config exists.
+        """
+        return self._eventConfigStore.exists(name)
+
+    def deleteEventConfig(self, name: str) -> bool:
+        """Delete an event configuration.
+
+        Args:
+            name: Event config name to delete.
+
+        Returns:
+            True if deleted successfully.
+        """
+        result = self._eventConfigStore.delete(name)
+        if result:
+            logger.info(f"Deleted event config: {name}")
+        return result
+
+    @property
+    def eventConfigStore(self) -> EventConfigStore:
+        """Get the event config store for advanced access."""
+        return self._eventConfigStore
+
+    def loadInitialWorldState(self) -> dict[str, Any] | None:
+        """Load initial world state from storage.
+
+        Looks for state/initial.json in the simulation's db folder.
+
+        Returns:
+            Initial world state dict or None if not found.
+        """
+        initialStatePath = self._dbPath / self.name / "state" / "initial.json"
+        if initialStatePath.exists():
+            try:
+                with open(initialStatePath, "r", encoding="utf-8") as f:
+                    state = json.load(f)
+                logger.debug(f"Loaded initial world state from {initialStatePath}")
+                return state
+            except Exception as e:
+                logger.warning(f"Failed to load initial state: {e}")
+        return None
+
+    def saveInitialWorldState(self, state: dict[str, Any]) -> bool:
+        """Save initial world state to storage.
+
+        Args:
+            state: World state to save as initial.
+
+        Returns:
+            True if saved successfully.
+        """
+        statePath = self._dbPath / self.name / "state"
+        statePath.mkdir(parents=True, exist_ok=True)
+        initialStatePath = statePath / "initial.json"
+
+        try:
+            with open(initialStatePath, "w", encoding="utf-8") as f:
+                json.dump(state, f, indent=2)
+            logger.info(f"Saved initial world state to {initialStatePath}")
+            return True
+        except Exception as e:
+            logger.error(f"Failed to save initial state: {e}")
+            return False
+
+    # Pipeline Configuration
+
+    def getPipelineConfig(self) -> PipelineConfig:
+        """Get the pipeline configuration.
+
+        Returns:
+            Current pipeline configuration.
+        """
+        return self._pipelineConfig
+
+    def setPipelineConfig(self, config: PipelineConfig) -> None:
+        """Set the pipeline configuration.
+
+        Args:
+            config: New pipeline configuration.
+        """
+        self._pipelineConfig = config
+        # Save to storage
+        self._storage.saveState("pipeline_config", config.toDict())
+        logger.info(f"Pipeline config set: turnMode={config.turnMode.value}")
+
+    def loadPipelineConfig(self) -> PipelineConfig | None:
+        """Load pipeline config from storage.
+
+        Returns:
+            Loaded config or None if not found.
+        """
+        try:
+            data = self._storage.loadState("pipeline_config")
+            if data:
+                self._pipelineConfig = PipelineConfig.fromDict(data)
+                return self._pipelineConfig
+        except Exception as e:
+            logger.warning(f"Failed to load pipeline config: {e}")
+        return None
+
+    # Play Mode Response Format Configuration
+
+    def getDefaultResponseFormat(self) -> ResponseFormatConfig:
+        """Get the default response format configuration.
+
+        Returns:
+            Current default response format configuration.
+        """
+        return self._defaultResponseFormat
+
+    def setDefaultResponseFormat(self, config: ResponseFormatConfig) -> None:
+        """Set the default response format configuration.
+
+        Args:
+            config: New response format configuration.
+        """
+        self._defaultResponseFormat = config
+        self._storage.saveState("response_format", config.toDict())
+        logger.info(f"Response format set: formatType={config.formatType.value}")
+
+    def loadResponseFormat(self) -> ResponseFormatConfig | None:
+        """Load response format config from storage.
+
+        Returns:
+            Loaded config or None if not found.
+        """
+        try:
+            data = self._storage.loadState("response_format")
+            if data:
+                self._defaultResponseFormat = ResponseFormatConfig.fromDict(data)
+                return self._defaultResponseFormat
+        except Exception as e:
+            logger.warning(f"Failed to load response format config: {e}")
+        return None
+
+    def getEffectiveResponseFormat(
+        self, agentName: str | None = None, eventName: str | None = None
+    ) -> ResponseFormatConfig:
+        """Get the effective response format with hierarchical override.
+
+        Resolution order: Agent > Event > Simulation default.
+
+        Args:
+            agentName: Optional agent name to check for override.
+            eventName: Optional event name to check for override (TODO: implement).
+
+        Returns:
+            The effective response format configuration.
+        """
+        # Check agent-level override
+        if agentName and agentName in self._agents:
+            agent = self._agents[agentName]
+            if agent.responseFormat is not None:
+                if self._defaultResponseFormat.allowFormatOverride:
+                    return agent.responseFormat
+
+        # TODO: Check event-level override when event configs support it
+
+        # Fall back to simulation default
+        return self._defaultResponseFormat
+
     # World State Management
 
     def setWorldState(self, state: dict[str, Any]) -> None:
@@ -704,10 +914,11 @@ class Simulation:
         )
 
         # Check cache first
+        logger.info(f"Cache enabled: {self._responseCache is not None}")
         if self._responseCache:
             cachedResponse = self._responseCache.get(signature)
             if cachedResponse:
-                logger.info(f"Cache hit for {agentName}")
+                logger.info(f"Cache HIT for {agentName}: {cachedResponse.response[:50]}...")
                 if self._costTracker:
                     self._costTracker.recordCacheHit()
 
@@ -767,6 +978,7 @@ class Simulation:
             logger.warning(f"Token budget warning: {budgetCheck['reason']}")
 
         # Generate response via LLM
+        logger.info(f"Calling LLM client: {type(self._llmClient).__name__}")
         llmResponse = self._llmClient.generateAgentResponse(
             agentSystemPrompt=agent.systemPrompt,
             messages=messages,
@@ -774,6 +986,7 @@ class Simulation:
         )
 
         content = llmResponse["content"]
+        logger.info(f"LLM response (first 100 chars): {content[:100]}")
 
         # Record token usage
         usage = llmResponse.get("usage", {})
@@ -1744,6 +1957,56 @@ class Simulation:
         """Check if simulation is in test mode."""
         return self._testMode
 
+    def setTestMode(self, enabled: bool) -> None:
+        """Switch between test mode and real LLM mode.
+
+        Args:
+            enabled: True for test/mock mode, False for real LLM.
+        """
+        if enabled == self._testMode:
+            return  # No change needed
+
+        if enabled:
+            # Switch to mock client
+            from pm6.testing import MockAnthropicClient
+
+            self._llmClient = MockAnthropicClient(
+                costTracker=self._costTracker,
+                modelRouter=self._modelRouter,
+            )
+            self._mockClient = self._llmClient  # type: ignore
+        else:
+            # Switch to real client
+            self._llmClient = AnthropicClient(
+                costTracker=self._costTracker,
+                modelRouter=self._modelRouter,
+            )
+            self._mockClient = None
+
+        self._testMode = enabled
+        logger.info(f"Simulation '{self.name}' test mode set to {enabled}")
+
+    @property
+    def isCacheEnabled(self) -> bool:
+        """Check if response caching is enabled."""
+        return self._responseCache is not None
+
+    def setCacheEnabled(self, enabled: bool) -> None:
+        """Enable or disable response caching.
+
+        Args:
+            enabled: True to enable caching, False to disable.
+        """
+        if enabled and self._responseCache is None:
+            # Enable cache
+            cachePath = self._dbPath / self.name / "responses"
+            self._responseCache = ResponseCache(cachePath)
+            logger.info(f"Simulation '{self.name}' cache enabled")
+        elif not enabled and self._responseCache is not None:
+            # Disable cache
+            self._responseCache = None
+            logger.info(f"Simulation '{self.name}' cache disabled")
+
     @property
     def mockClient(self) -> MockAnthropicClient | None:
         """Get the mock client (only available in test mode).
@@ -1910,7 +2173,7 @@ class Simulation:
         Returns:
             ValidationReport with results.
         """
-        from pm6.testing import AgentValidator, ValidationReport
+        from pm6.testing import AgentValidator
 
         if validator is None:
             validator = AgentValidator()

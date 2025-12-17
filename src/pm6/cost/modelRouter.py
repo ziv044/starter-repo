@@ -6,8 +6,8 @@ Routes tasks to appropriate models based on complexity:
 - Opus for complex reasoning (when needed)
 """
 
-from enum import Enum
 import logging
+from enum import Enum
 
 logger = logging.getLogger("pm6.cost")
 

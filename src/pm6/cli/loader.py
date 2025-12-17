@@ -2,15 +2,14 @@
 
 from __future__ import annotations
 
-import yaml
 from pathlib import Path
 from typing import Any, Literal
 
+import yaml
 from pydantic import BaseModel, Field
 
 from pm6.agents.agentConfig import AgentConfig
 from pm6.agents.memoryPolicy import MemoryPolicy
-from pm6.core.rules import RuleType
 
 
 class AgentDefinition(BaseModel):

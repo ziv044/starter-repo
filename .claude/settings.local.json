@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(cat:*)",
+      "Bash(python:*)",
+      "Bash(find:*)",
+      "Bash(dir:*)",
+      "SlashCommand(/bmad:bmm:workflows:workflow-init)",
+      "Bash(git -C \"c:\\Users\\ziv04\\pm6\" status)",
+      "Bash(git -C \"c:\\Users\\ziv04\\pm6\" diff src/pm6/logging/config.py)",
+      "Bash(git -C \"c:\\Users\\ziv04\\pm6\" log --oneline -5)",
+      "Bash(git -C \"c:\\Users\\ziv04\\pm6\" add src/pm6/logging/config.py)",
+      "Bash(git -C \"c:\\Users\\ziv04\\pm6\" commit -m \"$(cat <<''EOF''\nAdd automatic file logging with timestamps\n\n- Add enableFileLogging parameter to configureLogging (defaults to True)\n- Auto-create timestamped log files in logs/ directory (pm6_YYYY-MM-DD_HH-MM-SS.log)\n- Add helper functions _getLogsDirectory() and _generateLogFilename()\n- Logs directory is auto-created if it doesn''t exist\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n)\")"
+    ]
+  }
+}

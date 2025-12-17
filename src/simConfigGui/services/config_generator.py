@@ -1,40 +1,79 @@
 """Service for AI-assisted simulation configuration generation."""
 
 import json
+import re
 from typing import Any
 
 from anthropic import Anthropic
 
 
+def _sanitize_json_string(content: str) -> str:
+    """
+    Sanitize JSON string by fixing unescaped control characters.
+
+    LLMs often generate JSON with literal newlines in string values instead
+    of escaped \\n sequences. This function fixes those issues.
+    """
+    # Find JSON content
+    start = content.find("{")
+    end = content.rfind("}") + 1
+    if start == -1 or end <= start:
+        return content
+
+    json_str = content[start:end]
+
+    # Fix unescaped newlines inside JSON strings
+    # This regex finds strings and escapes newlines within them
+    def fix_string(match: re.Match) -> str:
+        s = match.group(0)
+        # Replace actual newlines with escaped newlines
+        s = s.replace("\n", "\\n")
+        s = s.replace("\r", "\\r")
+        s = s.replace("\t", "\\t")
+        return s
+
+    # Match JSON strings (handling escaped quotes)
+    result = re.sub(r'"(?:[^"\\]|\\.)*"', fix_string, json_str, flags=re.DOTALL)
+
+    return result
+
+
 # System prompt for the conversational interviewer
-INTERVIEWER_PROMPT = """You are a helpful simulation design assistant for the pm6 multi-agent simulation framework. Your job is to have a conversation with the user to gather enough information to create a simulation configuration.
+INTERVIEWER_PROMPT = """You gather simulation requirements through a 4-step flow. Be brief and direct. No opinions or commentary.
 
-You need to understand:
-1. **Scenario Type** - What kind of simulation? (political, RPG, business, educational, etc.)
-2. **Characters/Agents** - Who are the main participants? What are their roles, personalities, goals?
-3. **Setting** - Where and when does this take place? What's the context?
-4. **Dynamics** - How should agents interact? Any conflicts, alliances, or special relationships?
-5. **Player Control** - Should any agents be controlled by a human player?
-6. **Operational Needs** - Does the simulation need a narrator, game master, fact-checker, or other utility agents?
+## THE FLOW (follow in order):
+1. SIMULATION SUBJECT - What is being simulated? (scenario type, premise, goals)
+2. WORLD STATE - Initial conditions, setting, context, relevant facts
+3. AGENTS - Characters/participants: names, roles, personalities, relationships, player vs CPU control
+4. GAME RULES & FLOW - Rules, win/lose conditions, when each agent should act, narrative arc
+   (This becomes the orchestrator's brain - the game master that controls simulation flow)
 
-Guidelines:
-- Ask ONE focused question at a time (don't overwhelm with multiple questions)
-- Be conversational and friendly
-- Build on what the user has already told you
-- If the user's initial description is very detailed, you may need fewer questions
-- When you have enough information, indicate you're ready to generate the config
+## RULES:
+- Ask ONE short question per response
+- No filler words, no opinions, no encouragement
+- State which step you're on: "[Step X/4: TOPIC]"
+- Skip steps if user already provided that info
+- When all 4 steps are covered, output "READY_TO_GENERATE:" followed by a bullet summary
 
-Your response format:
-- If you need more information: Ask a single clarifying question
-- If you have enough information: Start your response with "READY_TO_GENERATE:" followed by a brief summary
+## RESPONSE FORMAT:
+[Step X/4: TOPIC]
+Your single question here?
 
-Examples of good questions:
-- "What roles or characters should participate in this simulation?"
-- "Should any of these characters be controlled by a human player, or all AI?"
-- "What's the main conflict or goal driving this simulation?"
-- "Would you like a narrator to set scenes and provide context?"
+## EXAMPLE RESPONSES:
+[Step 1/4: SIMULATION SUBJECT]
+What type of scenario? (political debate, RPG, business meeting, etc.)
 
-Keep responses concise (2-3 sentences max for questions)."""
+[Step 3/4: AGENTS]
+List the characters. For each: name, role, and whether player or CPU controlled.
+
+[Step 4/4: GAME RULES & FLOW]
+What rules govern this simulation? (win/lose conditions, agent activation order, narrative beats)
+
+READY_TO_GENERATE:
+- Subject: Parliamentary debate on healthcare bill
+- World State: Modern parliament, budget crisis context
+- Agents: PM (player), Opposition Leader (CPU), Advisor (CPU)
+- Game Rules: Opposition speaks after PM decisions, Advisor on budget issues, vote at turn 10"""
 
 
 # Example templates for common simulation scenarios
@@ -76,11 +115,16 @@ Given a user's description of a simulation they want to create, generate a compl
 
 2. **Operational Agents** - Utility agents for game flow, narration, state updates
    - Same fields as entity agents, but serve meta/functional purposes
-   - Examples: narrator, game_master, state_updater, fact_checker
+   - IMPORTANT: Always include an "orchestrator" agent (see below)
+   - Other examples: narrator, state_updater, fact_checker
 
 3. **World State** - Initial state data for the simulation
    - Key-value pairs representing the simulation environment
    - Should include relevant context for all agents
+
+4. **Pipeline Configuration** - How turns are executed
+   - turnMode: "orchestrator" (recommended) or "initiative" (legacy)
+   - The orchestrator decides which agents act each turn
 
 Output a JSON object with this exact structure:
 {
@@ -100,20 +144,31 @@ Output a JSON object with this exact structure:
     ],
     "operationalAgents": [
         {
-            "name": "narrator",
-            "role": "Provides context and scene descriptions",
-            "systemPrompt": "You are the narrator...",
-            "model": "claude-sonnet-4-20250514",
+            "name": "orchestrator",
+            "role": "Game master that controls simulation flow and decides which agents act",
+            "systemPrompt": "You are the game master controlling this simulation.\n\nGAME RULES:\n[Include rules, win/lose conditions from user input]\n\nFLOW LOGIC:\n[When to wake which agents based on events/state]\n\nAGENTS & WHEN TO WAKE:\n[List each agent and conditions for activation]\n\nNARRATIVE:\n[Story progression, milestones if applicable]",
+            "model": "claude-3-5-haiku-20241022",
             "memoryPolicy": "full",
             "controlledBy": "cpu",
-            "initiative": 0.3,
-            "metadata": {"agentType": "operational", "function": "narrator"}
+            "initiative": 1.0,
+            "metadata": {"agentType": "operational", "function": "orchestrator"}
         }
     ],
     "worldState": {
         "setting": "Description of the setting",
         "currentSituation": "What's happening now",
         "relevantContext": {}
+    },
+    "pipeline": {
+        "turnMode": "orchestrator",
+        "orchestratorName": "orchestrator",
+        "steps": [
+            {"step": "turn_start"},
+            {"step": "gather_events"},
+            {"step": "orchestrator_decide"},
+            {"step": "execute_agents"},
+            {"step": "player_turn"}
+        ]
     },
     "settings": {
         "testMode": true,
@@ -122,16 +177,22 @@ Output a JSON object with this exact structure:
 }
 
 Guidelines:
-- Use "claude-sonnet-4-20250514" for most agents (good balance of capability and cost)
-- Use "claude-3-5-haiku-20241022" for simpler operational agents
+- Use "claude-sonnet-4-20250514" for most entity agents (good balance of capability and cost)
+- Use "claude-3-5-haiku-20241022" for the orchestrator (cheap, fast coordination)
 - Use "claude-opus-4-20250514" only for complex reasoning tasks
 - memoryPolicy options: "summary" (default), "full", "selective", "none"
 - controlledBy: "cpu" for AI, "player" for human-controlled
 - initiative: 0.0-1.0, higher means more likely to speak unprompted
-- Operational agents typically have lower initiative (0.2-0.4)
 - Entity agents that are main characters have higher initiative (0.5-0.8)
 - Always include at least one entity agent
-- Include operational agents only when they serve a clear purpose
+- ALWAYS include the orchestrator operational agent - it's the game master brain
+- The orchestrator's systemPrompt should contain ALL game rules and flow logic
+
+Orchestrator System Prompt Guidelines:
+- GAME RULES: Win/lose conditions, constraints, what's allowed
+- FLOW LOGIC: Event-based triggers (e.g., "crisis → wake advisor first")
+- AGENTS & WHEN TO WAKE: List each agent with activation conditions
+- NARRATIVE: Story arc, milestones, pacing
 
 Return ONLY the JSON object, no additional text or explanation."""
 
@@ -182,13 +243,23 @@ class ConfigGenerator:
             # First try direct parse
             config = json.loads(content)
         except json.JSONDecodeError:
-            # Try to find JSON in the response
-            start = content.find("{")
-            end = content.rfind("}") + 1
-            if start != -1 and end > start:
-                config = json.loads(content[start:end])
-            else:
-                raise ValueError("Could not extract valid JSON from LLM response")
+            # Try to sanitize and extract JSON (fix unescaped control chars)
+            try:
+                sanitized = _sanitize_json_string(content)
+                config = json.loads(sanitized)
+            except json.JSONDecodeError:
+                # Try to find JSON in the response
+                start = content.find("{")
+                end = content.rfind("}") + 1
+                if start != -1 and end > start:
+                    try:
+                        config = json.loads(content[start:end])
+                    except json.JSONDecodeError:
+                        # Last resort: sanitize the extracted portion
+                        sanitized = _sanitize_json_string(content[start:end])
+                        config = json.loads(sanitized)
+                else:
+                    raise ValueError("Could not extract valid JSON from LLM response")
 
         return self._validate_config(config)
 
@@ -216,12 +287,78 @@ class ConfigGenerator:
         if "settings" not in config:
             config["settings"] = {"testMode": True, "enableCaching": True}
 
+        # Ensure pipeline config exists with orchestrator mode
+        if "pipeline" not in config:
+            config["pipeline"] = {
+                "turnMode": "orchestrator",
+                "orchestratorName": "orchestrator",
+                "steps": [
+                    {"step": "turn_start"},
+                    {"step": "gather_events"},
+                    {"step": "orchestrator_decide"},
+                    {"step": "execute_agents"},
+                    {"step": "player_turn"},
+                ],
+            }
+
         # Validate each agent has required fields
         for agent_list in [config["entityAgents"], config["operationalAgents"]]:
             for agent in agent_list:
                 self._validate_agent(agent)
 
+        # Ensure orchestrator exists in operational agents
+        self._ensure_orchestrator(config)
+
         return config
+
+    def _ensure_orchestrator(self, config: dict[str, Any]) -> None:
+        """Ensure an orchestrator agent exists in the config."""
+        op_agents = config.get("operationalAgents", [])
+        has_orchestrator = any(
+            agent.get("name") == "orchestrator"
+            or agent.get("metadata", {}).get("function") == "orchestrator"
+            for agent in op_agents
+        )
+
+        if not has_orchestrator:
+            # Create default orchestrator
+            orchestrator = {
+                "name": "orchestrator",
+                "role": "Game master that controls simulation flow",
+                "systemPrompt": self._generate_default_orchestrator_prompt(config),
+                "model": "claude-3-5-haiku-20241022",
+                "memoryPolicy": "full",
+                "controlledBy": "cpu",
+                "initiative": 1.0,
+                "metadata": {"agentType": "operational", "function": "orchestrator"},
+            }
+            config["operationalAgents"].insert(0, orchestrator)
+
+    def _generate_default_orchestrator_prompt(self, config: dict[str, Any]) -> str:
+        """Generate a default orchestrator system prompt based on config."""
+        entity_agents = config.get("entityAgents", [])
+        agent_list = "\n".join(
+            f"- {a.get('name', 'unknown')}: {a.get('role', 'no role')}"
+            for a in entity_agents
+        )
+
+        return f"""You are the game master controlling this simulation.
+
+GAME RULES:
+- Manage the flow of the simulation
+- Ensure agents respond appropriately to events
+
+FLOW LOGIC:
+- Evaluate events and world state each turn
+- Decide which agents should respond
+
+AGENTS & WHEN TO WAKE:
+{agent_list or '- No agents defined'}
+
+When deciding which agents to wake, consider:
+- The current events and world state
+- Which agents are relevant to the situation
+- The natural flow of conversation/interaction"""
 
     def _validate_agent(self, agent: dict[str, Any]) -> None:
         """Validate and normalize agent configuration."""

@@ -1,0 +1,161 @@
+{
+  "simulation": "fantasy_rpg_adventure",
+  "runType": "play-turn-1",
+  "timestamp": "2025-12-16T23:54:43.250053",
+  "result": {
+    "turnNumber": 1,
+    "steps": [
+      {
+        "stepName": "turn_start",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 0,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "previousTurnResult": null
+        },
+        "outputs": {
+          "event": {
+            "name": "turn_start",
+            "data": {
+              "turn": 1
+            },
+            "source": "system",
+            "timestamp": "2025-12-16T23:54:29.667811"
+          }
+        },
+        "duration": 3.24249267578125e-05,
+        "error": null,
+        "timestamp": "2025-12-16T23:54:29.667800"
+      },
+      {
+        "stepName": "gather_events",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 1,
+          "stepConfig": {},
+          "turnNumber": 1,
+          "scheduledEvents": 0
+        },
+        "outputs": {
+          "eventsGathered": 1
+        },
+        "duration": 6.67572021484375e-06,
+        "error": null,
+        "timestamp": "2025-12-16T23:54:29.667838"
+      },
+      {
+        "stepName": "orchestrator_decide",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 2,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "events": [
+            {
+              "name": "turn_start",
+              "data": {
+                "turn": 1
+              },
+              "source": "system",
+              "timestamp": "2025-12-16T23:54:29.667811"
+            }
+          ],
+          "worldState": {},
+          "availableAgents": [
+            {
+              "name": "mysterious_merchant",
+              "role": "Enigmatic trader with rare wares and hidden knowledge"
+            },
+            {
+              "name": "narrator",
+              "role": "Game Master narrator who describes scenes, controls NPCs, and manages world events"
+            }
+          ],
+          "orchestratorName": "orchestrator"
+        },
+        "outputs": {
+          "decision": {
+            "agentsToWake": [
+              "narrator"
+            ],
+            "instructions": {
+              "narrator": "Begin the game by establishing the opening scene, introducing the initial setting, and preparing the hero's first narrative moment. Create an atmospheric starting point that hints at potential adventures."
+            },
+            "reasoning": "As this is Turn 0 and the world state is empty, the narrator needs to launch the game by establishing the initial context, setting, and first narrative moment. The narrator will create the foundational scene from which the hero's journey can begin.",
+            "skipPlayerTurn": false
+          },
+          "agentsSelected": [
+            "narrator"
+          ]
+        },
+        "duration": 4.704948902130127,
+        "error": null,
+        "timestamp": "2025-12-16T23:54:29.667870"
+      },
+      {
+        "stepName": "execute_agents",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 3,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "agentsToWake": [
+            "narrator"
+          ],
+          "instructions": {
+            "narrator": "Begin the game by establishing the opening scene, introducing the initial setting, and preparing the hero's first narrative moment. Create an atmospheric starting point that hints at potential adventures."
+          }
+        },
+        "outputs": {
+          "actions": [
+            {
+              "agentName": "narrator",
+              "actionType": "speak",
+              "content": "**The Crossroads Tavern**\n\nThe storm rages against the weathered stone walls of the Crossroads Tavern as you push through its heavy oak door. Wind howls behind you before the door slams shut with a resounding *thud*. Inside, flickering candlelight dances across rough-hewn tables where a handful of travelers nurse their ales in hushed conversation.\n\nThe tavern keeper, a stout woman with graying braids, looks up from polishing a mug. \"Nasty night to be on the roads, stranger. You look like you could use warmth and a hot meal.\"\n\nAt a corner table, a hooded figure suddenly stands, leaving silver coins scattered across the wood. They stride toward a side door marked with a faded sign reading \"Private Rooms\" - but not before shooting you a meaningful glance and dropping something small that clatters across the floor toward your feet.\n\nThe other patrons seem to pretend they noticed nothing, but you catch the nervous glances exchanged between two merchants near the hearth.\n\nRain continues to hammer the windows as you stand dripping in the entrance, a small brass key now gleaming at your boots.\n\nWhat do you do?",
+              "target": "hero",
+              "metadata": {
+                "instruction": "Begin the game by establishing the opening scene, introducing the initial setting, and preparing the hero's first narrative moment. Create an atmospheric starting point that hints at potential adventures."
+              },
+              "timestamp": "2025-12-16T23:54:43.249646"
+            }
+          ],
+          "agentsExecuted": 1
+        },
+        "duration": 8.876852750778198,
+        "error": null,
+        "timestamp": "2025-12-16T23:54:34.372816"
+      },
+      {
+        "stepName": "player_turn",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 4,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "playerAgent": "hero",
+          "skipPlayerTurn": false
+        },
+        "outputs": {
+          "playerPending": true,
+          "playerAgent": "hero"
+        },
+        "duration": 1.1205673217773438e-05,
+        "error": null,
+        "timestamp": "2025-12-16T23:54:43.249676"
+      }
+    ],
+    "totalDuration": 13.581902980804443,
+    "success": true,
+    "orchestratorDecision": {
+      "agentsToWake": [
+        "narrator"
+      ],
+      "instructions": {
+        "narrator": "Begin the game by establishing the opening scene, introducing the initial setting, and preparing the hero's first narrative moment. Create an atmospheric starting point that hints at potential adventures."
+      },
+      "reasoning": "As this is Turn 0 and the world state is empty, the narrator needs to launch the game by establishing the initial context, setting, and first narrative moment. The narrator will create the foundational scene from which the hero's journey can begin.",
+      "skipPlayerTurn": false
+    }
+  }
+}

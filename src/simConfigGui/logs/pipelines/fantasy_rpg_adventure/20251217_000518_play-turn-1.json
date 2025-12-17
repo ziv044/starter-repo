@@ -1,0 +1,168 @@
+{
+  "simulation": "fantasy_rpg_adventure",
+  "runType": "play-turn-1",
+  "timestamp": "2025-12-17T00:05:18.879343",
+  "result": {
+    "turnNumber": 1,
+    "steps": [
+      {
+        "stepName": "turn_start",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 0,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "previousTurnResult": null
+        },
+        "outputs": {
+          "event": {
+            "name": "turn_start",
+            "data": {
+              "turn": 1
+            },
+            "source": "system",
+            "timestamp": "2025-12-17T00:05:05.762394"
+          }
+        },
+        "duration": 3.886222839355469e-05,
+        "error": null,
+        "timestamp": "2025-12-17T00:05:05.762380"
+      },
+      {
+        "stepName": "gather_events",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 1,
+          "stepConfig": {},
+          "turnNumber": 1,
+          "scheduledEvents": 0
+        },
+        "outputs": {
+          "eventsGathered": 1
+        },
+        "duration": 4.76837158203125e-06,
+        "error": null,
+        "timestamp": "2025-12-17T00:05:05.762419"
+      },
+      {
+        "stepName": "orchestrator_decide",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 2,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "events": [
+            {
+              "name": "turn_start",
+              "data": {
+                "turn": 1
+              },
+              "source": "system",
+              "timestamp": "2025-12-17T00:05:05.762394"
+            }
+          ],
+          "worldState": {
+            "actors": [
+              "cpu_agent",
+              "player_agent"
+            ],
+            "currentActor": "cpu_agent",
+            "turnIndex": 0
+          },
+          "availableAgents": [
+            {
+              "name": "mysterious_merchant",
+              "role": "Enigmatic trader with rare wares and hidden knowledge"
+            },
+            {
+              "name": "narrator",
+              "role": "Game Master narrator who describes scenes, controls NPCs, and manages world events"
+            }
+          ],
+          "orchestratorName": "orchestrator"
+        },
+        "outputs": {
+          "decision": {
+            "agentsToWake": [
+              "narrator"
+            ],
+            "instructions": {
+              "narrator": "Initiate the game by setting the initial scene and introducing the hero's starting context. Describe the setting, basic equipment, and immediate surroundings."
+            },
+            "reasoning": "Turn 0 is the game's initial moment, so the narrator should establish the starting narrative and world context for the hero's journey. This sets the stage for the player's first interactions and decisions.",
+            "skipPlayerTurn": false
+          },
+          "agentsSelected": [
+            "narrator"
+          ]
+        },
+        "duration": 3.091684341430664,
+        "error": null,
+        "timestamp": "2025-12-17T00:05:05.762442"
+      },
+      {
+        "stepName": "execute_agents",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 3,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "agentsToWake": [
+            "narrator"
+          ],
+          "instructions": {
+            "narrator": "Initiate the game by setting the initial scene and introducing the hero's starting context. Describe the setting, basic equipment, and immediate surroundings."
+          }
+        },
+        "outputs": {
+          "actions": [
+            {
+              "agentName": "narrator",
+              "actionType": "speak",
+              "content": "**The Whispering Woods - Dawn**\n\nMist clings to the ancient oaks as the first pale light of dawn filters through the canopy above. You stand at the edge of a moss-covered clearing, your leather boots silent on the damp forest floor. The air is thick with the scent of pine and something else\u2014something unsettling that makes the hair on your neck rise.\n\nYour weathered traveling pack rests against your shoulder, containing your meager supplies: a handful of copper coins, dried rations for three days, a coil of rope, and a small tinderbox. At your side hangs a sturdy oak walking staff, its wood worn smooth from years of faithful service. A simple eating knife rests in your belt\u2014more tool than weapon, but sharp enough.\n\nBehind you, the forest path winds back toward the distant village of Millhaven, where worried whispers spoke of merchants gone missing and strange lights dancing between the trees at night. Ahead, the path splits three ways: one leads deeper into the shadowed heart of the woods, another curves toward what might be the glint of water through the trees, and the third climbs upward toward a rocky outcropping where ravens circle ominously.\n\nA twig snaps somewhere in the underbrush to your left.\n\nWhat do you do?",
+              "target": "hero",
+              "metadata": {
+                "instruction": "Initiate the game by setting the initial scene and introducing the hero's starting context. Describe the setting, basic equipment, and immediate surroundings."
+              },
+              "timestamp": "2025-12-17T00:05:18.877721"
+            }
+          ],
+          "agentsExecuted": 1
+        },
+        "duration": 10.023613691329956,
+        "error": null,
+        "timestamp": "2025-12-17T00:05:08.854127"
+      },
+      {
+        "stepName": "player_turn",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 4,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "playerAgent": "hero",
+          "skipPlayerTurn": false
+        },
+        "outputs": {
+          "playerPending": true,
+          "playerAgent": "hero"
+        },
+        "duration": 1.0967254638671875e-05,
+        "error": null,
+        "timestamp": "2025-12-17T00:05:18.877755"
+      }
+    ],
+    "totalDuration": 13.115404605865479,
+    "success": true,
+    "orchestratorDecision": {
+      "agentsToWake": [
+        "narrator"
+      ],
+      "instructions": {
+        "narrator": "Initiate the game by setting the initial scene and introducing the hero's starting context. Describe the setting, basic equipment, and immediate surroundings."
+      },
+      "reasoning": "Turn 0 is the game's initial moment, so the narrator should establish the starting narrative and world context for the hero's journey. This sets the stage for the player's first interactions and decisions.",
+      "skipPlayerTurn": false
+    }
+  }
+}

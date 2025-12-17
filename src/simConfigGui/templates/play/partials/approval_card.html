@@ -1,0 +1,71 @@
+{# Approval Card Component - IDF-style authorization request #}
+{# Usage: {% include 'play/partials/approval_card.html' with item=action_item %} #}
+
+<div class="action-card approval-card" data-item-id="{{ item.id }}" data-item-type="approval">
+    {# Header Bar with Entity Branding #}
+    <div class="card-header-bar approval-header">
+        <div class="entity-badge">
+            <div class="entity-logo">
+                {% if 'IDF' in item.source_role|upper %}
+                    <span class="logo-text">IDF</span>
+                {% elif 'MOSSAD' in item.source_role|upper %}
+                    <span class="logo-text">M</span>
+                {% elif 'SHIN BET' in item.source_role|upper %}
+                    <span class="logo-text">SB</span>
+                {% else %}
+                    <span class="logo-text">{{ item.source_role[:2]|upper }}</span>
+                {% endif %}
+            </div>
+            <div class="entity-info">
+                <div class="entity-role">{{ item.source_role }}</div>
+                <div class="entity-type">AUTHORIZATION REQUEST</div>
+            </div>
+        </div>
+        <div class="classification-badge {{ item.classification|lower }}">
+            {{ item.classification|upper or 'CONFIDENTIAL' }}
+        </div>
+    </div>
+
+    {# Request Content #}
+    <div class="card-body">
+        <div class="request-title">{{ item.title }}</div>
+        <div class="timestamp">{{ item.timestamp or 'Pending' }}</div>
+
+        <div class="divider"></div>
+
+        <div class="request-content">{{ item.content }}</div>
+
+        {# Impact Preview Section #}
+        {% if item.approval_impacts %}
+        <div class="impact-section">
+            <div class="impact-label">PROJECTED IMPACT</div>
+            <div class="impact-grid">
+                {% for key, value in item.approval_impacts.items() %}
+                <div class="impact-item {{ 'positive' if value > 0 else 'negative' }}">
+                    <span class="impact-metric">{{ key.replace('_', ' ').title() }}</span>
+                    <span class="impact-value">{{ '+' if value > 0 else '' }}{{ value }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {# Warning Banner (if urgent) #}
+        {% if item.urgency == 'critical' or item.urgency == 'high' %}
+        <div class="warning-banner">
+            <span class="warning-icon">&#9888;</span>
+            <span class="warning-text">{{ item.urgency|upper }} PRIORITY - Immediate decision required</span>
+        </div>
+        {% endif %}
+    </div>
+
+    {# Action Buttons #}
+    <div class="card-actions">
+        <button class="btn btn-approve" onclick="handleApproval('{{ item.id }}', true)">
+            <span class="btn-icon">&#10003;</span> APPROVE
+        </button>
+        <button class="btn btn-deny" onclick="handleApproval('{{ item.id }}', false)">
+            <span class="btn-icon">&#10007;</span> DENY
+        </button>
+    </div>
+</div>

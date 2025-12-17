@@ -147,6 +147,15 @@
         </label>
     </div>
 
+    {% if config.pipeline %}
+    <div class="card">
+        <h2>Pipeline Configuration</h2>
+        <p><strong>Turn Mode:</strong> {{ config.pipeline.turnMode }}</p>
+        <p><strong>Orchestrator:</strong> {{ config.pipeline.orchestratorName }}</p>
+        <input type="hidden" name="pipeline_config" value="{{ config.pipeline | tojson }}">
+    </div>
+    {% endif %}
+
     <div class="actions">
         <button type="submit" class="btn btn-success">Create Simulation</button>
         <a href="{{ url_for('simulation.create_wizard') }}" class="btn btn-secondary">Regenerate</a>

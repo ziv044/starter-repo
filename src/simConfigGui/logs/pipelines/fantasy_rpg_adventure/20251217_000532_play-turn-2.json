@@ -1,0 +1,168 @@
+{
+  "simulation": "fantasy_rpg_adventure",
+  "runType": "play-turn-2",
+  "timestamp": "2025-12-17T00:05:32.770381",
+  "result": {
+    "turnNumber": 1,
+    "steps": [
+      {
+        "stepName": "turn_start",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 0,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "previousTurnResult": null
+        },
+        "outputs": {
+          "event": {
+            "name": "turn_start",
+            "data": {
+              "turn": 1
+            },
+            "source": "system",
+            "timestamp": "2025-12-17T00:05:18.880431"
+          }
+        },
+        "duration": 1.7881393432617188e-05,
+        "error": null,
+        "timestamp": "2025-12-17T00:05:18.880425"
+      },
+      {
+        "stepName": "gather_events",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 1,
+          "stepConfig": {},
+          "turnNumber": 1,
+          "scheduledEvents": 0
+        },
+        "outputs": {
+          "eventsGathered": 1
+        },
+        "duration": 3.0994415283203125e-06,
+        "error": null,
+        "timestamp": "2025-12-17T00:05:18.880443"
+      },
+      {
+        "stepName": "orchestrator_decide",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 2,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "events": [
+            {
+              "name": "turn_start",
+              "data": {
+                "turn": 1
+              },
+              "source": "system",
+              "timestamp": "2025-12-17T00:05:18.880431"
+            }
+          ],
+          "worldState": {
+            "actors": [
+              "cpu_agent",
+              "player_agent"
+            ],
+            "currentActor": "cpu_agent",
+            "turnIndex": 0
+          },
+          "availableAgents": [
+            {
+              "name": "mysterious_merchant",
+              "role": "Enigmatic trader with rare wares and hidden knowledge"
+            },
+            {
+              "name": "narrator",
+              "role": "Game Master narrator who describes scenes, controls NPCs, and manages world events"
+            }
+          ],
+          "orchestratorName": "orchestrator"
+        },
+        "outputs": {
+          "decision": {
+            "agentsToWake": [
+              "narrator"
+            ],
+            "instructions": {
+              "narrator": "Begin the story's introduction. Set the initial scene for the hero, describing their starting location, basic equipment, and immediate surroundings. Establish the mood and potential initial narrative direction."
+            },
+            "reasoning": "Turn 0 is the game's opening moment, which requires the narrator to establish the initial narrative context and world state for the hero's journey. This sets the stage for the player's first interactions and potential choices.",
+            "skipPlayerTurn": false
+          },
+          "agentsSelected": [
+            "narrator"
+          ]
+        },
+        "duration": 3.300093650817871,
+        "error": null,
+        "timestamp": "2025-12-17T00:05:18.880460"
+      },
+      {
+        "stepName": "execute_agents",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 3,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "agentsToWake": [
+            "narrator"
+          ],
+          "instructions": {
+            "narrator": "Begin the story's introduction. Set the initial scene for the hero, describing their starting location, basic equipment, and immediate surroundings. Establish the mood and potential initial narrative direction."
+          }
+        },
+        "outputs": {
+          "actions": [
+            {
+              "agentName": "narrator",
+              "actionType": "speak",
+              "content": "**The Village of Millbrook - Dawn**\n\nYou awaken to the sound of urgent knocking at your cottage door. Golden rays of dawn filter through your shuttered window, casting long shadows across the simple room. Your leather armor hangs neatly on its peg beside your well-worn traveling pack, and your trusty sword rests in its scabbard against the wall.\n\nThe knocking grows more insistent. \"Please! Someone must help us!\" comes a desperate voice from outside.\n\nThrough the window, you glimpse Millbrook stirring to life - or what should be life. The usually bustling village square appears strangely empty. No merchants setting up their stalls, no children running between the houses. An unnatural mist clings to the cobblestones, and you notice several cottages have their doors marked with crude red X's painted hastily across the wood.\n\nSomething is deeply wrong in Millbrook.\n\nThe voice calls out again: \"The miller's children... they've gone missing in the night! And there are... *things* in the fog!\"\n\n**What do you do?**\n\n- Answer the door immediately\n- Arm yourself first, then answer\n- Look out the window to assess the situation\n- Call out to ask who's there",
+              "target": "hero",
+              "metadata": {
+                "instruction": "Begin the story's introduction. Set the initial scene for the hero, describing their starting location, basic equipment, and immediate surroundings. Establish the mood and potential initial narrative direction."
+              },
+              "timestamp": "2025-12-17T00:05:32.769221"
+            }
+          ],
+          "agentsExecuted": 1
+        },
+        "duration": 10.5886812210083,
+        "error": null,
+        "timestamp": "2025-12-17T00:05:22.180560"
+      },
+      {
+        "stepName": "player_turn",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 4,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "playerAgent": "hero",
+          "skipPlayerTurn": false
+        },
+        "outputs": {
+          "playerPending": true,
+          "playerAgent": "hero"
+        },
+        "duration": 1.1920928955078125e-05,
+        "error": null,
+        "timestamp": "2025-12-17T00:05:32.769255"
+      }
+    ],
+    "totalDuration": 13.888847589492798,
+    "success": true,
+    "orchestratorDecision": {
+      "agentsToWake": [
+        "narrator"
+      ],
+      "instructions": {
+        "narrator": "Begin the story's introduction. Set the initial scene for the hero, describing their starting location, basic equipment, and immediate surroundings. Establish the mood and potential initial narrative direction."
+      },
+      "reasoning": "Turn 0 is the game's opening moment, which requires the narrator to establish the initial narrative context and world state for the hero's journey. This sets the stage for the player's first interactions and potential choices.",
+      "skipPlayerTurn": false
+    }
+  }
+}

@@ -1,0 +1,161 @@
+{
+  "simulation": "fantasy_rpg_adventure",
+  "runType": "play-turn-12",
+  "timestamp": "2025-12-16T23:59:26.598917",
+  "result": {
+    "turnNumber": 1,
+    "steps": [
+      {
+        "stepName": "turn_start",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 0,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "previousTurnResult": null
+        },
+        "outputs": {
+          "event": {
+            "name": "turn_start",
+            "data": {
+              "turn": 1
+            },
+            "source": "system",
+            "timestamp": "2025-12-16T23:59:12.642213"
+          }
+        },
+        "duration": 1.4066696166992188e-05,
+        "error": null,
+        "timestamp": "2025-12-16T23:59:12.642208"
+      },
+      {
+        "stepName": "gather_events",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 1,
+          "stepConfig": {},
+          "turnNumber": 1,
+          "scheduledEvents": 0
+        },
+        "outputs": {
+          "eventsGathered": 1
+        },
+        "duration": 2.86102294921875e-06,
+        "error": null,
+        "timestamp": "2025-12-16T23:59:12.642224"
+      },
+      {
+        "stepName": "orchestrator_decide",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 2,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "events": [
+            {
+              "name": "turn_start",
+              "data": {
+                "turn": 1
+              },
+              "source": "system",
+              "timestamp": "2025-12-16T23:59:12.642213"
+            }
+          ],
+          "worldState": {},
+          "availableAgents": [
+            {
+              "name": "mysterious_merchant",
+              "role": "Enigmatic trader with rare wares and hidden knowledge"
+            },
+            {
+              "name": "narrator",
+              "role": "Game Master narrator who describes scenes, controls NPCs, and manages world events"
+            }
+          ],
+          "orchestratorName": "orchestrator"
+        },
+        "outputs": {
+          "decision": {
+            "agentsToWake": [
+              "narrator"
+            ],
+            "instructions": {
+              "narrator": "Initialize the game world and set the opening scene. Describe the starting location, initial context, and prepare to introduce the hero's first potential adventure."
+            },
+            "reasoning": "As this is Turn 0 (the game's initial turn), the narrator should establish the starting context, create the initial game environment, and set up the narrative framework for the hero's journey.",
+            "skipPlayerTurn": false
+          },
+          "agentsSelected": [
+            "narrator"
+          ]
+        },
+        "duration": 4.178561210632324,
+        "error": null,
+        "timestamp": "2025-12-16T23:59:12.642238"
+      },
+      {
+        "stepName": "execute_agents",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 3,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "agentsToWake": [
+            "narrator"
+          ],
+          "instructions": {
+            "narrator": "Initialize the game world and set the opening scene. Describe the starting location, initial context, and prepare to introduce the hero's first potential adventure."
+          }
+        },
+        "outputs": {
+          "actions": [
+            {
+              "agentName": "narrator",
+              "actionType": "speak",
+              "content": "**The Village of Millbrook - Dawn**\n\nThe morning mist clings to the cobblestone streets as you stand at the edge of Millbrook, a humble farming village nestled between rolling green hills and the dark expanse of the Whispering Woods. Thatched-roof cottages line the main road, their chimneys releasing thin wisps of smoke into the pale sky.\n\nThe village should be bustling with morning activity - farmers heading to their fields, merchants opening their shops, children playing in the streets. Instead, an unsettling quiet hangs over Millbrook like a shroud.\n\nA weathered wooden signpost near the village well bears a hastily scrawled notice, the ink still wet with morning dew. As you approach, you can make out urgent words: *\"MISSING - Elara Brightwater, age 16. Last seen three nights past near the forest edge. REWARD offered. Seek Mayor Aldric at the Copper Kettle Inn.\"*\n\nFrom somewhere deep within the village, you hear the faint sound of worried voices and the creak of a door opening. A figure emerges from the inn - an elderly man with silver hair and deep worry lines etched across his weathered face.\n\nThe adventure begins here, traveler. What draws your attention first in this troubled village?",
+              "target": "hero",
+              "metadata": {
+                "instruction": "Initialize the game world and set the opening scene. Describe the starting location, initial context, and prepare to introduce the hero's first potential adventure."
+              },
+              "timestamp": "2025-12-16T23:59:26.598345"
+            }
+          ],
+          "agentsExecuted": 1
+        },
+        "duration": 9.777557849884033,
+        "error": null,
+        "timestamp": "2025-12-16T23:59:16.820807"
+      },
+      {
+        "stepName": "player_turn",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 4,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "playerAgent": "hero",
+          "skipPlayerTurn": false
+        },
+        "outputs": {
+          "playerPending": true,
+          "playerAgent": "hero"
+        },
+        "duration": 1.0251998901367188e-05,
+        "error": null,
+        "timestamp": "2025-12-16T23:59:26.598378"
+      }
+    ],
+    "totalDuration": 13.956185817718506,
+    "success": true,
+    "orchestratorDecision": {
+      "agentsToWake": [
+        "narrator"
+      ],
+      "instructions": {
+        "narrator": "Initialize the game world and set the opening scene. Describe the starting location, initial context, and prepare to introduce the hero's first potential adventure."
+      },
+      "reasoning": "As this is Turn 0 (the game's initial turn), the narrator should establish the starting context, create the initial game environment, and set up the narrative framework for the hero's journey.",
+      "skipPlayerTurn": false
+    }
+  }
+}

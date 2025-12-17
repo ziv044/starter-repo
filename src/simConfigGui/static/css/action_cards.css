@@ -1,0 +1,792 @@
+/* Action Cards Styling - Document Theater Design */
+/* Based on wireframes: approval-card-idf, operation-card-mossad, demand-card-hostages */
+
+/* ========================================
+   Base Card Styles
+   ======================================== */
+
+.action-card {
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 2px solid #1e3a5f;
+    margin-bottom: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.action-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* ========================================
+   Card Header Bar
+   ======================================== */
+
+.card-header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    color: white;
+}
+
+.entity-badge {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.entity-logo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 12px;
+    color: #1e3a5f;
+    border: 2px solid white;
+}
+
+.entity-logo.operation-logo {
+    background: #1a1a2e;
+    color: white;
+}
+
+.entity-logo.demand-logo {
+    background: white;
+    font-size: 24px;
+}
+
+.entity-logo.info-logo {
+    background: #3498db;
+    color: white;
+}
+
+.ribbon-icon {
+    font-size: 24px;
+}
+
+.entity-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.entity-role {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.entity-type {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+/* Header color variants */
+.approval-header {
+    background: #1e3a5f;
+}
+
+.approval-header .entity-type {
+    color: #ffc107;
+}
+
+.operation-header {
+    background: #2c3e50;
+}
+
+.operation-header .entity-type {
+    color: #3498db;
+}
+
+.demand-header {
+    background: #922b21;
+}
+
+.demand-header .entity-type {
+    color: #f1c40f;
+}
+
+.info-header {
+    background: #2c3e50;
+}
+
+/* ========================================
+   Classification & Status Badges
+   ======================================== */
+
+.classification-badge,
+.urgency-badge,
+.priority-badge,
+.status-badge,
+.category-badge {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.classification-badge {
+    background: #dc3545;
+    color: white;
+}
+
+.classification-badge.top-secret {
+    background: #8b0000;
+}
+
+.classification-badge.confidential {
+    background: #dc3545;
+}
+
+.classification-badge.secret {
+    background: #ff6600;
+}
+
+.urgency-badge.urgent {
+    background: #e74c3c;
+    color: white;
+}
+
+.priority-badge.critical {
+    background: #dc3545;
+    color: white;
+}
+
+.priority-badge.high {
+    background: #ff9800;
+    color: white;
+}
+
+.priority-badge.normal {
+    background: #6c757d;
+    color: white;
+}
+
+.status-badge {
+    margin-left: 8px;
+}
+
+.status-badge.in_progress {
+    background: #3498db;
+    color: white;
+}
+
+.status-badge.completed {
+    background: #28a745;
+    color: white;
+}
+
+.status-badge.failed {
+    background: #dc3545;
+    color: white;
+}
+
+.status-badge.cancelled {
+    background: #6c757d;
+    color: white;
+}
+
+.category-badge {
+    background: #3498db;
+    color: white;
+}
+
+.category-badge.cyber {
+    background: #9b59b6;
+}
+
+.category-badge.sigint {
+    background: #3498db;
+}
+
+.category-badge.kinetic {
+    background: #e74c3c;
+}
+
+.category-badge.humint {
+    background: #27ae60;
+}
+
+.category-badge.intel {
+    background: #2c3e50;
+}
+
+/* ========================================
+   Card Body
+   ======================================== */
+
+.card-body {
+    padding: 20px;
+    color: #495057;
+}
+
+.request-title,
+.operation-name,
+.info-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #1e3a5f;
+    margin-bottom: 5px;
+}
+
+.timestamp {
+    font-size: 10px;
+    color: #adb5bd;
+    text-align: right;
+}
+
+.divider {
+    height: 1px;
+    background: #dee2e6;
+    margin: 15px 0;
+}
+
+.request-content,
+.operation-description,
+.info-content,
+.demand-intro {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #495057;
+}
+
+/* ========================================
+   Operation Badges Section
+   ======================================== */
+
+.operation-badges {
+    display: flex;
+    gap: 8px;
+    margin: 10px 0;
+}
+
+/* ========================================
+   Impact Preview Section
+   ======================================== */
+
+.impact-section,
+.outcome-section {
+    margin-top: 15px;
+}
+
+.impact-label,
+.outcome-label,
+.timeline-label,
+.milestones-label {
+    font-size: 11px;
+    font-weight: bold;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.impact-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    background: #e9ecef;
+    padding: 15px;
+    border-radius: 4px;
+}
+
+.impact-item {
+    text-align: center;
+    min-width: 80px;
+}
+
+.impact-metric {
+    display: block;
+    font-size: 11px;
+    color: #495057;
+    margin-bottom: 2px;
+}
+
+.impact-value {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.impact-item.positive .impact-value {
+    color: #28a745;
+}
+
+.impact-item.negative .impact-value {
+    color: #dc3545;
+}
+
+/* ========================================
+   Timeline Section (Operations)
+   ======================================== */
+
+.timeline-section {
+    margin-top: 15px;
+}
+
+.timeline-container {
+    background: #e9ecef;
+    padding: 15px;
+    border-radius: 4px;
+}
+
+.duration-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.duration-icon {
+    font-size: 24px;
+}
+
+.duration-phase {
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.duration-time {
+    font-size: 13px;
+    color: #495057;
+}
+
+.progress-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.progress-label {
+    font-size: 11px;
+    color: #6c757d;
+    min-width: 60px;
+}
+
+.progress-bar-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.progress-bar-bg {
+    flex: 1;
+    height: 18px;
+    background: #dee2e6;
+    border-radius: 9px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: #3498db;
+    border-radius: 9px;
+    transition: width 0.5s ease;
+}
+
+.progress-text {
+    font-size: 11px;
+    font-weight: bold;
+    min-width: 40px;
+}
+
+/* ========================================
+   Outcome Section (Operations)
+   ======================================== */
+
+.outcome-container {
+    background: #d4edda;
+    padding: 12px 15px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+/* ========================================
+   Milestones Section (Operations)
+   ======================================== */
+
+.milestones-section {
+    margin-top: 15px;
+}
+
+.milestones-list {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 10px;
+}
+
+.milestone-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.milestone-item:last-child {
+    border-bottom: none;
+}
+
+.milestone-icon {
+    font-size: 16px;
+}
+
+.milestone-item.completed .milestone-icon {
+    color: #28a745;
+}
+
+.milestone-item.pending .milestone-icon {
+    color: #6c757d;
+}
+
+.milestone-text {
+    font-size: 12px;
+}
+
+/* ========================================
+   Demand Items Section
+   ======================================== */
+
+.demand-items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.demand-item {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 15px;
+}
+
+.demand-item-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.demand-number {
+    font-weight: bold;
+    color: #922b21;
+}
+
+.demand-text {
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.demand-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.demand-impacts {
+    margin-top: 8px;
+    font-size: 10px;
+    color: #6c757d;
+}
+
+.impacts-preview {
+    font-style: italic;
+}
+
+/* ========================================
+   Warning Banner
+   ======================================== */
+
+.warning-banner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 4px;
+    padding: 12px 15px;
+    margin-top: 15px;
+}
+
+.warning-icon {
+    font-size: 18px;
+    color: #856404;
+}
+
+.warning-text {
+    font-size: 12px;
+    color: #856404;
+    font-weight: 500;
+}
+
+/* ========================================
+   Card Action Buttons
+   ======================================== */
+
+.card-actions {
+    display: flex;
+    gap: 10px;
+    padding: 15px 20px;
+    background: #f1f3f4;
+    border-top: 1px solid #dee2e6;
+}
+
+.card-actions .btn {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.btn-icon {
+    font-size: 16px;
+}
+
+/* Approval buttons */
+.btn-approve {
+    background: #28a745;
+    color: white;
+}
+
+.btn-approve:hover {
+    background: #218838;
+}
+
+.btn-deny {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-deny:hover {
+    background: #5a6268;
+}
+
+/* Operation buttons */
+.btn-authorize {
+    background: #3498db;
+    color: white;
+}
+
+.btn-authorize:hover {
+    background: #2980b9;
+}
+
+.btn-defer {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-defer:hover {
+    background: #5a6268;
+}
+
+.btn-cancel {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-cancel:hover {
+    background: #c82333;
+}
+
+/* Demand buttons */
+.btn-agree {
+    background: white;
+    color: #28a745;
+    border: 2px solid #28a745;
+    padding: 6px 16px;
+    font-size: 10px;
+    flex: 0;
+}
+
+.btn-agree:hover,
+.btn-agree.selected {
+    background: #28a745;
+    color: white;
+}
+
+.btn-disagree {
+    background: white;
+    color: #dc3545;
+    border: 2px solid #dc3545;
+    padding: 6px 16px;
+    font-size: 10px;
+    flex: 0;
+}
+
+.btn-disagree:hover,
+.btn-disagree.selected {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-submit-demands {
+    background: #922b21;
+    color: white;
+    width: 100%;
+}
+
+.btn-submit-demands:hover {
+    background: #7b241c;
+}
+
+/* Info card acknowledge */
+.btn-acknowledge {
+    background: #2c3e50;
+    color: white;
+    width: 100%;
+}
+
+.btn-acknowledge:hover {
+    background: #1a252f;
+}
+
+/* Status display */
+.status-display {
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+}
+
+.status-display.completed {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-display.failed {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.status-display.cancelled {
+    background: #e9ecef;
+    color: #495057;
+}
+
+/* ========================================
+   Info Card Specific Styles
+   ======================================== */
+
+.info-card .card-body {
+    background: #f8f9fa;
+}
+
+.info-metadata {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #dee2e6;
+    text-align: right;
+}
+
+/* ========================================
+   Action Items Container
+   ======================================== */
+
+.action-items-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.action-items-section {
+    margin-bottom: 30px;
+}
+
+.action-items-section h3 {
+    color: #1e3a5f;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #1e3a5f;
+}
+
+/* ========================================
+   Dark Mode Adjustments
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+    .action-card {
+        background: #2c3e50;
+        border-color: #34495e;
+    }
+
+    .card-body {
+        color: #ecf0f1;
+    }
+
+    .request-title,
+    .operation-name,
+    .info-title {
+        color: #ecf0f1;
+    }
+
+    .divider {
+        background: #34495e;
+    }
+
+    .impact-grid,
+    .timeline-container {
+        background: #34495e;
+    }
+
+    .demand-item {
+        background: #34495e;
+        border-color: #4a6278;
+    }
+
+    .card-actions {
+        background: #1a252f;
+        border-color: #34495e;
+    }
+}
+
+/* ========================================
+   Responsive Adjustments
+   ======================================== */
+
+@media (max-width: 768px) {
+    .card-header-bar {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+
+    .entity-badge {
+        flex-direction: column;
+    }
+
+    .impact-grid {
+        justify-content: center;
+    }
+
+    .demand-buttons {
+        justify-content: center;
+    }
+
+    .card-actions {
+        flex-direction: column;
+    }
+}

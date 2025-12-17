@@ -1,0 +1,168 @@
+{
+  "simulation": "fantasy_rpg_adventure",
+  "runType": "play-turn-20",
+  "timestamp": "2025-12-17T00:06:01.211647",
+  "result": {
+    "turnNumber": 1,
+    "steps": [
+      {
+        "stepName": "turn_start",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 0,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "previousTurnResult": null
+        },
+        "outputs": {
+          "event": {
+            "name": "turn_start",
+            "data": {
+              "turn": 1
+            },
+            "source": "system",
+            "timestamp": "2025-12-17T00:05:48.295458"
+          }
+        },
+        "duration": 1.6927719116210938e-05,
+        "error": null,
+        "timestamp": "2025-12-17T00:05:48.295453"
+      },
+      {
+        "stepName": "gather_events",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 1,
+          "stepConfig": {},
+          "turnNumber": 1,
+          "scheduledEvents": 0
+        },
+        "outputs": {
+          "eventsGathered": 1
+        },
+        "duration": 3.0994415283203125e-06,
+        "error": null,
+        "timestamp": "2025-12-17T00:05:48.295471"
+      },
+      {
+        "stepName": "orchestrator_decide",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 2,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "events": [
+            {
+              "name": "turn_start",
+              "data": {
+                "turn": 1
+              },
+              "source": "system",
+              "timestamp": "2025-12-17T00:05:48.295458"
+            }
+          ],
+          "worldState": {
+            "actors": [
+              "cpu_agent",
+              "player_agent"
+            ],
+            "currentActor": "player_agent",
+            "turnIndex": 1
+          },
+          "availableAgents": [
+            {
+              "name": "mysterious_merchant",
+              "role": "Enigmatic trader with rare wares and hidden knowledge"
+            },
+            {
+              "name": "narrator",
+              "role": "Game Master narrator who describes scenes, controls NPCs, and manages world events"
+            }
+          ],
+          "orchestratorName": "orchestrator"
+        },
+        "outputs": {
+          "decision": {
+            "agentsToWake": [
+              "narrator"
+            ],
+            "instructions": {
+              "narrator": "Begin the story by introducing the hero's starting location and initial context. Describe the setting, provide initial atmosphere, and set up the first potential narrative moment."
+            },
+            "reasoning": "Since this is TURN 0 and we are initializing the game world, the narrator should establish the opening scene and provide narrative context for the hero's journey. This sets the stage for player interaction and creates the initial game environment.",
+            "skipPlayerTurn": false
+          },
+          "agentsSelected": [
+            "narrator"
+          ]
+        },
+        "duration": 3.9181604385375977,
+        "error": null,
+        "timestamp": "2025-12-17T00:05:48.295485"
+      },
+      {
+        "stepName": "execute_agents",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 3,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "agentsToWake": [
+            "narrator"
+          ],
+          "instructions": {
+            "narrator": "Begin the story by introducing the hero's starting location and initial context. Describe the setting, provide initial atmosphere, and set up the first potential narrative moment."
+          }
+        },
+        "outputs": {
+          "actions": [
+            {
+              "agentName": "narrator",
+              "actionType": "speak",
+              "content": "**The Weathered Crossroads**\n\nThe ancient cobblestones beneath your boots glisten with morning dew as you stand at the crossroads just outside the village of Millbrook. Behind you, thin wisps of smoke curl up from cottage chimneys, and the familiar sounds of daily life fade into a gentle murmur. Ahead, three weathered paths stretch into the unknown.\n\nTo the north, a well-traveled road winds toward the shadowy eaves of Thornwood Forest, where merchant caravans often require armed escorts. To the east, a rocky trail climbs toward the Copper Hills, where rumors speak of abandoned mines and strange lights seen at night. To the west, an overgrown path meanders toward the Mistral Marshlands, largely avoided by locals who whisper of things that lurk in the fog.\n\nA wooden signpost, carved with symbols worn smooth by countless seasons, marks each direction. The morning sun casts long shadows across your path, and a cool breeze carries the scent of adventure\u2014and perhaps danger.\n\nYour leather pack sits comfortably on your shoulders, your weapon rests within easy reach, and the world awaits your first choice.\n\n*What do you do?*",
+              "target": "hero",
+              "metadata": {
+                "instruction": "Begin the story by introducing the hero's starting location and initial context. Describe the setting, provide initial atmosphere, and set up the first potential narrative moment."
+              },
+              "timestamp": "2025-12-17T00:06:01.210697"
+            }
+          ],
+          "agentsExecuted": 1
+        },
+        "duration": 8.99705982208252,
+        "error": null,
+        "timestamp": "2025-12-17T00:05:52.213656"
+      },
+      {
+        "stepName": "player_turn",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 4,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "playerAgent": "hero",
+          "skipPlayerTurn": false
+        },
+        "outputs": {
+          "playerPending": true,
+          "playerAgent": "hero"
+        },
+        "duration": 8.58306884765625e-06,
+        "error": null,
+        "timestamp": "2025-12-17T00:06:01.210724"
+      }
+    ],
+    "totalDuration": 12.915338039398193,
+    "success": true,
+    "orchestratorDecision": {
+      "agentsToWake": [
+        "narrator"
+      ],
+      "instructions": {
+        "narrator": "Begin the story by introducing the hero's starting location and initial context. Describe the setting, provide initial atmosphere, and set up the first potential narrative moment."
+      },
+      "reasoning": "Since this is TURN 0 and we are initializing the game world, the narrator should establish the opening scene and provide narrative context for the hero's journey. This sets the stage for player interaction and creates the initial game environment.",
+      "skipPlayerTurn": false
+    }
+  }
+}

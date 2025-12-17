@@ -6,7 +6,6 @@ state snapshots, and recovery capabilities.
 NFR11-13: Transactions, Crash Recovery, State Consistency
 """
 
-import copy
 import logging
 from contextlib import contextmanager
 from dataclasses import dataclass, field

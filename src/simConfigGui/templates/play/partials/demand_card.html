@@ -1,0 +1,94 @@
+{# Demand Card Component - Hostage Families Coalition style demands #}
+{# Usage: {% include 'play/partials/demand_card.html' with item=action_item %} #}
+
+<div class="action-card demand-card" data-item-id="{{ item.id }}" data-item-type="demand">
+    {# Header Bar with Entity Branding #}
+    <div class="card-header-bar demand-header">
+        <div class="entity-badge">
+            <div class="entity-logo demand-logo">
+                <span class="ribbon-icon">&#127895;</span>
+            </div>
+            <div class="entity-info">
+                <div class="entity-role">{{ item.source_role or 'HOSTAGE FAMILIES COALITION' }}</div>
+                <div class="entity-type">FORMAL DEMANDS</div>
+            </div>
+        </div>
+        {% if item.urgency == 'critical' %}
+        <div class="urgency-badge urgent">
+            URGENT
+        </div>
+        {% endif %}
+    </div>
+
+    {# Demand Content #}
+    <div class="card-body">
+        {# Introduction #}
+        <div class="demand-intro">
+            {{ item.content }}
+        </div>
+
+        <div class="divider"></div>
+
+        {# Individual Demand Items #}
+        <div class="demand-items">
+            {% if item.demand_items %}
+                {% for demand in item.demand_items %}
+                <div class="demand-item" data-demand-id="{{ demand.id }}">
+                    <div class="demand-item-content">
+                        <span class="demand-number">{{ loop.index }}.</span>
+                        <span class="demand-text">{{ demand.text }}</span>
+                    </div>
+                    <div class="demand-buttons">
+                        <button class="btn btn-agree {{ 'selected' if demand.response == 'agree' else '' }}"
+                                onclick="setDemandResponse('{{ item.id }}', '{{ demand.id }}', 'agree')">
+                            Agree
+                        </button>
+                        <button class="btn btn-disagree {{ 'selected' if demand.response == 'disagree' else '' }}"
+                                onclick="setDemandResponse('{{ item.id }}', '{{ demand.id }}', 'disagree')">
+                            Disagree
+                        </button>
+                    </div>
+                    {% if demand.impacts %}
+                    <div class="demand-impacts">
+                        <span class="impacts-preview">
+                            Agree: {% for k, v in demand.impacts.agree.items() %}{{ k }} {{ '+' if v > 0 else '' }}{{ v }}{{ ', ' if not loop.last else '' }}{% endfor %}
+                            | Disagree: {% for k, v in demand.impacts.disagree.items() %}{{ k }} {{ '+' if v > 0 else '' }}{{ v }}{{ ', ' if not loop.last else '' }}{% endfor %}
+                        </span>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                {# Single demand fallback #}
+                <div class="demand-item single-demand" data-demand-id="main">
+                    <div class="demand-item-content">
+                        <span class="demand-text">{{ item.title }}</span>
+                    </div>
+                    <div class="demand-buttons">
+                        <button class="btn btn-agree" onclick="setDemandResponse('{{ item.id }}', 'main', 'agree')">
+                            Agree
+                        </button>
+                        <button class="btn btn-disagree" onclick="setDemandResponse('{{ item.id }}', 'main', 'disagree')">
+                            Disagree
+                        </button>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        {# Warning Banner (upcoming consequences) #}
+        {% if item.deadline_warning %}
+        <div class="warning-banner">
+            <span class="warning-icon">&#9888;</span>
+            <span class="warning-text">{{ item.deadline_warning }}</span>
+        </div>
+        {% endif %}
+    </div>
+
+    {# Submit Button #}
+    <div class="card-actions">
+        <button class="btn btn-submit-demands" onclick="submitDemandResponses('{{ item.id }}')">
+            SUBMIT RESPONSES
+        </button>
+    </div>
+</div>

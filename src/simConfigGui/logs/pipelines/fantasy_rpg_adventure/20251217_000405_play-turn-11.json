@@ -1,0 +1,161 @@
+{
+  "simulation": "fantasy_rpg_adventure",
+  "runType": "play-turn-11",
+  "timestamp": "2025-12-17T00:04:05.695899",
+  "result": {
+    "turnNumber": 1,
+    "steps": [
+      {
+        "stepName": "turn_start",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 0,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "previousTurnResult": null
+        },
+        "outputs": {
+          "event": {
+            "name": "turn_start",
+            "data": {
+              "turn": 1
+            },
+            "source": "system",
+            "timestamp": "2025-12-17T00:03:52.262543"
+          }
+        },
+        "duration": 2.5510787963867188e-05,
+        "error": null,
+        "timestamp": "2025-12-17T00:03:52.262534"
+      },
+      {
+        "stepName": "gather_events",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 1,
+          "stepConfig": {},
+          "turnNumber": 1,
+          "scheduledEvents": 0
+        },
+        "outputs": {
+          "eventsGathered": 1
+        },
+        "duration": 4.5299530029296875e-06,
+        "error": null,
+        "timestamp": "2025-12-17T00:03:52.262562"
+      },
+      {
+        "stepName": "orchestrator_decide",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 2,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "events": [
+            {
+              "name": "turn_start",
+              "data": {
+                "turn": 1
+              },
+              "source": "system",
+              "timestamp": "2025-12-17T00:03:52.262543"
+            }
+          ],
+          "worldState": {},
+          "availableAgents": [
+            {
+              "name": "mysterious_merchant",
+              "role": "Enigmatic trader with rare wares and hidden knowledge"
+            },
+            {
+              "name": "narrator",
+              "role": "Game Master narrator who describes scenes, controls NPCs, and manages world events"
+            }
+          ],
+          "orchestratorName": "orchestrator"
+        },
+        "outputs": {
+          "decision": {
+            "agentsToWake": [
+              "narrator"
+            ],
+            "instructions": {
+              "narrator": "Begin the game by setting the initial scene. Describe the hero's starting location, basic environment, and provide an initial narrative hook to spark adventure. Establish mood and potential early story directions."
+            },
+            "reasoning": "Turn 0 is typically the game's opening scene. The narrator needs to establish the starting context, world atmosphere, and give the hero an initial orientation. With no existing world state, the narrator will create the foundational narrative framework.",
+            "skipPlayerTurn": false
+          },
+          "agentsSelected": [
+            "narrator"
+          ]
+        },
+        "duration": 3.696589946746826,
+        "error": null,
+        "timestamp": "2025-12-17T00:03:52.262583"
+      },
+      {
+        "stepName": "execute_agents",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 3,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "agentsToWake": [
+            "narrator"
+          ],
+          "instructions": {
+            "narrator": "Begin the game by setting the initial scene. Describe the hero's starting location, basic environment, and provide an initial narrative hook to spark adventure. Establish mood and potential early story directions."
+          }
+        },
+        "outputs": {
+          "actions": [
+            {
+              "agentName": "narrator",
+              "actionType": "speak",
+              "content": "**The Whispering Crossroads**\n\nDawn breaks cold and gray over the ancient crossroads where you stand, casting long shadows from weathered stone markers that point toward distant lands. Mist clings to the cobblestones beneath your boots, and the air carries the scent of wet earth and something else\u2014something metallic and unsettling.\n\nThe four paths stretch before you like gnarled fingers: North toward the **Thornwick Mountains** where smoke rises from what should be abandoned peaks; East to the **Merchant's Road** where no caravans have passed in days; South into the **Darkwood** where strange lights flickered through the night; and West toward **Millbrook Village**, though the morning bell that should be ringing remains ominously silent.\n\nAt the crossroads' center stands an ancient waystone, its surface carved with warnings in the old tongue. Fresh scratches mar its base\u2014claw marks that gleam wet in the pale light. A torn piece of blue cloth flutters from a nearby thornbush, and you catch the faint sound of something moving through the mist behind you.\n\nThe world feels different this morning. Wrong somehow.\n\n**What do you do?**",
+              "target": "hero",
+              "metadata": {
+                "instruction": "Begin the game by setting the initial scene. Describe the hero's starting location, basic environment, and provide an initial narrative hook to spark adventure. Establish mood and potential early story directions."
+              },
+              "timestamp": "2025-12-17T00:04:05.695034"
+            }
+          ],
+          "agentsExecuted": 1
+        },
+        "duration": 9.735881567001343,
+        "error": null,
+        "timestamp": "2025-12-17T00:03:55.959170"
+      },
+      {
+        "stepName": "player_turn",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 4,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "playerAgent": "hero",
+          "skipPlayerTurn": false
+        },
+        "outputs": {
+          "playerPending": true,
+          "playerAgent": "hero"
+        },
+        "duration": 1.049041748046875e-05,
+        "error": null,
+        "timestamp": "2025-12-17T00:04:05.695066"
+      }
+    ],
+    "totalDuration": 13.432554960250854,
+    "success": true,
+    "orchestratorDecision": {
+      "agentsToWake": [
+        "narrator"
+      ],
+      "instructions": {
+        "narrator": "Begin the game by setting the initial scene. Describe the hero's starting location, basic environment, and provide an initial narrative hook to spark adventure. Establish mood and potential early story directions."
+      },
+      "reasoning": "Turn 0 is typically the game's opening scene. The narrator needs to establish the starting context, world atmosphere, and give the hero an initial orientation. With no existing world state, the narrator will create the foundational narrative framework.",
+      "skipPlayerTurn": false
+    }
+  }
+}

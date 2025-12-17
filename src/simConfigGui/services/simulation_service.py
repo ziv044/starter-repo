@@ -14,8 +14,8 @@ def get_simulation(name: str) -> Simulation | None:
 
 def create_simulation(
     name: str,
-    test_mode: bool = True,
-    enable_cache: bool = False,
+    test_mode: bool = False,
+    enable_cache: bool = True,
 ) -> Simulation:
     """Create a new simulation."""
     sim = Simulation(
@@ -62,4 +62,5 @@ def get_simulation_state(name: str) -> dict[str, Any] | None:
         "stats": sim.getStats(),
         "turnCount": sim.turnCount,
         "isTestMode": sim.isTestMode,
+        "isCacheEnabled": sim.isCacheEnabled,
     }

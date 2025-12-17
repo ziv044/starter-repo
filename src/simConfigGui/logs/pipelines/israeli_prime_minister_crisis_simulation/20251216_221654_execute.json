@@ -1,0 +1,164 @@
+{
+  "simulation": "israeli_prime_minister_crisis_simulation",
+  "runType": "execute",
+  "timestamp": "2025-12-16T22:16:54.471881",
+  "result": {
+    "turnNumber": 1,
+    "steps": [
+      {
+        "stepName": "turn_start",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 0,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "previousTurnResult": null
+        },
+        "outputs": {
+          "event": {
+            "name": "turn_start",
+            "data": {
+              "turn": 1
+            },
+            "source": "system",
+            "timestamp": "2025-12-16T22:16:54.470693"
+          }
+        },
+        "duration": 3.647804260253906e-05,
+        "error": null,
+        "timestamp": "2025-12-16T22:16:54.470682"
+      },
+      {
+        "stepName": "gather_events",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 1,
+          "stepConfig": {},
+          "turnNumber": 1,
+          "scheduledEvents": 0
+        },
+        "outputs": {
+          "eventsGathered": 1
+        },
+        "duration": 5.7220458984375e-06,
+        "error": null,
+        "timestamp": "2025-12-16T22:16:54.470716"
+      },
+      {
+        "stepName": "orchestrator_decide",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 2,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "events": [
+            {
+              "name": "turn_start",
+              "data": {
+                "turn": 1
+              },
+              "source": "system",
+              "timestamp": "2025-12-16T22:16:54.470693"
+            }
+          ],
+          "worldState": {},
+          "availableAgents": [
+            {
+              "name": "chief_of_staff",
+              "role": "Prime Minister's Chief of Staff"
+            },
+            {
+              "name": "crisis_generator",
+              "role": "Generates realistic political and security crises"
+            },
+            {
+              "name": "defense_minister",
+              "role": "Israeli Defense Minister"
+            },
+            {
+              "name": "media_voice",
+              "role": "Represents media reactions and public opinion"
+            },
+            {
+              "name": "narrator",
+              "role": "Simulation narrator providing context and scene descriptions"
+            },
+            {
+              "name": "national_security_advisor",
+              "role": "Israeli National Security Advisor"
+            },
+            {
+              "name": "opposition_leader",
+              "role": "Leader of the Opposition"
+            },
+            {
+              "name": "palestinian_authority_president",
+              "role": "President of the Palestinian Authority"
+            },
+            {
+              "name": "us_president",
+              "role": "President of the United States"
+            }
+          ],
+          "orchestratorName": "orchestrator"
+        },
+        "outputs": {
+          "decision": {
+            "agentsToWake": [],
+            "instructions": {},
+            "reasoning": "Error: Agent 'orchestrator' not found in simulation",
+            "skipPlayerTurn": false
+          },
+          "agentsSelected": []
+        },
+        "duration": 0.0004305839538574219,
+        "error": null,
+        "timestamp": "2025-12-16T22:16:54.470803"
+      },
+      {
+        "stepName": "execute_agents",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 3,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "agentsToWake": [],
+          "instructions": {}
+        },
+        "outputs": {
+          "actions": [],
+          "agentsExecuted": 0
+        },
+        "duration": 9.775161743164062e-06,
+        "error": null,
+        "timestamp": "2025-12-16T22:16:54.471168"
+      },
+      {
+        "stepName": "player_turn",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 4,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "playerAgent": "prime_minister",
+          "skipPlayerTurn": false
+        },
+        "outputs": {
+          "playerPending": true,
+          "playerAgent": "prime_minister"
+        },
+        "duration": 8.082389831542969e-05,
+        "error": null,
+        "timestamp": "2025-12-16T22:16:54.471251"
+      }
+    ],
+    "totalDuration": 0.0006210803985595703,
+    "success": true,
+    "orchestratorDecision": {
+      "agentsToWake": [],
+      "instructions": {},
+      "reasoning": "Error: Agent 'orchestrator' not found in simulation",
+      "skipPlayerTurn": false
+    }
+  }
+}

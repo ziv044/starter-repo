@@ -1,0 +1,143 @@
+{
+  "simulation": "fantasy_rpg_adventure",
+  "runType": "play-turn-4",
+  "timestamp": "2025-12-17T00:06:05.087305",
+  "result": {
+    "turnNumber": 1,
+    "steps": [
+      {
+        "stepName": "turn_start",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 0,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "previousTurnResult": null
+        },
+        "outputs": {
+          "event": {
+            "name": "turn_start",
+            "data": {
+              "turn": 1
+            },
+            "source": "system",
+            "timestamp": "2025-12-17T00:06:00.713262"
+          }
+        },
+        "duration": 2.3126602172851562e-05,
+        "error": null,
+        "timestamp": "2025-12-17T00:06:00.713255"
+      },
+      {
+        "stepName": "gather_events",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 1,
+          "stepConfig": {},
+          "turnNumber": 1,
+          "scheduledEvents": 0
+        },
+        "outputs": {
+          "eventsGathered": 1
+        },
+        "duration": 4.5299530029296875e-06,
+        "error": null,
+        "timestamp": "2025-12-17T00:06:00.713281"
+      },
+      {
+        "stepName": "orchestrator_decide",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 2,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "events": [
+            {
+              "name": "turn_start",
+              "data": {
+                "turn": 1
+              },
+              "source": "system",
+              "timestamp": "2025-12-17T00:06:00.713262"
+            }
+          ],
+          "worldState": {
+            "actors": [
+              "cpu_agent",
+              "player_agent"
+            ],
+            "currentActor": "player_agent",
+            "turnIndex": 1
+          },
+          "availableAgents": [
+            {
+              "name": "mysterious_merchant",
+              "role": "Enigmatic trader with rare wares and hidden knowledge"
+            },
+            {
+              "name": "narrator",
+              "role": "Game Master narrator who describes scenes, controls NPCs, and manages world events"
+            }
+          ],
+          "orchestratorName": "orchestrator"
+        },
+        "outputs": {
+          "decision": {
+            "agentsToWake": [],
+            "instructions": {},
+            "reasoning": "Error: No active timer to stop",
+            "skipPlayerTurn": false
+          },
+          "agentsSelected": []
+        },
+        "duration": 4.373007535934448,
+        "error": null,
+        "timestamp": "2025-12-17T00:06:00.713302"
+      },
+      {
+        "stepName": "execute_agents",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 3,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "agentsToWake": [],
+          "instructions": {}
+        },
+        "outputs": {
+          "actions": [],
+          "agentsExecuted": 0
+        },
+        "duration": 6.9141387939453125e-06,
+        "error": null,
+        "timestamp": "2025-12-17T00:06:05.086308"
+      },
+      {
+        "stepName": "player_turn",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 4,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "playerAgent": "hero",
+          "skipPlayerTurn": false
+        },
+        "outputs": {
+          "playerPending": true,
+          "playerAgent": "hero"
+        },
+        "duration": 7.867813110351562e-06,
+        "error": null,
+        "timestamp": "2025-12-17T00:06:05.086319"
+      }
+    ],
+    "totalDuration": 4.373084306716919,
+    "success": true,
+    "orchestratorDecision": {
+      "agentsToWake": [],
+      "instructions": {},
+      "reasoning": "Error: No active timer to stop",
+      "skipPlayerTurn": false
+    }
+  }
+}

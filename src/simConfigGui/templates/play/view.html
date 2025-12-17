@@ -1,0 +1,349 @@
+{% extends "play/base.html" %}
+
+{% block title %}{{ sim_name }} - Play Mode{% endblock %}
+
+{% block content %}
+<a href="{{ url_for('simulation.view_simulation', name=sim_name) }}" class="admin-link">Back to Admin</a>
+
+<div class="play-container">
+    <div class="main-panel">
+        <!-- Narrative Panel -->
+        <div class="card narrative-panel">
+            <div class="card-header">What's Happening</div>
+            <div id="narrative-content" class="narrative-content">
+                <p>Welcome to <strong>{{ sim_name }}</strong>. Click "Start Turn" to begin the simulation.</p>
+            </div>
+        </div>
+
+        <!-- Choices Panel -->
+        <div id="choices-panel" class="card choices-panel" style="display: none;">
+            <div class="card-header">Your Response</div>
+            <div id="choices-container">
+                <!-- Choices will be populated via JS -->
+            </div>
+        </div>
+
+        <!-- Free Text Input (shown for free_text format) -->
+        <div id="free-text-panel" class="card" style="display: none;">
+            <div class="card-header">Your Response</div>
+            <textarea id="free-text-input" class="free-text-input" placeholder="Type your response..."></textarea>
+            <button id="submit-text-btn" class="btn btn-primary" style="margin-top: 10px;">Submit</button>
+        </div>
+
+        <!-- Controls -->
+        <div class="card">
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button id="step-btn" class="btn btn-primary">Start Turn</button>
+                <button id="reset-btn" class="btn btn-secondary">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <!-- Turn Indicator -->
+        <div class="card turn-indicator">
+            Turn <span id="turn-number">{{ turn_number }}</span>
+        </div>
+
+        <!-- World State -->
+        <div class="card">
+            <div class="card-header">World State</div>
+            <div id="world-state">
+                {% for key, value in world_state.items() %}
+                <div class="state-item">
+                    <span class="state-key">{{ key }}</span>
+                    <span class="state-value">{{ value }}</span>
+                </div>
+                {% else %}
+                <p style="color: var(--text-secondary);">No state data yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- History -->
+        <div class="card">
+            <div class="card-header">History</div>
+            <div id="history-container" style="max-height: 300px; overflow-y: auto;">
+                <p style="color: var(--text-secondary);">No history yet.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+const simName = "{{ sim_name }}";
+let isProcessing = false;
+let history = [];
+
+// DOM Elements
+const narrativeContent = document.getElementById('narrative-content');
+const choicesPanel = document.getElementById('choices-panel');
+const choicesContainer = document.getElementById('choices-container');
+const freeTextPanel = document.getElementById('free-text-panel');
+const freeTextInput = document.getElementById('free-text-input');
+const submitTextBtn = document.getElementById('submit-text-btn');
+const stepBtn = document.getElementById('step-btn');
+const resetBtn = document.getElementById('reset-btn');
+const turnNumber = document.getElementById('turn-number');
+const worldStateContainer = document.getElementById('world-state');
+const historyContainer = document.getElementById('history-container');
+
+// Step turn
+stepBtn.addEventListener('click', async () => {
+    if (isProcessing) return;
+    isProcessing = true;
+    stepBtn.disabled = true;
+    stepBtn.textContent = 'Processing...';
+
+    try {
+        const response = await fetch(`/play/${simName}/step`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({})
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            renderOutput(data.output);
+        } else {
+            showError(data.error);
+        }
+    } catch (err) {
+        showError(err.message);
+    } finally {
+        isProcessing = false;
+        stepBtn.disabled = false;
+        stepBtn.textContent = 'Next Turn';
+    }
+});
+
+// Reset
+resetBtn.addEventListener('click', async () => {
+    if (confirm('Reset the simulation?')) {
+        try {
+            const response = await fetch(`/play/${simName}/reset`, {method: 'POST'});
+            const data = await response.json();
+            if (data.success) {
+                turnNumber.textContent = '0';
+                narrativeContent.innerHTML = '<p>Simulation reset. Click "Start Turn" to begin.</p>';
+                choicesPanel.style.display = 'none';
+                freeTextPanel.style.display = 'none';
+                history = [];
+                historyContainer.innerHTML = '<p style="color: var(--text-secondary);">No history yet.</p>';
+                stepBtn.textContent = 'Start Turn';
+            }
+        } catch (err) {
+            showError(err.message);
+        }
+    }
+});
+
+// Submit free text
+submitTextBtn.addEventListener('click', async () => {
+    const text = freeTextInput.value.trim();
+    if (!text) return;
+
+    isProcessing = true;
+    submitTextBtn.disabled = true;
+    submitTextBtn.textContent = 'Processing...';
+
+    try {
+        const response = await fetch(`/play/${simName}/free-text`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({text})
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            freeTextInput.value = '';
+            renderOutput(data.output);
+        } else {
+            showError(data.error);
+        }
+    } catch (err) {
+        showError(err.message);
+    } finally {
+        isProcessing = false;
+        submitTextBtn.disabled = false;
+        submitTextBtn.textContent = 'Submit';
+    }
+});
+
+// Render output
+function renderOutput(output) {
+    // Update turn number
+    turnNumber.textContent = output.turnNumber;
+
+    // Render narrative
+    narrativeContent.innerHTML = formatNarrative(output.narrativeSummary);
+
+    // Update world state with changes
+    updateWorldState(output.stateChanges);
+
+    // Show appropriate input panel
+    if (output.responseFormat === 'free_text') {
+        choicesPanel.style.display = 'none';
+        freeTextPanel.style.display = 'block';
+    } else if (output.playerChoices && output.playerChoices.length > 0) {
+        freeTextPanel.style.display = 'none';
+        renderChoices(output.playerChoices, output.responseFormat);
+        choicesPanel.style.display = 'block';
+    } else {
+        choicesPanel.style.display = 'none';
+        freeTextPanel.style.display = 'none';
+    }
+
+    // Add to history
+    addToHistory(output);
+}
+
+// Format narrative (convert markdown bold)
+function formatNarrative(text) {
+    return text
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/\n/g, '<br>');
+}
+
+// Render choices
+function renderChoices(choices, format) {
+    choicesContainer.innerHTML = '';
+
+    choices.forEach(choice => {
+        const btn = document.createElement('button');
+        btn.className = 'choice-btn';
+        btn.dataset.choiceId = choice.id;
+
+        let impactsHtml = '';
+        if (choice.predictedImpacts && Object.keys(choice.predictedImpacts).length > 0) {
+            const impacts = Object.entries(choice.predictedImpacts)
+                .map(([key, val]) => {
+                    const sign = val > 0 ? '+' : '';
+                    const cls = val > 0 ? 'impact-positive' : 'impact-negative';
+                    return `<span class="${cls}">${key}: ${sign}${val}</span>`;
+                })
+                .join(' | ');
+            impactsHtml = `<div class="choice-impacts">${impacts}</div>`;
+        }
+
+        btn.innerHTML = `
+            <span class="choice-id">${choice.id}</span>
+            <span class="choice-text">${choice.text}</span>
+            ${impactsHtml}
+        `;
+
+        btn.addEventListener('click', () => submitChoice(choice.id));
+        choicesContainer.appendChild(btn);
+    });
+}
+
+// Submit choice
+async function submitChoice(choiceId) {
+    if (isProcessing) return;
+    isProcessing = true;
+
+    // Disable all choice buttons
+    document.querySelectorAll('.choice-btn').forEach(btn => btn.disabled = true);
+
+    try {
+        const response = await fetch(`/play/${simName}/choice`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({choice_id: choiceId})
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            // Update world state display
+            refreshWorldState(data.world_state);
+            // Hide choices panel
+            choicesPanel.style.display = 'none';
+            // Show message
+            narrativeContent.innerHTML += `<p><em>You chose: ${choiceId}</em></p>`;
+        } else {
+            showError(data.error);
+        }
+    } catch (err) {
+        showError(err.message);
+    } finally {
+        isProcessing = false;
+        document.querySelectorAll('.choice-btn').forEach(btn => btn.disabled = false);
+    }
+}
+
+// Update world state with change indicators
+function updateWorldState(stateChanges) {
+    if (!stateChanges || stateChanges.length === 0) return;
+
+    stateChanges.forEach(change => {
+        const existing = worldStateContainer.querySelector(`[data-key="${change.key}"]`);
+        if (existing) {
+            const valueSpan = existing.querySelector('.state-value');
+            valueSpan.textContent = change.newValue;
+
+            // Add change indicator
+            if (change.delta) {
+                const sign = change.delta > 0 ? '+' : '';
+                const cls = change.delta > 0 ? 'positive' : 'negative';
+                let changeSpan = existing.querySelector('.state-change');
+                if (!changeSpan) {
+                    changeSpan = document.createElement('span');
+                    changeSpan.className = 'state-change';
+                    valueSpan.parentNode.appendChild(changeSpan);
+                }
+                changeSpan.className = `state-change ${cls}`;
+                changeSpan.textContent = `(${sign}${change.delta})`;
+            }
+        } else {
+            // New state key
+            const div = document.createElement('div');
+            div.className = 'state-item';
+            div.dataset.key = change.key;
+            div.innerHTML = `
+                <span class="state-key">${change.key}</span>
+                <span class="state-value">${change.newValue}</span>
+            `;
+            worldStateContainer.appendChild(div);
+        }
+    });
+}
+
+// Refresh world state from server data
+function refreshWorldState(state) {
+    worldStateContainer.innerHTML = '';
+    Object.entries(state).forEach(([key, value]) => {
+        const div = document.createElement('div');
+        div.className = 'state-item';
+        div.dataset.key = key;
+        div.innerHTML = `
+            <span class="state-key">${key}</span>
+            <span class="state-value">${value}</span>
+        `;
+        worldStateContainer.appendChild(div);
+    });
+}
+
+// Add to history
+function addToHistory(output) {
+    if (history.length === 0) {
+        historyContainer.innerHTML = '';
+    }
+
+    history.push(output);
+
+    const div = document.createElement('div');
+    div.className = 'history-item';
+    div.innerHTML = `
+        <span class="history-turn">Turn ${output.turnNumber}</span>:
+        ${output.narrativeSummary.substring(0, 100)}${output.narrativeSummary.length > 100 ? '...' : ''}
+    `;
+    historyContainer.insertBefore(div, historyContainer.firstChild);
+}
+
+// Show error
+function showError(message) {
+    narrativeContent.innerHTML = `<p style="color: var(--danger);">Error: ${message}</p>`;
+}
+{% endblock %}

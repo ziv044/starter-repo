@@ -1,0 +1,168 @@
+{
+  "simulation": "fantasy_rpg_adventure",
+  "runType": "play-turn-12",
+  "timestamp": "2025-12-17T00:07:51.326672",
+  "result": {
+    "turnNumber": 1,
+    "steps": [
+      {
+        "stepName": "turn_start",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 0,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "previousTurnResult": null
+        },
+        "outputs": {
+          "event": {
+            "name": "turn_start",
+            "data": {
+              "turn": 1
+            },
+            "source": "system",
+            "timestamp": "2025-12-17T00:07:37.891060"
+          }
+        },
+        "duration": 1.7881393432617188e-05,
+        "error": null,
+        "timestamp": "2025-12-17T00:07:37.891055"
+      },
+      {
+        "stepName": "gather_events",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 1,
+          "stepConfig": {},
+          "turnNumber": 1,
+          "scheduledEvents": 0
+        },
+        "outputs": {
+          "eventsGathered": 1
+        },
+        "duration": 3.337860107421875e-06,
+        "error": null,
+        "timestamp": "2025-12-17T00:07:37.891074"
+      },
+      {
+        "stepName": "orchestrator_decide",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 2,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "events": [
+            {
+              "name": "turn_start",
+              "data": {
+                "turn": 1
+              },
+              "source": "system",
+              "timestamp": "2025-12-17T00:07:37.891060"
+            }
+          ],
+          "worldState": {
+            "actors": [
+              "cpu_agent",
+              "player_agent"
+            ],
+            "currentActor": "player_agent",
+            "turnIndex": 1
+          },
+          "availableAgents": [
+            {
+              "name": "mysterious_merchant",
+              "role": "Enigmatic trader with rare wares and hidden knowledge"
+            },
+            {
+              "name": "narrator",
+              "role": "Game Master narrator who describes scenes, controls NPCs, and manages world events"
+            }
+          ],
+          "orchestratorName": "orchestrator"
+        },
+        "outputs": {
+          "decision": {
+            "agentsToWake": [
+              "narrator"
+            ],
+            "instructions": {
+              "narrator": "Begin the initial scene, introducing the hero's starting location and setting the stage for the first adventure. Provide atmospheric details and create an initial opportunity for exploration or action."
+            },
+            "reasoning": "Turn 0 is the perfect moment for the narrator to establish the game world, create initial context, and prepare the stage for the player's first actions. The narrator will set the scene and provide the hero with an initial environment to interact with.",
+            "skipPlayerTurn": false
+          },
+          "agentsSelected": [
+            "narrator"
+          ]
+        },
+        "duration": 3.9221112728118896,
+        "error": null,
+        "timestamp": "2025-12-17T00:07:37.891091"
+      },
+      {
+        "stepName": "execute_agents",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 3,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "agentsToWake": [
+            "narrator"
+          ],
+          "instructions": {
+            "narrator": "Begin the initial scene, introducing the hero's starting location and setting the stage for the first adventure. Provide atmospheric details and create an initial opportunity for exploration or action."
+          }
+        },
+        "outputs": {
+          "actions": [
+            {
+              "agentName": "narrator",
+              "actionType": "speak",
+              "content": "**The Whispering Crossroads**\n\nThe ancient cobblestones beneath your boots glisten with morning dew as you stand at the convergence of three weathered paths. Towering oak trees form a natural cathedral overhead, their gnarled branches filtering the early sunlight into dancing patterns of gold and shadow.\n\nTo your **north**, a narrow trail winds upward into mist-shrouded hills where the crumbling silhouette of an old watchtower pierces the fog. Strange blue lights flicker occasionally from its uppermost window.\n\nThe **eastern** path descends toward a babbling brook, where you can make out the thatched roofs of a small village nestled in the valley below. Smoke rises lazily from several chimneys, and you catch the faint sound of a blacksmith's hammer ringing against anvil.\n\n**Westward**, the road disappears into a dense forest of towering pines. The shadows there seem deeper than they should be, and an odd stillness hangs in the air\u2014no birdsong, no rustle of small creatures.\n\nAt the crossroads' center stands a weathered stone marker, its surface carved with symbols that seem to shift and writhe when you're not looking directly at them. A leather-bound message tube hangs from an iron hook driven into the stone.\n\n*What draws your attention first, traveler?*",
+              "target": "hero",
+              "metadata": {
+                "instruction": "Begin the initial scene, introducing the hero's starting location and setting the stage for the first adventure. Provide atmospheric details and create an initial opportunity for exploration or action."
+              },
+              "timestamp": "2025-12-17T00:07:51.325510"
+            }
+          ],
+          "agentsExecuted": 1
+        },
+        "duration": 9.512318849563599,
+        "error": null,
+        "timestamp": "2025-12-17T00:07:41.813207"
+      },
+      {
+        "stepName": "player_turn",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 4,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "playerAgent": "hero",
+          "skipPlayerTurn": false
+        },
+        "outputs": {
+          "playerPending": true,
+          "playerAgent": "hero"
+        },
+        "duration": 9.5367431640625e-06,
+        "error": null,
+        "timestamp": "2025-12-17T00:07:51.325536"
+      }
+    ],
+    "totalDuration": 13.434497833251953,
+    "success": true,
+    "orchestratorDecision": {
+      "agentsToWake": [
+        "narrator"
+      ],
+      "instructions": {
+        "narrator": "Begin the initial scene, introducing the hero's starting location and setting the stage for the first adventure. Provide atmospheric details and create an initial opportunity for exploration or action."
+      },
+      "reasoning": "Turn 0 is the perfect moment for the narrator to establish the game world, create initial context, and prepare the stage for the player's first actions. The narrator will set the scene and provide the hero with an initial environment to interact with.",
+      "skipPlayerTurn": false
+    }
+  }
+}

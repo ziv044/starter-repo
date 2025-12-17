@@ -1,0 +1,136 @@
+{
+  "simulation": "fantasy_rpg_adventure",
+  "runType": "play-turn-19",
+  "timestamp": "2025-12-16T23:51:58.764558",
+  "result": {
+    "turnNumber": 1,
+    "steps": [
+      {
+        "stepName": "turn_start",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 0,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "previousTurnResult": null
+        },
+        "outputs": {
+          "event": {
+            "name": "turn_start",
+            "data": {
+              "turn": 1
+            },
+            "source": "system",
+            "timestamp": "2025-12-16T23:51:58.763603"
+          }
+        },
+        "duration": 1.1444091796875e-05,
+        "error": null,
+        "timestamp": "2025-12-16T23:51:58.763600"
+      },
+      {
+        "stepName": "gather_events",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 1,
+          "stepConfig": {},
+          "turnNumber": 1,
+          "scheduledEvents": 0
+        },
+        "outputs": {
+          "eventsGathered": 1
+        },
+        "duration": 2.6226043701171875e-06,
+        "error": null,
+        "timestamp": "2025-12-16T23:51:58.763613"
+      },
+      {
+        "stepName": "orchestrator_decide",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 2,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "events": [
+            {
+              "name": "turn_start",
+              "data": {
+                "turn": 1
+              },
+              "source": "system",
+              "timestamp": "2025-12-16T23:51:58.763603"
+            }
+          ],
+          "worldState": {},
+          "availableAgents": [
+            {
+              "name": "mysterious_merchant",
+              "role": "Enigmatic trader with rare wares and hidden knowledge"
+            },
+            {
+              "name": "narrator",
+              "role": "Game Master narrator who describes scenes, controls NPCs, and manages world events"
+            }
+          ],
+          "orchestratorName": "orchestrator"
+        },
+        "outputs": {
+          "decision": {
+            "agentsToWake": [],
+            "instructions": {},
+            "reasoning": "Fallback parse: Mock response",
+            "skipPlayerTurn": false
+          },
+          "agentsSelected": []
+        },
+        "duration": 0.0007145404815673828,
+        "error": null,
+        "timestamp": "2025-12-16T23:51:58.763624"
+      },
+      {
+        "stepName": "execute_agents",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 3,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "agentsToWake": [],
+          "instructions": {}
+        },
+        "outputs": {
+          "actions": [],
+          "agentsExecuted": 0
+        },
+        "duration": 5.7220458984375e-06,
+        "error": null,
+        "timestamp": "2025-12-16T23:51:58.764343"
+      },
+      {
+        "stepName": "player_turn",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 4,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "playerAgent": "hero",
+          "skipPlayerTurn": false
+        },
+        "outputs": {
+          "playerPending": true,
+          "playerAgent": "hero"
+        },
+        "duration": 5.7220458984375e-06,
+        "error": null,
+        "timestamp": "2025-12-16T23:51:58.764353"
+      }
+    ],
+    "totalDuration": 0.0007650852203369141,
+    "success": true,
+    "orchestratorDecision": {
+      "agentsToWake": [],
+      "instructions": {},
+      "reasoning": "Fallback parse: Mock response",
+      "skipPlayerTurn": false
+    }
+  }
+}

@@ -30,6 +30,7 @@
                 <td>{{ sim.turnCount }}</td>
                 <td>{{ "Yes" if sim.isTestMode else "No" }}</td>
                 <td>
+                    <a href="{{ url_for('play.play_view', sim_name=sim.name) }}" class="btn btn-sm btn-success">Play</a>
                     <a href="{{ url_for('simulation.view_simulation', name=sim.name) }}" class="btn btn-sm">View</a>
                     <a href="{{ url_for('agents.list_agents_view', sim_name=sim.name) }}" class="btn btn-sm">Agents</a>
                     <a href="{{ url_for('events.events_page', sim_name=sim.name) }}" class="btn btn-sm">Events</a>

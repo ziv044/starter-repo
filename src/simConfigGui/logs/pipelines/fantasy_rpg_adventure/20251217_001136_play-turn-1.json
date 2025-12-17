@@ -1,0 +1,161 @@
+{
+  "simulation": "fantasy_rpg_adventure",
+  "runType": "play-turn-1",
+  "timestamp": "2025-12-17T00:11:36.310935",
+  "result": {
+    "turnNumber": 1,
+    "steps": [
+      {
+        "stepName": "turn_start",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 0,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "previousTurnResult": null
+        },
+        "outputs": {
+          "event": {
+            "name": "turn_start",
+            "data": {
+              "turn": 1
+            },
+            "source": "system",
+            "timestamp": "2025-12-17T00:11:22.845615"
+          }
+        },
+        "duration": 3.0279159545898438e-05,
+        "error": null,
+        "timestamp": "2025-12-17T00:11:22.845605"
+      },
+      {
+        "stepName": "gather_events",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 1,
+          "stepConfig": {},
+          "turnNumber": 1,
+          "scheduledEvents": 0
+        },
+        "outputs": {
+          "eventsGathered": 1
+        },
+        "duration": 4.291534423828125e-06,
+        "error": null,
+        "timestamp": "2025-12-17T00:11:22.845636"
+      },
+      {
+        "stepName": "orchestrator_decide",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 2,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "events": [
+            {
+              "name": "turn_start",
+              "data": {
+                "turn": 1
+              },
+              "source": "system",
+              "timestamp": "2025-12-17T00:11:22.845615"
+            }
+          ],
+          "worldState": {},
+          "availableAgents": [
+            {
+              "name": "mysterious_merchant",
+              "role": "Enigmatic trader with rare wares and hidden knowledge"
+            },
+            {
+              "name": "narrator",
+              "role": "Game Master narrator who describes scenes, controls NPCs, and manages world events"
+            }
+          ],
+          "orchestratorName": "orchestrator"
+        },
+        "outputs": {
+          "decision": {
+            "agentsToWake": [
+              "narrator"
+            ],
+            "instructions": {
+              "narrator": "Initialize the game world by introducing the hero's starting scenario - a small village, basic equipment, initial quest hook. Prepare the first scene to orient the player and create intrigue."
+            },
+            "reasoning": "As this is Turn 0/Turn 1, the narrator should set the initial scene and establish the starting context for the hero's journey. No other agents are needed at this moment.",
+            "skipPlayerTurn": false
+          },
+          "agentsSelected": [
+            "narrator"
+          ]
+        },
+        "duration": 3.3220887184143066,
+        "error": null,
+        "timestamp": "2025-12-17T00:11:22.845656"
+      },
+      {
+        "stepName": "execute_agents",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 3,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "agentsToWake": [
+            "narrator"
+          ],
+          "instructions": {
+            "narrator": "Initialize the game world by introducing the hero's starting scenario - a small village, basic equipment, initial quest hook. Prepare the first scene to orient the player and create intrigue."
+          }
+        },
+        "outputs": {
+          "actions": [
+            {
+              "agentName": "narrator",
+              "actionType": "speak",
+              "content": "**The Village of Millhaven**\n\nThe amber light of dusk filters through the windows of the *Weary Traveler Inn* as you sit nursing a tankard of ale. Millhaven is a humble farming village, barely more than a cluster of thatched cottages surrounding this single inn. Your worn leather armor bears the marks of travel, and your trusty sword rests against the wooden table beside a small coinpurse containing your last few silver pieces.\n\nThe innkeeper, a stout woman named Marta, approaches with worry creasing her brow. \"Stranger,\" she says quietly, glancing toward the other patrons, \"you have the look of someone who's seen trouble. We... we might have need of such a person.\"\n\nShe leans closer, lowering her voice. \"Children have been disappearing. Three in the past fortnight. The village guard is just old Henrik with his rusty spear, and the nearest lord's garrison is days away. Last night, young Tam saw strange lights dancing in the Thornwood Forest before he vanished.\"\n\nHer weathered hands tremble slightly as she places a small leather pouch on the table. \"It's not much - thirty silver coins - but it's all we can spare. Will you help us?\"\n\nOutside, night is falling, and somewhere in the darkness beyond the village, the Thornwood Forest awaits.\n\n**What do you do?**",
+              "target": "hero",
+              "metadata": {
+                "instruction": "Initialize the game world by introducing the hero's starting scenario - a small village, basic equipment, initial quest hook. Prepare the first scene to orient the player and create intrigue."
+              },
+              "timestamp": "2025-12-17T00:11:36.310324"
+            }
+          ],
+          "agentsExecuted": 1
+        },
+        "duration": 10.142598152160645,
+        "error": null,
+        "timestamp": "2025-12-17T00:11:26.167747"
+      },
+      {
+        "stepName": "player_turn",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 4,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "playerAgent": "hero",
+          "skipPlayerTurn": false
+        },
+        "outputs": {
+          "playerPending": true,
+          "playerAgent": "hero"
+        },
+        "duration": 1.3589859008789062e-05,
+        "error": null,
+        "timestamp": "2025-12-17T00:11:36.310360"
+      }
+    ],
+    "totalDuration": 13.464785814285278,
+    "success": true,
+    "orchestratorDecision": {
+      "agentsToWake": [
+        "narrator"
+      ],
+      "instructions": {
+        "narrator": "Initialize the game world by introducing the hero's starting scenario - a small village, basic equipment, initial quest hook. Prepare the first scene to orient the player and create intrigue."
+      },
+      "reasoning": "As this is Turn 0/Turn 1, the narrator should set the initial scene and establish the starting context for the hero's journey. No other agents are needed at this moment.",
+      "skipPlayerTurn": false
+    }
+  }
+}

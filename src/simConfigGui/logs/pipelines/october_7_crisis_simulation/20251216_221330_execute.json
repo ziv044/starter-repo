@@ -1,0 +1,180 @@
+{
+  "simulation": "october_7_crisis_simulation",
+  "runType": "execute",
+  "timestamp": "2025-12-16T22:13:30.387177",
+  "result": {
+    "turnNumber": 1,
+    "steps": [
+      {
+        "stepName": "turn_start",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 0,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "previousTurnResult": null
+        },
+        "outputs": {
+          "event": {
+            "name": "turn_start",
+            "data": {
+              "turn": 1
+            },
+            "source": "system",
+            "timestamp": "2025-12-16T22:13:30.385382"
+          }
+        },
+        "duration": 2.6226043701171875e-05,
+        "error": null,
+        "timestamp": "2025-12-16T22:13:30.385375"
+      },
+      {
+        "stepName": "gather_events",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 1,
+          "stepConfig": {},
+          "turnNumber": 1,
+          "scheduledEvents": 0
+        },
+        "outputs": {
+          "eventsGathered": 1
+        },
+        "duration": 5.7220458984375e-06,
+        "error": null,
+        "timestamp": "2025-12-16T22:13:30.385404"
+      },
+      {
+        "stepName": "orchestrator_decide",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 2,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "events": [
+            {
+              "name": "turn_start",
+              "data": {
+                "turn": 1
+              },
+              "source": "system",
+              "timestamp": "2025-12-16T22:13:30.385382"
+            }
+          ],
+          "worldState": {},
+          "availableAgents": [
+            {
+              "name": "crisis_narrator",
+              "role": "Dramatic narrator for major events and situation updates"
+            },
+            {
+              "name": "defense_minister",
+              "role": "Senior cabinet member overseeing defense policy and military coordination"
+            },
+            {
+              "name": "far_right_ministers",
+              "role": "Far-right coalition partners pushing for maximum force and settlement expansion"
+            },
+            {
+              "name": "hamas_leadership",
+              "role": "Palestinian militant leadership coordinating multi-front resistance"
+            },
+            {
+              "name": "hezbollah_command",
+              "role": "Lebanese militant group threatening northern front escalation"
+            },
+            {
+              "name": "hostage_families_representative",
+              "role": "Spokesperson for families demanding immediate hostage rescue"
+            },
+            {
+              "name": "idf_chief_of_staff",
+              "role": "Military commander providing operational assessments and recommendations"
+            },
+            {
+              "name": "intelligence_briefer",
+              "role": "Provides situation reports and intelligence updates"
+            },
+            {
+              "name": "iranian_revolutionary_guard",
+              "role": "Regional power coordinating proxy warfare against Israel"
+            },
+            {
+              "name": "israeli_public_opinion",
+              "role": "Domestic pressure reflecting public mood and electoral concerns"
+            },
+            {
+              "name": "mossad_director",
+              "role": "Intelligence chief focused on covert operations and strategic intelligence"
+            },
+            {
+              "name": "shabak_director",
+              "role": "Internal security chief focused on domestic threats and counterterrorism"
+            },
+            {
+              "name": "us_secretary_of_state",
+              "role": "American diplomatic pressure for restraint and civilian protection"
+            }
+          ],
+          "orchestratorName": "orchestrator"
+        },
+        "outputs": {
+          "decision": {
+            "agentsToWake": [],
+            "instructions": {},
+            "reasoning": "Fallback parse: Mock response",
+            "skipPlayerTurn": false
+          },
+          "agentsSelected": []
+        },
+        "duration": 0.0009336471557617188,
+        "error": null,
+        "timestamp": "2025-12-16T22:13:30.385439"
+      },
+      {
+        "stepName": "execute_agents",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 3,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "agentsToWake": [],
+          "instructions": {}
+        },
+        "outputs": {
+          "actions": [],
+          "agentsExecuted": 0
+        },
+        "duration": 1.2159347534179688e-05,
+        "error": null,
+        "timestamp": "2025-12-16T22:13:30.386365"
+      },
+      {
+        "stepName": "player_turn",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 4,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "playerAgent": "pm_netanyahu",
+          "skipPlayerTurn": false
+        },
+        "outputs": {
+          "playerPending": true,
+          "playerAgent": "pm_netanyahu"
+        },
+        "duration": 1.4543533325195312e-05,
+        "error": null,
+        "timestamp": "2025-12-16T22:13:30.386385"
+      }
+    ],
+    "totalDuration": 0.0010387897491455078,
+    "success": true,
+    "orchestratorDecision": {
+      "agentsToWake": [],
+      "instructions": {},
+      "reasoning": "Fallback parse: Mock response",
+      "skipPlayerTurn": false
+    }
+  }
+}

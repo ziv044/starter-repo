@@ -5,12 +5,35 @@
 {% block content %}
 <h1>Design Your Simulation</h1>
 
+<div class="flow-progress">
+    <div class="flow-step" data-step="1">
+        <div class="step-number">1</div>
+        <div class="step-label">Subject</div>
+    </div>
+    <div class="flow-connector"></div>
+    <div class="flow-step" data-step="2">
+        <div class="step-number">2</div>
+        <div class="step-label">World State</div>
+    </div>
+    <div class="flow-connector"></div>
+    <div class="flow-step" data-step="3">
+        <div class="step-number">3</div>
+        <div class="step-label">Agents</div>
+    </div>
+    <div class="flow-connector"></div>
+    <div class="flow-step" data-step="4">
+        <div class="step-number">4</div>
+        <div class="step-label">Game Rules</div>
+    </div>
+</div>
+
 <div class="chat-container">
     <div class="chat-messages" id="chatMessages">
         {% if not conversation %}
         <div class="chat-welcome">
-            <p><strong>Welcome!</strong> I'll help you design your simulation by asking a few questions.</p>
-            <p>Start by telling me what kind of simulation you'd like to create.</p>
+            <p><strong>Simulation Design Wizard</strong></p>
+            <p>Answer 4 quick questions to generate your simulation config.</p>
+            <p class="flow-hint">Subject → World State → Agents → Game Rules</p>
         </div>
         {% endif %}
 
@@ -46,6 +69,74 @@
 </div>
 
 <style>
+.flow-progress {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: #f0f4f8;
+    border-radius: 8px;
+}
+
+.flow-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    opacity: 0.4;
+    transition: opacity 0.3s;
+}
+
+.flow-step.active {
+    opacity: 1;
+}
+
+.flow-step.completed {
+    opacity: 0.7;
+}
+
+.flow-step.completed .step-number {
+    background: #28a745;
+}
+
+.step-number {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #6c757d;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.flow-step.active .step-number {
+    background: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.3);
+}
+
+.step-label {
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.flow-connector {
+    width: 40px;
+    height: 2px;
+    background: #ccc;
+    margin: 0 0.5rem;
+}
+
+.chat-welcome .flow-hint {
+    color: #888;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+}
+
 .chat-container {
     background: #f9f9f9;
     border-radius: 8px;
@@ -149,5 +240,45 @@ document.getElementById('messageInput').addEventListener('keydown', function(e) 
         this.form.submit();
     }
 });
+
+// Detect current step from conversation and update progress indicator
+function updateFlowProgress() {
+    const messages = document.querySelectorAll('.chat-message.assistant .message-content');
+    let currentStep = 1;
+    let isReady = false;
+
+    messages.forEach(msg => {
+        const text = msg.textContent;
+        // Check for step indicators like "[Step 2/4: WORLD STATE]"
+        const stepMatch = text.match(/\[Step\s*(\d)\/4/i);
+        if (stepMatch) {
+            currentStep = parseInt(stepMatch[1]);
+        }
+        // Check if ready to generate
+        if (text.includes('READY_TO_GENERATE') || text.toLowerCase().includes('ready to generate')) {
+            isReady = true;
+            currentStep = 5; // All steps completed
+        }
+    });
+
+    // Update step indicators
+    document.querySelectorAll('.flow-step').forEach(step => {
+        const stepNum = parseInt(step.dataset.step);
+        step.classList.remove('active', 'completed');
+
+        if (isReady || stepNum < currentStep) {
+            step.classList.add('completed');
+        } else if (stepNum === currentStep) {
+            step.classList.add('active');
+        }
+    });
+
+    // If no conversation yet, highlight step 1
+    if (messages.length === 0) {
+        document.querySelector('.flow-step[data-step="1"]').classList.add('active');
+    }
+}
+
+updateFlowProgress();
 </script>
 {% endblock %}

@@ -58,7 +58,7 @@ target-version = "py310"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "W"]
-ignore = ["N802", "N803", "N806"]  # Allow camelCase naming
+ignore = ["N802", "N803", "N806", "N815", "N999"]  # Allow camelCase naming throughout
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -1,0 +1,161 @@
+{
+  "simulation": "fantasy_rpg_adventure",
+  "runType": "play-turn-8",
+  "timestamp": "2025-12-16T23:58:28.286345",
+  "result": {
+    "turnNumber": 1,
+    "steps": [
+      {
+        "stepName": "turn_start",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 0,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "previousTurnResult": null
+        },
+        "outputs": {
+          "event": {
+            "name": "turn_start",
+            "data": {
+              "turn": 1
+            },
+            "source": "system",
+            "timestamp": "2025-12-16T23:58:16.797989"
+          }
+        },
+        "duration": 1.4781951904296875e-05,
+        "error": null,
+        "timestamp": "2025-12-16T23:58:16.797983"
+      },
+      {
+        "stepName": "gather_events",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 1,
+          "stepConfig": {},
+          "turnNumber": 1,
+          "scheduledEvents": 0
+        },
+        "outputs": {
+          "eventsGathered": 1
+        },
+        "duration": 3.814697265625e-06,
+        "error": null,
+        "timestamp": "2025-12-16T23:58:16.798001"
+      },
+      {
+        "stepName": "orchestrator_decide",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 2,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "events": [
+            {
+              "name": "turn_start",
+              "data": {
+                "turn": 1
+              },
+              "source": "system",
+              "timestamp": "2025-12-16T23:58:16.797989"
+            }
+          ],
+          "worldState": {},
+          "availableAgents": [
+            {
+              "name": "mysterious_merchant",
+              "role": "Enigmatic trader with rare wares and hidden knowledge"
+            },
+            {
+              "name": "narrator",
+              "role": "Game Master narrator who describes scenes, controls NPCs, and manages world events"
+            }
+          ],
+          "orchestratorName": "orchestrator"
+        },
+        "outputs": {
+          "decision": {
+            "agentsToWake": [
+              "narrator"
+            ],
+            "instructions": {
+              "narrator": "Begin the game by setting the initial scene. Describe the starting location, basic hero context, and immediate environment. Prepare for the hero's first moment of exploration."
+            },
+            "reasoning": "Since this is Turn 0 (game start), the narrator needs to establish the initial game world, provide context, and set up the first narrative moment for the hero to interact with.",
+            "skipPlayerTurn": false
+          },
+          "agentsSelected": [
+            "narrator"
+          ]
+        },
+        "duration": 2.894505500793457,
+        "error": null,
+        "timestamp": "2025-12-16T23:58:16.798016"
+      },
+      {
+        "stepName": "execute_agents",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 3,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "agentsToWake": [
+            "narrator"
+          ],
+          "instructions": {
+            "narrator": "Begin the game by setting the initial scene. Describe the starting location, basic hero context, and immediate environment. Prepare for the hero's first moment of exploration."
+          }
+        },
+        "outputs": {
+          "actions": [
+            {
+              "agentName": "narrator",
+              "actionType": "speak",
+              "content": "**The Crossroads Tavern - Evening**\n\nThe flickering candlelight casts dancing shadows across the worn wooden tables of the Crossroads Tavern. Rain patters steadily against the diamond-paned windows as you nurse your ale, watching droplets race down the glass. The common room buzzes with the low murmur of travelers seeking shelter from the storm.\n\nYou are a wanderer who arrived just as the downpour began, your coin purse light but sufficient for a night's lodging. The innkeeper, a stout woman named Marta, moves between tables with practiced efficiency, her worried expression suggesting something beyond mere weather troubles her establishment.\n\nFrom your corner table, you notice three things of interest:\n- A hooded figure in dark leathers sits alone near the fireplace, occasionally glancing toward the stairs leading to the upper rooms\n- Two local farmers whisper urgently at the bar, gesturing toward the northern road\n- A travel-worn merchant examines a torn piece of parchment with obvious distress\n\nThe storm shows no signs of abating, and the night is young. What draws your attention first in this haven of flickering warmth and gathering shadows?",
+              "target": "hero",
+              "metadata": {
+                "instruction": "Begin the game by setting the initial scene. Describe the starting location, basic hero context, and immediate environment. Prepare for the hero's first moment of exploration."
+              },
+              "timestamp": "2025-12-16T23:58:28.286030"
+            }
+          ],
+          "agentsExecuted": 1
+        },
+        "duration": 8.593519687652588,
+        "error": null,
+        "timestamp": "2025-12-16T23:58:19.692525"
+      },
+      {
+        "stepName": "player_turn",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 4,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "playerAgent": "hero",
+          "skipPlayerTurn": false
+        },
+        "outputs": {
+          "playerPending": true,
+          "playerAgent": "hero"
+        },
+        "duration": 8.58306884765625e-06,
+        "error": null,
+        "timestamp": "2025-12-16T23:58:28.286055"
+      }
+    ],
+    "totalDuration": 11.488088130950928,
+    "success": true,
+    "orchestratorDecision": {
+      "agentsToWake": [
+        "narrator"
+      ],
+      "instructions": {
+        "narrator": "Begin the game by setting the initial scene. Describe the starting location, basic hero context, and immediate environment. Prepare for the hero's first moment of exploration."
+      },
+      "reasoning": "Since this is Turn 0 (game start), the narrator needs to establish the initial game world, provide context, and set up the first narrative moment for the hero to interact with.",
+      "skipPlayerTurn": false
+    }
+  }
+}

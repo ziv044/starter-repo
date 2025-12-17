@@ -6,7 +6,6 @@ across similar (not identical) game states.
 
 from typing import Any
 
-
 # Default bucket configurations
 DEFAULT_BUCKETS = {
     "approval": [

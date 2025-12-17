@@ -1,0 +1,161 @@
+{
+  "simulation": "fantasy_rpg_adventure",
+  "runType": "play-turn-1",
+  "timestamp": "2025-12-16T23:56:48.374321",
+  "result": {
+    "turnNumber": 1,
+    "steps": [
+      {
+        "stepName": "turn_start",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 0,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "previousTurnResult": null
+        },
+        "outputs": {
+          "event": {
+            "name": "turn_start",
+            "data": {
+              "turn": 1
+            },
+            "source": "system",
+            "timestamp": "2025-12-16T23:56:34.725269"
+          }
+        },
+        "duration": 3.814697265625e-05,
+        "error": null,
+        "timestamp": "2025-12-16T23:56:34.725256"
+      },
+      {
+        "stepName": "gather_events",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 1,
+          "stepConfig": {},
+          "turnNumber": 1,
+          "scheduledEvents": 0
+        },
+        "outputs": {
+          "eventsGathered": 1
+        },
+        "duration": 6.198883056640625e-06,
+        "error": null,
+        "timestamp": "2025-12-16T23:56:34.725296"
+      },
+      {
+        "stepName": "orchestrator_decide",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 2,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "events": [
+            {
+              "name": "turn_start",
+              "data": {
+                "turn": 1
+              },
+              "source": "system",
+              "timestamp": "2025-12-16T23:56:34.725269"
+            }
+          ],
+          "worldState": {},
+          "availableAgents": [
+            {
+              "name": "mysterious_merchant",
+              "role": "Enigmatic trader with rare wares and hidden knowledge"
+            },
+            {
+              "name": "narrator",
+              "role": "Game Master narrator who describes scenes, controls NPCs, and manages world events"
+            }
+          ],
+          "orchestratorName": "orchestrator"
+        },
+        "outputs": {
+          "decision": {
+            "agentsToWake": [
+              "narrator"
+            ],
+            "instructions": {
+              "narrator": "Begin the game by establishing the initial scene and introducing the hero's starting context. Create an intriguing opening that sets up potential adventure and gives the hero an initial sense of purpose."
+            },
+            "reasoning": "Since this is Turn 0 and the world state is empty, the narrator should initialize the game world, introduce the starting environment, and provide context for the hero's journey. This will create narrative momentum and prepare for the hero's first actions.",
+            "skipPlayerTurn": false
+          },
+          "agentsSelected": [
+            "narrator"
+          ]
+        },
+        "duration": 3.3529059886932373,
+        "error": null,
+        "timestamp": "2025-12-16T23:56:34.725323"
+      },
+      {
+        "stepName": "execute_agents",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 3,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "agentsToWake": [
+            "narrator"
+          ],
+          "instructions": {
+            "narrator": "Begin the game by establishing the initial scene and introducing the hero's starting context. Create an intriguing opening that sets up potential adventure and gives the hero an initial sense of purpose."
+          }
+        },
+        "outputs": {
+          "actions": [
+            {
+              "agentName": "narrator",
+              "actionType": "speak",
+              "content": "**The Crimson Dawn**\n\nThe acrid smell of smoke drifts through the morning air as you crest the hill overlooking Millbrook Village. What should be peaceful farmland dotted with thatched cottages is instead a scene of devastation. Several buildings smolder in ruin, and an unnatural crimson mist clings to the ground like spilled blood.\n\nYou are a traveling sellsword, your weathered leather armor and well-worn sword marking you as someone familiar with danger. Your coin purse jangles nearly empty\u2014another reason you'd hoped this remote village might offer work.\n\nAs you descend toward the village outskirts, a young woman in a torn blue dress stumbles from behind an overturned cart. Her eyes are wide with terror as she spots you approaching. She clutches something small and glinting against her chest.\n\n\"Please!\" she calls out, her voice cracking. \"You have to help us! The children... they took the children to the old mine!\"\n\nBehind her, the crimson mist seems to pulse and writhe with unnatural life, as if responding to her distress. In the distance, you can make out several villagers huddled near the stone well in the village center, too far away to make out clearly.\n\nThe woman takes a hesitant step toward you, hope and desperation warring in her expression.\n\nWhat do you do?",
+              "target": "hero",
+              "metadata": {
+                "instruction": "Begin the game by establishing the initial scene and introducing the hero's starting context. Create an intriguing opening that sets up potential adventure and gives the hero an initial sense of purpose."
+              },
+              "timestamp": "2025-12-16T23:56:48.373689"
+            }
+          ],
+          "agentsExecuted": 1
+        },
+        "duration": 10.295480012893677,
+        "error": null,
+        "timestamp": "2025-12-16T23:56:38.078224"
+      },
+      {
+        "stepName": "player_turn",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 4,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "playerAgent": "hero",
+          "skipPlayerTurn": false
+        },
+        "outputs": {
+          "playerPending": true,
+          "playerAgent": "hero"
+        },
+        "duration": 8.344650268554688e-06,
+        "error": null,
+        "timestamp": "2025-12-16T23:56:48.373713"
+      }
+    ],
+    "totalDuration": 13.648484706878662,
+    "success": true,
+    "orchestratorDecision": {
+      "agentsToWake": [
+        "narrator"
+      ],
+      "instructions": {
+        "narrator": "Begin the game by establishing the initial scene and introducing the hero's starting context. Create an intriguing opening that sets up potential adventure and gives the hero an initial sense of purpose."
+      },
+      "reasoning": "Since this is Turn 0 and the world state is empty, the narrator should initialize the game world, introduce the starting environment, and provide context for the hero's journey. This will create narrative momentum and prepare for the hero's first actions.",
+      "skipPlayerTurn": false
+    }
+  }
+}

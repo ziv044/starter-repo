@@ -1,0 +1,161 @@
+{
+  "simulation": "fantasy_rpg_adventure",
+  "runType": "play-turn-15",
+  "timestamp": "2025-12-16T23:57:57.394088",
+  "result": {
+    "turnNumber": 1,
+    "steps": [
+      {
+        "stepName": "turn_start",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 0,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "previousTurnResult": null
+        },
+        "outputs": {
+          "event": {
+            "name": "turn_start",
+            "data": {
+              "turn": 1
+            },
+            "source": "system",
+            "timestamp": "2025-12-16T23:57:45.200763"
+          }
+        },
+        "duration": 1.6450881958007812e-05,
+        "error": null,
+        "timestamp": "2025-12-16T23:57:45.200757"
+      },
+      {
+        "stepName": "gather_events",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 1,
+          "stepConfig": {},
+          "turnNumber": 1,
+          "scheduledEvents": 0
+        },
+        "outputs": {
+          "eventsGathered": 1
+        },
+        "duration": 2.86102294921875e-06,
+        "error": null,
+        "timestamp": "2025-12-16T23:57:45.200775"
+      },
+      {
+        "stepName": "orchestrator_decide",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 2,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "events": [
+            {
+              "name": "turn_start",
+              "data": {
+                "turn": 1
+              },
+              "source": "system",
+              "timestamp": "2025-12-16T23:57:45.200763"
+            }
+          ],
+          "worldState": {},
+          "availableAgents": [
+            {
+              "name": "mysterious_merchant",
+              "role": "Enigmatic trader with rare wares and hidden knowledge"
+            },
+            {
+              "name": "narrator",
+              "role": "Game Master narrator who describes scenes, controls NPCs, and manages world events"
+            }
+          ],
+          "orchestratorName": "orchestrator"
+        },
+        "outputs": {
+          "decision": {
+            "agentsToWake": [
+              "narrator"
+            ],
+            "instructions": {
+              "narrator": "Begin the story by establishing the initial scene, introducing the hero's starting location, and setting up the first narrative context for the adventure."
+            },
+            "reasoning": "Since this is Turn 0 and the world state is empty, the narrator should create the initial scene, describe the hero's starting environment, and prepare the stage for the adventure to begin.",
+            "skipPlayerTurn": false
+          },
+          "agentsSelected": [
+            "narrator"
+          ]
+        },
+        "duration": 2.9992682933807373,
+        "error": null,
+        "timestamp": "2025-12-16T23:57:45.200792"
+      },
+      {
+        "stepName": "execute_agents",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 3,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "agentsToWake": [
+            "narrator"
+          ],
+          "instructions": {
+            "narrator": "Begin the story by establishing the initial scene, introducing the hero's starting location, and setting up the first narrative context for the adventure."
+          }
+        },
+        "outputs": {
+          "actions": [
+            {
+              "agentName": "narrator",
+              "actionType": "speak",
+              "content": "**The Whispering Crossroads**\n\nThe amber light of dusk filters through ancient oak trees as you stand at a weathered stone crossroads. Four paths stretch before you like the spokes of a great wheel - one leading north toward misty mountains, another east into dense woodlands, the third south toward distant farmlands, and the last west where the dying sun paints the horizon crimson.\n\nAt the intersection's center stands a moss-covered waystone, its carved runes barely visible after centuries of wind and rain. Strange symbols seem to shift in your peripheral vision, and you catch the faint sound of whispers carried on the evening breeze - though no other soul appears to be near.\n\nYour travel pack weighs heavy on your shoulders, containing the few possessions you carry into this uncertain journey. The day grows short, and you know that travelers caught on these roads after full dark often tell tales of things that hunt beneath the stars.\n\nA murder of ravens circles overhead, their harsh cries breaking the twilight stillness. One larger than the rest perches atop the waystone, fixing you with an intelligent black eye that seems far too knowing.\n\nThe crossroads await your choice, adventurer. Which path calls to you, and what draws you forward into the gathering night?",
+              "target": "hero",
+              "metadata": {
+                "instruction": "Begin the story by establishing the initial scene, introducing the hero's starting location, and setting up the first narrative context for the adventure."
+              },
+              "timestamp": "2025-12-16T23:57:57.393258"
+            }
+          ],
+          "agentsExecuted": 1
+        },
+        "duration": 9.193214416503906,
+        "error": null,
+        "timestamp": "2025-12-16T23:57:48.200065"
+      },
+      {
+        "stepName": "player_turn",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 4,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "playerAgent": "hero",
+          "skipPlayerTurn": false
+        },
+        "outputs": {
+          "playerPending": true,
+          "playerAgent": "hero"
+        },
+        "duration": 1.33514404296875e-05,
+        "error": null,
+        "timestamp": "2025-12-16T23:57:57.393298"
+      }
+    ],
+    "totalDuration": 12.192561149597168,
+    "success": true,
+    "orchestratorDecision": {
+      "agentsToWake": [
+        "narrator"
+      ],
+      "instructions": {
+        "narrator": "Begin the story by establishing the initial scene, introducing the hero's starting location, and setting up the first narrative context for the adventure."
+      },
+      "reasoning": "Since this is Turn 0 and the world state is empty, the narrator should create the initial scene, describe the hero's starting environment, and prepare the stage for the adventure to begin.",
+      "skipPlayerTurn": false
+    }
+  }
+}

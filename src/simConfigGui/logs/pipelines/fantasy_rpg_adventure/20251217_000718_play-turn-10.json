@@ -1,0 +1,168 @@
+{
+  "simulation": "fantasy_rpg_adventure",
+  "runType": "play-turn-10",
+  "timestamp": "2025-12-17T00:07:18.294499",
+  "result": {
+    "turnNumber": 1,
+    "steps": [
+      {
+        "stepName": "turn_start",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 0,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "previousTurnResult": null
+        },
+        "outputs": {
+          "event": {
+            "name": "turn_start",
+            "data": {
+              "turn": 1
+            },
+            "source": "system",
+            "timestamp": "2025-12-17T00:07:05.509321"
+          }
+        },
+        "duration": 1.8358230590820312e-05,
+        "error": null,
+        "timestamp": "2025-12-17T00:07:05.509315"
+      },
+      {
+        "stepName": "gather_events",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 1,
+          "stepConfig": {},
+          "turnNumber": 1,
+          "scheduledEvents": 0
+        },
+        "outputs": {
+          "eventsGathered": 1
+        },
+        "duration": 3.5762786865234375e-06,
+        "error": null,
+        "timestamp": "2025-12-17T00:07:05.509335"
+      },
+      {
+        "stepName": "orchestrator_decide",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 2,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "events": [
+            {
+              "name": "turn_start",
+              "data": {
+                "turn": 1
+              },
+              "source": "system",
+              "timestamp": "2025-12-17T00:07:05.509321"
+            }
+          ],
+          "worldState": {
+            "actors": [
+              "cpu_agent",
+              "player_agent"
+            ],
+            "currentActor": "cpu_agent",
+            "turnIndex": 0
+          },
+          "availableAgents": [
+            {
+              "name": "mysterious_merchant",
+              "role": "Enigmatic trader with rare wares and hidden knowledge"
+            },
+            {
+              "name": "narrator",
+              "role": "Game Master narrator who describes scenes, controls NPCs, and manages world events"
+            }
+          ],
+          "orchestratorName": "orchestrator"
+        },
+        "outputs": {
+          "decision": {
+            "agentsToWake": [
+              "narrator"
+            ],
+            "instructions": {
+              "narrator": "Begin the game by setting the opening scene, introducing the initial location and starting context for the hero's journey."
+            },
+            "reasoning": "Turn 0 is the game initialization point where the narrative world needs to be established. The narrator should create the initial setting and provide context for the hero's adventure to begin.",
+            "skipPlayerTurn": false
+          },
+          "agentsSelected": [
+            "narrator"
+          ]
+        },
+        "duration": 2.9479479789733887,
+        "error": null,
+        "timestamp": "2025-12-17T00:07:05.509353"
+      },
+      {
+        "stepName": "execute_agents",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 3,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "agentsToWake": [
+            "narrator"
+          ],
+          "instructions": {
+            "narrator": "Begin the game by setting the opening scene, introducing the initial location and starting context for the hero's journey."
+          }
+        },
+        "outputs": {
+          "actions": [
+            {
+              "agentName": "narrator",
+              "actionType": "speak",
+              "content": "**The Crossroads Tavern**\n\n*The amber glow of flickering candles dances across weathered wooden tables as you sit in the corner of the Crossroads Tavern. Rain patters against diamond-paned windows while the hearth crackles warmly nearby. The tavern buzzes with hushed conversations - merchants discussing blocked trade routes, farmers whispering about strange lights seen in the Thornwood Forest, and a hooded figure in the far corner nursing an untouched ale.*\n\n*The barkeep, a stout woman named Marta, approaches your table with a concerned expression.*\n\n**Marta:** \"Haven't seen you 'round these parts before, traveler. Name's Marta - I run this place. You picked an interesting night to arrive... three caravans failed to make it through Thornwood this week. Guards found 'em empty, goods scattered like something scared the horses into bolting.\"\n\n*She leans closer, lowering her voice.*\n\n**Marta:** \"Folk are saying it's bandits, but I've heard... other things. The kind of things that make grown men cross themselves twice before speaking. What brings you to our little crossroads?\"\n\n*Thunder rumbles overhead as you notice the hooded figure has turned slightly in your direction, listening.*\n\nWhat do you do?",
+              "target": "hero",
+              "metadata": {
+                "instruction": "Begin the game by setting the opening scene, introducing the initial location and starting context for the hero's journey."
+              },
+              "timestamp": "2025-12-17T00:07:18.293419"
+            }
+          ],
+          "agentsExecuted": 1
+        },
+        "duration": 9.836130857467651,
+        "error": null,
+        "timestamp": "2025-12-17T00:07:08.457303"
+      },
+      {
+        "stepName": "player_turn",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 4,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "playerAgent": "hero",
+          "skipPlayerTurn": false
+        },
+        "outputs": {
+          "playerPending": true,
+          "playerAgent": "hero"
+        },
+        "duration": 7.62939453125e-06,
+        "error": null,
+        "timestamp": "2025-12-17T00:07:18.293442"
+      }
+    ],
+    "totalDuration": 12.784145832061768,
+    "success": true,
+    "orchestratorDecision": {
+      "agentsToWake": [
+        "narrator"
+      ],
+      "instructions": {
+        "narrator": "Begin the game by setting the opening scene, introducing the initial location and starting context for the hero's journey."
+      },
+      "reasoning": "Turn 0 is the game initialization point where the narrative world needs to be established. The narrator should create the initial setting and provide context for the hero's adventure to begin.",
+      "skipPlayerTurn": false
+    }
+  }
+}

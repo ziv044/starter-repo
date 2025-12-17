@@ -1,0 +1,161 @@
+{
+  "simulation": "fantasy_rpg_adventure",
+  "runType": "play-turn-2",
+  "timestamp": "2025-12-17T00:02:07.395036",
+  "result": {
+    "turnNumber": 1,
+    "steps": [
+      {
+        "stepName": "turn_start",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 0,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "previousTurnResult": null
+        },
+        "outputs": {
+          "event": {
+            "name": "turn_start",
+            "data": {
+              "turn": 1
+            },
+            "source": "system",
+            "timestamp": "2025-12-17T00:01:53.061283"
+          }
+        },
+        "duration": 1.7881393432617188e-05,
+        "error": null,
+        "timestamp": "2025-12-17T00:01:53.061277"
+      },
+      {
+        "stepName": "gather_events",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 1,
+          "stepConfig": {},
+          "turnNumber": 1,
+          "scheduledEvents": 0
+        },
+        "outputs": {
+          "eventsGathered": 1
+        },
+        "duration": 3.0994415283203125e-06,
+        "error": null,
+        "timestamp": "2025-12-17T00:01:53.061297"
+      },
+      {
+        "stepName": "orchestrator_decide",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 2,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "events": [
+            {
+              "name": "turn_start",
+              "data": {
+                "turn": 1
+              },
+              "source": "system",
+              "timestamp": "2025-12-17T00:01:53.061283"
+            }
+          ],
+          "worldState": {},
+          "availableAgents": [
+            {
+              "name": "mysterious_merchant",
+              "role": "Enigmatic trader with rare wares and hidden knowledge"
+            },
+            {
+              "name": "narrator",
+              "role": "Game Master narrator who describes scenes, controls NPCs, and manages world events"
+            }
+          ],
+          "orchestratorName": "orchestrator"
+        },
+        "outputs": {
+          "decision": {
+            "agentsToWake": [
+              "narrator"
+            ],
+            "instructions": {
+              "narrator": "Initialize the game world by introducing the hero's starting scenario. Describe the setting, establish the initial context, and prepare for the hero's first actions."
+            },
+            "reasoning": "Since this is Turn 0 (game initialization), the narrator should set the scene and establish the initial game world context. This prepares the environment for the hero's first appearance and potential interactions.",
+            "skipPlayerTurn": false
+          },
+          "agentsSelected": [
+            "narrator"
+          ]
+        },
+        "duration": 3.416173219680786,
+        "error": null,
+        "timestamp": "2025-12-17T00:01:53.061312"
+      },
+      {
+        "stepName": "execute_agents",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 3,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "agentsToWake": [
+            "narrator"
+          ],
+          "instructions": {
+            "narrator": "Initialize the game world by introducing the hero's starting scenario. Describe the setting, establish the initial context, and prepare for the hero's first actions."
+          }
+        },
+        "outputs": {
+          "actions": [
+            {
+              "agentName": "narrator",
+              "actionType": "speak",
+              "content": "**The Crossroads Tavern**\n\nThe acrid smoke of burning thatch mingles with the cool mountain air as you crest the ridge overlooking Millbrook Valley. Below, what should be a peaceful farming village is ablaze. Orange flames lick hungrily at cottage roofs while panicked screams echo up from the settlement.\n\nYou stand at a weathered stone crossroads, your travel pack heavy on your shoulders. The familiar wooden sign of the **Crossroads Tavern** creaks in the wind beside you\u2014the very establishment where you'd planned to spend the night. But now, urgent choices demand your attention.\n\nTo the north, the main road leads down into burning Millbrook, where you can see dark figures moving between the flames\u2014too large and hulking to be ordinary bandits. To the south, a narrow forest path winds away from the chaos toward the relative safety of Greenvale. To the west, an old mining trail climbs higher into the Thornpeak Mountains.\n\nThe tavern keeper, a stout woman named Marta, bursts from her establishment's door, her face pale with terror. \"By the gods!\" she gasps, spotting you. \"They came from nowhere\u2014twisted things with fangs and claws! The whole village... we have to help them!\"\n\nLightning flickers in the darkening sky above, and you catch the distant sound of inhuman howls carried on the wind.\n\n**What do you do?**",
+              "target": "hero",
+              "metadata": {
+                "instruction": "Initialize the game world by introducing the hero's starting scenario. Describe the setting, establish the initial context, and prepare for the hero's first actions."
+              },
+              "timestamp": "2025-12-17T00:02:07.394143"
+            }
+          ],
+          "agentsExecuted": 1
+        },
+        "duration": 10.91667652130127,
+        "error": null,
+        "timestamp": "2025-12-17T00:01:56.477486"
+      },
+      {
+        "stepName": "player_turn",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 4,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "playerAgent": "hero",
+          "skipPlayerTurn": false
+        },
+        "outputs": {
+          "playerPending": true,
+          "playerAgent": "hero"
+        },
+        "duration": 1.2636184692382812e-05,
+        "error": null,
+        "timestamp": "2025-12-17T00:02:07.394183"
+      }
+    ],
+    "totalDuration": 14.33292555809021,
+    "success": true,
+    "orchestratorDecision": {
+      "agentsToWake": [
+        "narrator"
+      ],
+      "instructions": {
+        "narrator": "Initialize the game world by introducing the hero's starting scenario. Describe the setting, establish the initial context, and prepare for the hero's first actions."
+      },
+      "reasoning": "Since this is Turn 0 (game initialization), the narrator should set the scene and establish the initial game world context. This prepares the environment for the hero's first appearance and potential interactions.",
+      "skipPlayerTurn": false
+    }
+  }
+}

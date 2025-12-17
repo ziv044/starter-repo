@@ -1,0 +1,42 @@
+{# Info Card Component - General information display #}
+{# Usage: {% include 'play/partials/info_card.html' with item=action_item %} #}
+
+<div class="action-card info-card" data-item-id="{{ item.id }}" data-item-type="info">
+    {# Header Bar with Entity Branding #}
+    <div class="card-header-bar info-header">
+        <div class="entity-badge">
+            <div class="entity-logo info-logo">
+                <span class="logo-text">{{ item.source_role[:2]|upper if item.source_role else 'IN' }}</span>
+            </div>
+            <div class="entity-info">
+                <div class="entity-role">{{ item.source_role or 'Intelligence Update' }}</div>
+                <div class="entity-type">BRIEFING</div>
+            </div>
+        </div>
+        {% if item.urgency %}
+        <div class="priority-badge {{ item.urgency|lower }}">
+            {{ item.urgency|upper }}
+        </div>
+        {% endif %}
+    </div>
+
+    {# Info Content #}
+    <div class="card-body">
+        <div class="info-title">{{ item.title }}</div>
+        <div class="info-content">{{ item.content }}</div>
+
+        {# Metadata #}
+        {% if item.timestamp %}
+        <div class="info-metadata">
+            <span class="timestamp">{{ item.timestamp }}</span>
+        </div>
+        {% endif %}
+    </div>
+
+    {# Acknowledge Button #}
+    <div class="card-actions">
+        <button class="btn btn-acknowledge" onclick="acknowledgeInfo('{{ item.id }}')">
+            ACKNOWLEDGED
+        </button>
+    </div>
+</div>

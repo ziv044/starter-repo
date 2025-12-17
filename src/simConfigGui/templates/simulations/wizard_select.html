@@ -8,12 +8,13 @@
 <div class="mode-selector">
     <div class="card mode-card" onclick="window.location='{{ url_for('simulation.create_wizard_chat') }}'">
         <h2>Guided Conversation</h2>
-        <p>Have a conversation with the AI to design your simulation step by step.</p>
-        <ul>
-            <li>AI asks clarifying questions</li>
-            <li>Build up requirements interactively</li>
-            <li>Best for complex or custom scenarios</li>
-        </ul>
+        <p>Answer 4 quick questions to generate your simulation.</p>
+        <ol class="flow-steps">
+            <li><strong>Subject</strong> - What is being simulated?</li>
+            <li><strong>World State</strong> - Initial conditions and context</li>
+            <li><strong>Agents</strong> - Characters and their roles</li>
+            <li><strong>Events</strong> - Key triggers and conflicts</li>
+        </ol>
         <a href="{{ url_for('simulation.create_wizard_chat') }}" class="btn btn-success">Start Conversation</a>
     </div>
 
@@ -57,6 +58,14 @@
 }
 .mode-card li {
     margin: 0.5rem 0;
+}
+.flow-steps {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+    font-size: 0.9rem;
+}
+.flow-steps li {
+    margin: 0.4rem 0;
 }
 @media (max-width: 768px) {
     .mode-selector {

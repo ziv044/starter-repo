@@ -1,0 +1,161 @@
+{
+  "simulation": "fantasy_rpg_adventure",
+  "runType": "play-turn-2",
+  "timestamp": "2025-12-16T23:57:00.556512",
+  "result": {
+    "turnNumber": 1,
+    "steps": [
+      {
+        "stepName": "turn_start",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 0,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "previousTurnResult": null
+        },
+        "outputs": {
+          "event": {
+            "name": "turn_start",
+            "data": {
+              "turn": 1
+            },
+            "source": "system",
+            "timestamp": "2025-12-16T23:56:48.375428"
+          }
+        },
+        "duration": 1.6450881958007812e-05,
+        "error": null,
+        "timestamp": "2025-12-16T23:56:48.375423"
+      },
+      {
+        "stepName": "gather_events",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 1,
+          "stepConfig": {},
+          "turnNumber": 1,
+          "scheduledEvents": 0
+        },
+        "outputs": {
+          "eventsGathered": 1
+        },
+        "duration": 3.0994415283203125e-06,
+        "error": null,
+        "timestamp": "2025-12-16T23:56:48.375441"
+      },
+      {
+        "stepName": "orchestrator_decide",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 2,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "events": [
+            {
+              "name": "turn_start",
+              "data": {
+                "turn": 1
+              },
+              "source": "system",
+              "timestamp": "2025-12-16T23:56:48.375428"
+            }
+          ],
+          "worldState": {},
+          "availableAgents": [
+            {
+              "name": "mysterious_merchant",
+              "role": "Enigmatic trader with rare wares and hidden knowledge"
+            },
+            {
+              "name": "narrator",
+              "role": "Game Master narrator who describes scenes, controls NPCs, and manages world events"
+            }
+          ],
+          "orchestratorName": "orchestrator"
+        },
+        "outputs": {
+          "decision": {
+            "agentsToWake": [
+              "narrator"
+            ],
+            "instructions": {
+              "narrator": "Initialize the game world and set the opening scene. Describe the initial environment, establish starting context for the hero, and prepare for first player interaction."
+            },
+            "reasoning": "Turn 0 is typically used to establish the game's starting narrative. The narrator should create the initial scene and set up the context for the hero's journey, preparing the world for the first player actions.",
+            "skipPlayerTurn": false
+          },
+          "agentsSelected": [
+            "narrator"
+          ]
+        },
+        "duration": 3.3492050170898438,
+        "error": null,
+        "timestamp": "2025-12-16T23:56:48.375455"
+      },
+      {
+        "stepName": "execute_agents",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 3,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "agentsToWake": [
+            "narrator"
+          ],
+          "instructions": {
+            "narrator": "Initialize the game world and set the opening scene. Describe the initial environment, establish starting context for the hero, and prepare for first player interaction."
+          }
+        },
+        "outputs": {
+          "actions": [
+            {
+              "agentName": "narrator",
+              "actionType": "speak",
+              "content": "**The Mist-Shrouded Crossroads**\n\nYou find yourself standing at a weathered stone crossroads as twilight settles over the land. Ancient waymarker stones, carved with symbols worn smooth by centuries of wind and rain, point in four directions. To the north, a narrow mountain path disappears into swirling mists. The eastern road leads toward distant lights flickering through a dark forest. Southward stretches a cobbled highway toward what appears to be farmland. The western path descends into shadow-filled valleys.\n\nA cold wind carries the scent of pine and something else\u2014something metallic and unsettling. Your travel pack weighs heavy on your shoulders, and your coin purse jingles with what remains of your funds after the long journey to reach this remote region.\n\nIn the distance, you hear the lonely howl of a wolf, answered by another from a different direction. The mists are thickening, and night approaches quickly in these wild lands.\n\nAbove you, a weathered wooden sign creaks in the wind. Though partially obscured by moss, you can make out the words: \"*Beware\u2014Grimhaven lies ahead. The Pale Lord stirs.*\"\n\nWhat do you do?",
+              "target": "hero",
+              "metadata": {
+                "instruction": "Initialize the game world and set the opening scene. Describe the initial environment, establish starting context for the hero, and prepare for first player interaction."
+              },
+              "timestamp": "2025-12-16T23:57:00.556034"
+            }
+          ],
+          "agentsExecuted": 1
+        },
+        "duration": 8.831389904022217,
+        "error": null,
+        "timestamp": "2025-12-16T23:56:51.724665"
+      },
+      {
+        "stepName": "player_turn",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 4,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "playerAgent": "hero",
+          "skipPlayerTurn": false
+        },
+        "outputs": {
+          "playerPending": true,
+          "playerAgent": "hero"
+        },
+        "duration": 1.33514404296875e-05,
+        "error": null,
+        "timestamp": "2025-12-16T23:57:00.556073"
+      }
+    ],
+    "totalDuration": 12.180668830871582,
+    "success": true,
+    "orchestratorDecision": {
+      "agentsToWake": [
+        "narrator"
+      ],
+      "instructions": {
+        "narrator": "Initialize the game world and set the opening scene. Describe the initial environment, establish starting context for the hero, and prepare for first player interaction."
+      },
+      "reasoning": "Turn 0 is typically used to establish the game's starting narrative. The narrator should create the initial scene and set up the context for the hero's journey, preparing the world for the first player actions.",
+      "skipPlayerTurn": false
+    }
+  }
+}

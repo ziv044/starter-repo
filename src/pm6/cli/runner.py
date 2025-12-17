@@ -2,14 +2,13 @@
 
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 from typing import Any
 
 from pm6.cli.loader import SimulationConfig, SimulationLoader
-from pm6.core.simulation import Simulation
 from pm6.core.engine import SimulationEngine
 from pm6.core.rules import Rule, RuleType
+from pm6.core.simulation import Simulation
 
 
 class SimulationRunner:

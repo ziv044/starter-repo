@@ -1,0 +1,168 @@
+{
+  "simulation": "fantasy_rpg_adventure",
+  "runType": "play-turn-19",
+  "timestamp": "2025-12-17T00:05:48.294001",
+  "result": {
+    "turnNumber": 1,
+    "steps": [
+      {
+        "stepName": "turn_start",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 0,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "previousTurnResult": null
+        },
+        "outputs": {
+          "event": {
+            "name": "turn_start",
+            "data": {
+              "turn": 1
+            },
+            "source": "system",
+            "timestamp": "2025-12-17T00:05:36.282266"
+          }
+        },
+        "duration": 1.5974044799804688e-05,
+        "error": null,
+        "timestamp": "2025-12-17T00:05:36.282260"
+      },
+      {
+        "stepName": "gather_events",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 1,
+          "stepConfig": {},
+          "turnNumber": 1,
+          "scheduledEvents": 0
+        },
+        "outputs": {
+          "eventsGathered": 1
+        },
+        "duration": 2.86102294921875e-06,
+        "error": null,
+        "timestamp": "2025-12-17T00:05:36.282278"
+      },
+      {
+        "stepName": "orchestrator_decide",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 2,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "events": [
+            {
+              "name": "turn_start",
+              "data": {
+                "turn": 1
+              },
+              "source": "system",
+              "timestamp": "2025-12-17T00:05:36.282266"
+            }
+          ],
+          "worldState": {
+            "actors": [
+              "cpu_agent",
+              "player_agent"
+            ],
+            "currentActor": "cpu_agent",
+            "turnIndex": 0
+          },
+          "availableAgents": [
+            {
+              "name": "mysterious_merchant",
+              "role": "Enigmatic trader with rare wares and hidden knowledge"
+            },
+            {
+              "name": "narrator",
+              "role": "Game Master narrator who describes scenes, controls NPCs, and manages world events"
+            }
+          ],
+          "orchestratorName": "orchestrator"
+        },
+        "outputs": {
+          "decision": {
+            "agentsToWake": [
+              "narrator"
+            ],
+            "instructions": {
+              "narrator": "Begin the initial story setup. Describe the opening scene, introducing the hero's starting location and immediate environment. Set the stage for the hero's first potential adventure or decision."
+            },
+            "reasoning": "Turn 0 is the initial game start, so the narrator should establish the starting context and create the initial narrative hook for the hero's journey",
+            "skipPlayerTurn": false
+          },
+          "agentsSelected": [
+            "narrator"
+          ]
+        },
+        "duration": 3.0555613040924072,
+        "error": null,
+        "timestamp": "2025-12-17T00:05:36.282292"
+      },
+      {
+        "stepName": "execute_agents",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 3,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "agentsToWake": [
+            "narrator"
+          ],
+          "instructions": {
+            "narrator": "Begin the initial story setup. Describe the opening scene, introducing the hero's starting location and immediate environment. Set the stage for the hero's first potential adventure or decision."
+          }
+        },
+        "outputs": {
+          "actions": [
+            {
+              "agentName": "narrator",
+              "actionType": "speak",
+              "content": "**The Crossroads Inn**\n\nThe weathered wooden sign creaks in the evening breeze as you push open the heavy oak door of the Crossroads Inn. Warm amber light spills from within, along with the mingled scents of roasted meat, ale, and old leather. The common room buzzes with quiet conversation - merchants counting coin at corner tables, a hooded figure nursing ale alone by the fireplace, and the innkeeper polishing mugs behind the bar with practiced efficiency.\n\nYou stand at the threshold, road dust still clinging to your boots. Through the diamond-paned windows, you glimpse the intersection where four roads meet in the gathering dusk: one leads north toward the Thornwood Forest, another east to the mining town of Goldbrook, the third south toward the great city of Valorhaven, and the last west into the mysterious Shadowmere Marshlands.\n\nThe innkeeper, a stout woman with graying hair, looks up from her work. \"Welcome, traveler. Room and board for the night? Or perhaps you've come seeking word of the roads ahead?\" Her eyes hold the knowing look of one who's heard many tales from weary wanderers.\n\nBehind you, the inn's door remains open to the crossroads - and to whatever path you might choose come morning.\n\n**What do you do?**",
+              "target": "hero",
+              "metadata": {
+                "instruction": "Begin the initial story setup. Describe the opening scene, introducing the hero's starting location and immediate environment. Set the stage for the hero's first potential adventure or decision."
+              },
+              "timestamp": "2025-12-17T00:05:48.292940"
+            }
+          ],
+          "agentsExecuted": 1
+        },
+        "duration": 8.955097436904907,
+        "error": null,
+        "timestamp": "2025-12-17T00:05:39.337858"
+      },
+      {
+        "stepName": "player_turn",
+        "status": "completed",
+        "inputs": {
+          "stepIndex": 4,
+          "stepConfig": {},
+          "turnNumber": 0,
+          "playerAgent": "hero",
+          "skipPlayerTurn": false
+        },
+        "outputs": {
+          "playerPending": true,
+          "playerAgent": "hero"
+        },
+        "duration": 8.821487426757812e-06,
+        "error": null,
+        "timestamp": "2025-12-17T00:05:48.292966"
+      }
+    ],
+    "totalDuration": 12.010722875595093,
+    "success": true,
+    "orchestratorDecision": {
+      "agentsToWake": [
+        "narrator"
+      ],
+      "instructions": {
+        "narrator": "Begin the initial story setup. Describe the opening scene, introducing the hero's starting location and immediate environment. Set the stage for the hero's first potential adventure or decision."
+      },
+      "reasoning": "Turn 0 is the initial game start, so the narrator should establish the starting context and create the initial narrative hook for the hero's journey",
+      "skipPlayerTurn": false
+    }
+  }
+}

@@ -5,6 +5,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, Field
 
 from pm6.agents.memoryPolicy import MemoryPolicy
+from pm6.core.types import ResponseFormatConfig, ResponseFormatType
 
 
 class AgentConfig(BaseModel):
@@ -24,6 +25,7 @@ class AgentConfig(BaseModel):
         tools: Tool names this agent can use.
         controlledBy: Whether agent is controlled by 'player' or 'cpu'.
         initiative: Probability (0-1) that CPU agent speaks on a turn.
+        responseFormat: Play mode response format config (overrides simulation default).
         metadata: Additional agent-specific data.
     """
 
@@ -71,6 +73,14 @@ class AgentConfig(BaseModel):
         ge=0.0,
         le=1.0,
     )
+    meetable: bool = Field(
+        default=True,
+        description="Whether player can request direct meeting with this agent via CoS",
+    )
+    responseFormat: ResponseFormatConfig | None = Field(
+        default=None,
+        description="Play mode response format (overrides simulation default if set)",
+    )
     metadata: dict[str, Any] = Field(
         default_factory=dict,
         description="Additional agent-specific data",
@@ -105,3 +115,8 @@ class AgentConfig(BaseModel):
     def isCpu(self) -> bool:
         """Check if this agent is controlled by the CPU."""
         return self.controlledBy == "cpu"
+
+    @property
+    def isMeetable(self) -> bool:
+        """Check if player can meet with this agent via Chief of Staff."""
+        return self.meetable

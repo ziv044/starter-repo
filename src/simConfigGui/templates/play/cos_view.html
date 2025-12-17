@@ -1,0 +1,1224 @@
+{% extends "play/base.html" %}
+
+{% block title %}{{ sim_name }} - Chief of Staff Mode{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/action_cards.css') }}">
+<div class="cos-container">
+    <!-- Header -->
+    <div class="cos-header">
+        <div class="header-left">
+            <h1>Chief of Staff Briefing</h1>
+            <span class="turn-indicator">Turn <span id="turn-number">{{ turn_number }}</span></span>
+            <span class="time-indicator">Time: <span id="game-time">{{ world_state.get('turn_date', 'N/A') }}</span></span>
+            <span class="hours-indicator">Hours elapsed: <span id="hours-elapsed">0</span></span>
+        </div>
+        <div class="header-right">
+            <span class="phase-badge" id="phase-badge">BRIEFING</span>
+            <a href="{{ url_for('simulation.view_simulation', name=sim_name) }}" class="btn btn-secondary btn-sm">Exit</a>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="cos-main">
+        <!-- Left Panel: Briefing / Meeting -->
+        <div class="cos-panel briefing-panel">
+            <div class="panel-header">
+                <h2 id="panel-title">Awaiting Briefing</h2>
+                <button id="start-turn-btn" class="btn btn-primary" onclick="startTurn()">Start Turn</button>
+            </div>
+
+            <!-- Narrative Area -->
+            <div id="narrative-area" class="narrative-area">
+                <p class="placeholder-text">Click "Start Turn" to begin the briefing...</p>
+            </div>
+
+            <!-- Agent Briefs -->
+            <div id="agent-briefs" class="agent-briefs hidden">
+                <h3>Advisor Positions</h3>
+                <div id="briefs-list"></div>
+            </div>
+
+            <!-- Action Items Section -->
+            <div id="action-items-area" class="action-items-area hidden">
+                <h3>Action Items Requiring Attention</h3>
+
+                <!-- Approvals Section -->
+                <div id="approvals-section" class="action-items-section hidden">
+                    <h4>Authorization Requests</h4>
+                    <div id="approvals-list" class="action-items-container"></div>
+                </div>
+
+                <!-- Operations Section -->
+                <div id="operations-section" class="action-items-section hidden">
+                    <h4>Active Operations</h4>
+                    <div id="operations-list" class="action-items-container"></div>
+                </div>
+
+                <!-- Demands Section -->
+                <div id="demands-section" class="action-items-section hidden">
+                    <h4>Demands Requiring Response</h4>
+                    <div id="demands-list" class="action-items-container"></div>
+                </div>
+
+                <!-- Info Section -->
+                <div id="info-section" class="action-items-section hidden">
+                    <h4>Intelligence Updates</h4>
+                    <div id="info-list" class="action-items-container"></div>
+                </div>
+            </div>
+
+            <!-- Meeting Area (hidden by default) -->
+            <div id="meeting-area" class="meeting-area hidden">
+                <div class="meeting-header">
+                    <h3>Meeting with <span id="meeting-agent-name"></span></h3>
+                    <button class="btn btn-secondary btn-sm" onclick="endMeeting()">End Meeting (+7h)</button>
+                </div>
+                <div id="meeting-history" class="meeting-history"></div>
+                <div class="meeting-input">
+                    <input type="text" id="meeting-input" placeholder="Type your message..." onkeypress="handleMeetingKeypress(event)">
+                    <button class="btn btn-primary" onclick="sendMeetingMessage()">Send</button>
+                </div>
+            </div>
+
+            <!-- Decision Choices -->
+            <div id="choices-area" class="choices-area hidden">
+                <h3>Strategic Decisions</h3>
+                <div id="choices-list"></div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Agent Cards & Actions -->
+        <div class="cos-panel agents-panel">
+            <h2>Available Advisors</h2>
+            <p class="panel-subtitle">Select an advisor to request a meeting (each meeting = +7 hours)</p>
+
+            <div id="meetable-agents" class="agent-cards">
+                {% for agent in meetable_agents %}
+                <div class="agent-card" data-agent="{{ agent.name }}">
+                    <div class="agent-name">{{ agent.role }}</div>
+                    <div class="agent-id">{{ agent.name }}</div>
+                    <button class="btn btn-sm btn-outline" onclick="requestMeeting('{{ agent.name }}')">Meet</button>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="action-buttons">
+                <button id="proceed-btn" class="btn btn-success" onclick="proceedToDecision()" disabled>
+                    Proceed to Decision
+                </button>
+            </div>
+
+            <!-- State Dashboard -->
+            <div class="state-dashboard">
+                <h3>World State</h3>
+                <div id="state-values">
+                    {% for key, value in world_state.items() %}
+                    {% if key not in ['fronts', 'turn_date'] and value is number %}
+                    <div class="state-item">
+                        <span class="state-key">{{ key.replace('_', ' ').title() }}</span>
+                        <span class="state-value" id="state-{{ key }}">{{ value }}</span>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.cos-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 20px;
+    gap: 20px;
+}
+
+.cos-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: var(--card-bg);
+    border-radius: 8px;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.header-left h1 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.turn-indicator, .time-indicator, .hours-indicator {
+    background: var(--bg);
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.phase-badge {
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: bold;
+    text-transform: uppercase;
+    background: var(--primary);
+    color: white;
+}
+
+.phase-badge.meeting {
+    background: var(--warning);
+}
+
+.phase-badge.decision {
+    background: var(--success);
+}
+
+.cos-main {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    flex: 1;
+    overflow: hidden;
+}
+
+.cos-panel {
+    background: var(--card-bg);
+    border-radius: 8px;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.panel-header h2 {
+    margin: 0;
+}
+
+.narrative-area {
+    background: var(--bg);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    white-space: pre-wrap;
+    line-height: 1.6;
+}
+
+.placeholder-text {
+    color: var(--text-secondary);
+    font-style: italic;
+}
+
+.agent-briefs h3 {
+    margin-bottom: 15px;
+}
+
+.brief-item {
+    background: var(--bg);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border-left: 4px solid var(--primary);
+}
+
+.brief-item.met {
+    border-left-color: var(--success);
+    opacity: 0.8;
+}
+
+.brief-role {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.brief-summary {
+    color: var(--text-secondary);
+}
+
+.meeting-area {
+    background: var(--bg);
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.meeting-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+}
+
+.meeting-history {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+}
+
+.meeting-message {
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.meeting-message.player {
+    background: var(--primary);
+    color: white;
+    margin-left: 20%;
+}
+
+.meeting-message.agent {
+    background: var(--card-bg);
+    margin-right: 20%;
+}
+
+.meeting-input {
+    display: flex;
+    gap: 10px;
+}
+
+.meeting-input input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    color: var(--text);
+}
+
+.choices-area h3 {
+    margin-bottom: 15px;
+}
+
+.choice-card {
+    background: var(--bg);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.choice-card:hover {
+    border-color: var(--primary);
+}
+
+.choice-card.selected {
+    border-color: var(--success);
+    background: rgba(76, 175, 80, 0.1);
+}
+
+.choice-id {
+    font-weight: bold;
+    color: var(--primary);
+    margin-bottom: 5px;
+}
+
+.choice-text {
+    margin-bottom: 10px;
+}
+
+.choice-impacts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.impact-badge {
+    font-size: 0.8rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.impact-badge.positive {
+    background: rgba(76, 175, 80, 0.2);
+    color: var(--success);
+}
+
+.impact-badge.negative {
+    background: rgba(244, 67, 54, 0.2);
+    color: var(--danger);
+}
+
+.agent-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.agent-card {
+    background: var(--bg);
+    padding: 12px 15px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.agent-card .agent-name {
+    flex: 1;
+    font-weight: 500;
+}
+
+.agent-card .agent-id {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+}
+
+.agent-card.met {
+    opacity: 0.6;
+}
+
+.agent-card.met::after {
+    content: '(met)';
+    color: var(--success);
+    font-size: 0.8rem;
+}
+
+.action-buttons {
+    margin-bottom: 20px;
+}
+
+.action-buttons .btn {
+    width: 100%;
+}
+
+.state-dashboard {
+    background: var(--bg);
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.state-dashboard h3 {
+    margin-bottom: 10px;
+    font-size: 1rem;
+}
+
+.state-values {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.state-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    padding: 4px 0;
+}
+
+.state-key {
+    color: var(--text-secondary);
+}
+
+.state-value {
+    font-weight: bold;
+}
+
+.state-value.changed-up {
+    color: var(--success);
+}
+
+.state-value.changed-down {
+    color: var(--danger);
+}
+
+.hidden {
+    display: none !important;
+}
+</style>
+
+<script>
+const simName = '{{ sim_name }}';
+let currentPhase = 'start';
+let selectedChoice = null;
+
+async function apiCall(endpoint, method = 'GET', data = null) {
+    const options = {
+        method,
+        headers: { 'Content-Type': 'application/json' }
+    };
+    if (data) options.body = JSON.stringify(data);
+
+    const response = await fetch(`/play/${simName}/cos${endpoint}`, options);
+    return response.json();
+}
+
+async function startTurn() {
+    document.getElementById('start-turn-btn').disabled = true;
+    document.getElementById('start-turn-btn').textContent = 'Processing...';
+
+    try {
+        const result = await apiCall('/step', 'POST');
+
+        if (result.success) {
+            updateBriefing(result.briefing);
+            currentPhase = 'briefing';
+            updatePhase('BRIEFING');
+            document.getElementById('proceed-btn').disabled = false;
+        } else {
+            alert('Error: ' + result.error);
+        }
+    } catch (e) {
+        alert('Error starting turn: ' + e.message);
+    }
+
+    document.getElementById('start-turn-btn').disabled = false;
+    document.getElementById('start-turn-btn').textContent = 'Next Turn';
+}
+
+function updateBriefing(briefing) {
+    // Update turn number and time
+    document.getElementById('turn-number').textContent = briefing.turnNumber;
+    document.getElementById('game-time').textContent = briefing.gameTime;
+    document.getElementById('hours-elapsed').textContent = briefing.hoursElapsed;
+
+    // Update narrative
+    document.getElementById('panel-title').textContent = 'Chief of Staff Briefing';
+    document.getElementById('narrative-area').innerHTML =
+        `<div class="cos-narrative">${briefing.chiefOfStaffNarrative.replace(/\n/g, '<br>')}</div>`;
+
+    // Update agent briefs
+    const briefsList = document.getElementById('briefs-list');
+    briefsList.innerHTML = '';
+
+    briefing.agentBriefs.forEach(brief => {
+        const met = briefing.hoursElapsed > 0 && brief.agentName in (briefing.agentsMet || []);
+        briefsList.innerHTML += `
+            <div class="brief-item ${met ? 'met' : ''}">
+                <div class="brief-role">${brief.agentRole}</div>
+                <div class="brief-summary">${brief.summary}</div>
+            </div>
+        `;
+    });
+
+    document.getElementById('agent-briefs').classList.remove('hidden');
+
+    // Update choices if in decision phase
+    if (briefing.strategicChoices && briefing.strategicChoices.length > 0) {
+        updateChoices(briefing.strategicChoices);
+    }
+}
+
+function updateChoices(choices) {
+    const choicesList = document.getElementById('choices-list');
+    choicesList.innerHTML = '';
+
+    choices.forEach(choice => {
+        const impactsHtml = Object.entries(choice.predictedImpacts || {})
+            .map(([key, val]) => {
+                const cls = val > 0 ? 'positive' : 'negative';
+                const prefix = val > 0 ? '+' : '';
+                return `<span class="impact-badge ${cls}">${key.replace(/_/g, ' ')}: ${prefix}${val}</span>`;
+            })
+            .join('');
+
+        choicesList.innerHTML += `
+            <div class="choice-card" data-choice-id="${choice.id}" onclick="selectChoice('${choice.id}')">
+                <div class="choice-id">[${choice.id}]</div>
+                <div class="choice-text">${choice.text}</div>
+                <div class="choice-impacts">${impactsHtml}</div>
+            </div>
+        `;
+    });
+
+    document.getElementById('choices-area').classList.remove('hidden');
+}
+
+function selectChoice(choiceId) {
+    selectedChoice = choiceId;
+
+    // Update UI
+    document.querySelectorAll('.choice-card').forEach(card => {
+        card.classList.remove('selected');
+        if (card.dataset.choiceId === choiceId) {
+            card.classList.add('selected');
+        }
+    });
+}
+
+async function requestMeeting(agentName) {
+    try {
+        const result = await apiCall('/meeting/start', 'POST', { agent_name: agentName });
+
+        if (result.success) {
+            showMeeting(result.meeting);
+            updatePhase('MEETING');
+            currentPhase = 'meeting';
+
+            // Mark agent as in meeting
+            document.querySelector(`.agent-card[data-agent="${agentName}"]`).classList.add('in-meeting');
+        } else {
+            alert('Error: ' + result.error);
+        }
+    } catch (e) {
+        alert('Error starting meeting: ' + e.message);
+    }
+}
+
+function showMeeting(meeting) {
+    document.getElementById('meeting-agent-name').textContent = meeting.agentRole;
+
+    // Hide other areas
+    document.getElementById('narrative-area').classList.add('hidden');
+    document.getElementById('agent-briefs').classList.add('hidden');
+    document.getElementById('choices-area').classList.add('hidden');
+
+    // Show meeting area
+    document.getElementById('meeting-area').classList.remove('hidden');
+
+    // Render conversation history
+    renderMeetingHistory(meeting.history);
+
+    // Focus input
+    document.getElementById('meeting-input').focus();
+}
+
+function renderMeetingHistory(history) {
+    const historyEl = document.getElementById('meeting-history');
+    historyEl.innerHTML = '';
+
+    history.forEach(msg => {
+        historyEl.innerHTML += `
+            <div class="meeting-message ${msg.role}">
+                ${msg.content}
+            </div>
+        `;
+    });
+
+    // Scroll to bottom
+    historyEl.scrollTop = historyEl.scrollHeight;
+}
+
+async function sendMeetingMessage() {
+    const input = document.getElementById('meeting-input');
+    const message = input.value.trim();
+
+    if (!message) return;
+
+    input.value = '';
+    input.disabled = true;
+
+    try {
+        const result = await apiCall('/meeting/message', 'POST', { message });
+
+        if (result.success) {
+            renderMeetingHistory(result.meeting.history);
+        } else {
+            alert('Error: ' + result.error);
+        }
+    } catch (e) {
+        alert('Error sending message: ' + e.message);
+    }
+
+    input.disabled = false;
+    input.focus();
+}
+
+function handleMeetingKeypress(event) {
+    if (event.key === 'Enter') {
+        sendMeetingMessage();
+    }
+}
+
+async function endMeeting() {
+    try {
+        const result = await apiCall('/meeting/end', 'POST');
+
+        if (result.success) {
+            // Hide meeting area
+            document.getElementById('meeting-area').classList.add('hidden');
+            document.getElementById('narrative-area').classList.remove('hidden');
+            document.getElementById('agent-briefs').classList.remove('hidden');
+
+            // Update briefing
+            updateBriefing(result.briefing);
+            updatePhase('BRIEFING');
+            currentPhase = 'briefing';
+
+            // Update state
+            updateWorldState(result.world_state);
+        } else {
+            alert('Error: ' + result.error);
+        }
+    } catch (e) {
+        alert('Error ending meeting: ' + e.message);
+    }
+}
+
+async function proceedToDecision() {
+    try {
+        const result = await apiCall('/decide', 'POST');
+
+        if (result.success) {
+            updateBriefing(result.briefing);
+            updatePhase('DECISION');
+            currentPhase = 'decision';
+
+            // Hide meeting/proceed buttons, show choices
+            document.getElementById('proceed-btn').classList.add('hidden');
+        } else {
+            alert('Error: ' + result.error);
+        }
+    } catch (e) {
+        alert('Error proceeding to decision: ' + e.message);
+    }
+}
+
+async function submitDecision() {
+    if (!selectedChoice) {
+        alert('Please select a choice first');
+        return;
+    }
+
+    try {
+        const result = await apiCall('/decision', 'POST', { choice_id: selectedChoice });
+
+        if (result.success) {
+            updateWorldState(result.world_state);
+
+            // Reset for next turn
+            currentPhase = 'start';
+            selectedChoice = null;
+            updatePhase('START');
+
+            document.getElementById('choices-area').classList.add('hidden');
+            document.getElementById('proceed-btn').classList.remove('hidden');
+            document.getElementById('proceed-btn').disabled = true;
+
+            alert(`Decision ${result.choice_applied} applied! Click "Next Turn" to continue.`);
+        } else {
+            alert('Error: ' + result.error);
+        }
+    } catch (e) {
+        alert('Error submitting decision: ' + e.message);
+    }
+}
+
+function updatePhase(phase) {
+    const badge = document.getElementById('phase-badge');
+    badge.textContent = phase;
+    badge.className = 'phase-badge ' + phase.toLowerCase();
+}
+
+function updateWorldState(state) {
+    Object.entries(state).forEach(([key, value]) => {
+        const el = document.getElementById(`state-${key}`);
+        if (el && typeof value === 'number') {
+            const oldValue = parseInt(el.textContent);
+            el.textContent = value;
+
+            if (value > oldValue) {
+                el.classList.add('changed-up');
+                setTimeout(() => el.classList.remove('changed-up'), 2000);
+            } else if (value < oldValue) {
+                el.classList.add('changed-down');
+                setTimeout(() => el.classList.remove('changed-down'), 2000);
+            }
+        }
+    });
+
+    // Update game time
+    if (state.turn_date) {
+        document.getElementById('game-time').textContent = state.turn_date;
+    }
+}
+
+// Add submit button for decision phase
+document.addEventListener('DOMContentLoaded', () => {
+    const choicesArea = document.getElementById('choices-area');
+    if (!document.getElementById('submit-decision-btn')) {
+        const btn = document.createElement('button');
+        btn.id = 'submit-decision-btn';
+        btn.className = 'btn btn-success';
+        btn.textContent = 'Submit Decision';
+        btn.onclick = submitDecision;
+        btn.style.marginTop = '15px';
+        btn.style.width = '100%';
+        choicesArea.appendChild(btn);
+    }
+});
+
+// ========================================
+// Action Items Management
+// ========================================
+
+let demandResponses = {}; // Track demand responses before submission
+
+function updateActionItems(actionItems) {
+    if (!actionItems || actionItems.length === 0) {
+        document.getElementById('action-items-area').classList.add('hidden');
+        return;
+    }
+
+    document.getElementById('action-items-area').classList.remove('hidden');
+
+    // Group items by type
+    const approvals = actionItems.filter(i => i.type === 'approval');
+    const operations = actionItems.filter(i => i.type === 'operation');
+    const demands = actionItems.filter(i => i.type === 'demand');
+    const infos = actionItems.filter(i => i.type === 'info');
+
+    // Render each section
+    renderApprovals(approvals);
+    renderOperations(operations);
+    renderDemands(demands);
+    renderInfos(infos);
+}
+
+function renderApprovals(items) {
+    const section = document.getElementById('approvals-section');
+    const list = document.getElementById('approvals-list');
+
+    if (items.length === 0) {
+        section.classList.add('hidden');
+        return;
+    }
+
+    section.classList.remove('hidden');
+    list.innerHTML = items.map(item => renderApprovalCard(item)).join('');
+}
+
+function renderApprovalCard(item) {
+    const impacts = item.approval_impacts || {};
+    const impactsHtml = Object.entries(impacts).map(([key, value]) => {
+        const cls = value > 0 ? 'positive' : 'negative';
+        const prefix = value > 0 ? '+' : '';
+        return `<div class="impact-item ${cls}">
+            <span class="impact-metric">${key.replace(/_/g, ' ')}</span>
+            <span class="impact-value">${prefix}${value}</span>
+        </div>`;
+    }).join('');
+
+    return `
+    <div class="action-card approval-card" data-item-id="${item.id}">
+        <div class="card-header-bar approval-header">
+            <div class="entity-badge">
+                <div class="entity-logo">
+                    <span class="logo-text">${(item.source_role || 'REQ').substring(0, 3).toUpperCase()}</span>
+                </div>
+                <div class="entity-info">
+                    <div class="entity-role">${item.source_role || 'Unknown'}</div>
+                    <div class="entity-type">AUTHORIZATION REQUEST</div>
+                </div>
+            </div>
+            <div class="classification-badge ${(item.classification || 'confidential').toLowerCase()}">
+                ${(item.classification || 'CONFIDENTIAL').toUpperCase()}
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="request-title">${item.title}</div>
+            <div class="divider"></div>
+            <div class="request-content">${item.content}</div>
+            ${impactsHtml ? `
+            <div class="impact-section">
+                <div class="impact-label">PROJECTED IMPACT</div>
+                <div class="impact-grid">${impactsHtml}</div>
+            </div>` : ''}
+            ${item.urgency === 'critical' ? `
+            <div class="warning-banner">
+                <span class="warning-icon">&#9888;</span>
+                <span class="warning-text">CRITICAL PRIORITY - Immediate decision required</span>
+            </div>` : ''}
+        </div>
+        <div class="card-actions">
+            <button class="btn btn-approve" onclick="handleApproval('${item.id}', true)">
+                <span class="btn-icon">&#10003;</span> APPROVE
+            </button>
+            <button class="btn btn-deny" onclick="handleApproval('${item.id}', false)">
+                <span class="btn-icon">&#10007;</span> DENY
+            </button>
+        </div>
+    </div>`;
+}
+
+function renderOperations(items) {
+    const section = document.getElementById('operations-section');
+    const list = document.getElementById('operations-list');
+
+    if (items.length === 0) {
+        section.classList.add('hidden');
+        return;
+    }
+
+    section.classList.remove('hidden');
+    list.innerHTML = items.map(item => renderOperationCard(item)).join('');
+}
+
+function renderOperationCard(item) {
+    const operation = item.active_operation;
+    const progress = operation ? operation.progress_percent : 0;
+    const status = operation ? operation.status : 'proposed';
+
+    return `
+    <div class="action-card operation-card" data-item-id="${item.id}">
+        <div class="card-header-bar operation-header">
+            <div class="entity-badge">
+                <div class="entity-logo operation-logo">
+                    <span class="logo-text">${(item.source_role || 'OP').substring(0, 3).toUpperCase()}</span>
+                </div>
+                <div class="entity-info">
+                    <div class="entity-role">${item.source_role || 'Unknown'}</div>
+                    <div class="entity-type">OPERATION PROPOSAL</div>
+                </div>
+            </div>
+            <div class="classification-badge top-secret">TOP SECRET</div>
+        </div>
+        <div class="card-body">
+            <div class="operation-name">${item.operation_name || item.title}</div>
+            <div class="operation-badges">
+                <span class="category-badge ${(item.operation_category || 'intel').toLowerCase()}">
+                    ${(item.operation_category || 'INTEL').toUpperCase()}
+                </span>
+                ${status !== 'proposed' ? `<span class="status-badge ${status}">${status.toUpperCase()}</span>` : ''}
+            </div>
+            <div class="divider"></div>
+            <div class="operation-description">${item.content}</div>
+            <div class="timeline-section">
+                <div class="timeline-label">OPERATION TIMELINE</div>
+                <div class="timeline-container">
+                    <div class="duration-info">
+                        <div class="duration-icon">&#9202;</div>
+                        <div class="duration-details">
+                            <div class="duration-phase">Estimated Duration</div>
+                            <div class="duration-time">${item.operation_duration || 48} hours</div>
+                        </div>
+                    </div>
+                    ${operation ? `
+                    <div class="progress-section">
+                        <div class="progress-label">Progress:</div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill" style="width: ${progress}%"></div>
+                            </div>
+                            <span class="progress-text">${Math.round(progress)}%</span>
+                        </div>
+                    </div>` : ''}
+                </div>
+            </div>
+            ${item.operation_expected_outcome ? `
+            <div class="outcome-section">
+                <div class="outcome-label">EXPECTED OUTCOME</div>
+                <div class="outcome-container">${item.operation_expected_outcome}</div>
+            </div>` : ''}
+        </div>
+        <div class="card-actions">
+            ${!operation ? `
+                <button class="btn btn-authorize" onclick="authorizeOperation('${item.id}')">
+                    <span class="btn-icon">&#10003;</span> AUTHORIZE OP
+                </button>
+                <button class="btn btn-defer" onclick="deferItem('${item.id}')">DEFER</button>
+            ` : status === 'in_progress' ? `
+                <button class="btn btn-cancel" onclick="cancelOperation('${item.id}')">ABORT OPERATION</button>
+            ` : `
+                <span class="status-display ${status}">${status.toUpperCase()}</span>
+            `}
+        </div>
+    </div>`;
+}
+
+function renderDemands(items) {
+    const section = document.getElementById('demands-section');
+    const list = document.getElementById('demands-list');
+
+    if (items.length === 0) {
+        section.classList.add('hidden');
+        return;
+    }
+
+    section.classList.remove('hidden');
+    list.innerHTML = items.map(item => renderDemandCard(item)).join('');
+}
+
+function renderDemandCard(item) {
+    const demandItems = item.demand_items || [{ id: 'main', text: item.title }];
+
+    const demandsHtml = demandItems.map((demand, idx) => `
+        <div class="demand-item" data-demand-id="${demand.id}">
+            <div class="demand-item-content">
+                <span class="demand-number">${idx + 1}.</span>
+                <span class="demand-text">${demand.text}</span>
+            </div>
+            <div class="demand-buttons">
+                <button class="btn btn-agree" onclick="setDemandResponse('${item.id}', '${demand.id}', 'agree')">Agree</button>
+                <button class="btn btn-disagree" onclick="setDemandResponse('${item.id}', '${demand.id}', 'disagree')">Disagree</button>
+            </div>
+        </div>
+    `).join('');
+
+    return `
+    <div class="action-card demand-card" data-item-id="${item.id}">
+        <div class="card-header-bar demand-header">
+            <div class="entity-badge">
+                <div class="entity-logo demand-logo">
+                    <span class="ribbon-icon">&#127895;</span>
+                </div>
+                <div class="entity-info">
+                    <div class="entity-role">${item.source_role || 'Coalition'}</div>
+                    <div class="entity-type">FORMAL DEMANDS</div>
+                </div>
+            </div>
+            ${item.urgency === 'critical' ? '<div class="urgency-badge urgent">URGENT</div>' : ''}
+        </div>
+        <div class="card-body">
+            <div class="demand-intro">${item.content}</div>
+            <div class="divider"></div>
+            <div class="demand-items">${demandsHtml}</div>
+            ${item.deadline_warning ? `
+            <div class="warning-banner">
+                <span class="warning-icon">&#9888;</span>
+                <span class="warning-text">${item.deadline_warning}</span>
+            </div>` : ''}
+        </div>
+        <div class="card-actions">
+            <button class="btn btn-submit-demands" onclick="submitDemandResponses('${item.id}')">SUBMIT RESPONSES</button>
+        </div>
+    </div>`;
+}
+
+function renderInfos(items) {
+    const section = document.getElementById('info-section');
+    const list = document.getElementById('info-list');
+
+    if (items.length === 0) {
+        section.classList.add('hidden');
+        return;
+    }
+
+    section.classList.remove('hidden');
+    list.innerHTML = items.map(item => `
+    <div class="action-card info-card" data-item-id="${item.id}">
+        <div class="card-header-bar info-header">
+            <div class="entity-badge">
+                <div class="entity-logo info-logo">
+                    <span class="logo-text">${(item.source_role || 'IN').substring(0, 2).toUpperCase()}</span>
+                </div>
+                <div class="entity-info">
+                    <div class="entity-role">${item.source_role || 'Intelligence Update'}</div>
+                    <div class="entity-type">BRIEFING</div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="info-title">${item.title}</div>
+            <div class="info-content">${item.content}</div>
+        </div>
+        <div class="card-actions">
+            <button class="btn btn-acknowledge" onclick="acknowledgeInfo('${item.id}')">ACKNOWLEDGED</button>
+        </div>
+    </div>`).join('');
+}
+
+// Action Handlers
+async function handleApproval(itemId, approved) {
+    try {
+        const result = await apiCall('/action-item/approval', 'POST', {
+            item_id: itemId,
+            approved: approved
+        });
+
+        if (result.success) {
+            // Remove the card
+            document.querySelector(`.action-card[data-item-id="${itemId}"]`).remove();
+            // Update world state
+            if (result.world_state) {
+                updateWorldState(result.world_state);
+            }
+            // Show feedback
+            showNotification(approved ? 'Request approved' : 'Request denied', approved ? 'success' : 'warning');
+        } else {
+            showNotification('Error: ' + result.error, 'error');
+        }
+    } catch (e) {
+        showNotification('Error processing approval: ' + e.message, 'error');
+    }
+}
+
+async function authorizeOperation(itemId) {
+    try {
+        const result = await apiCall('/action-item/authorize-operation', 'POST', {
+            item_id: itemId
+        });
+
+        if (result.success) {
+            // Refresh action items to show updated operation status
+            if (result.action_items) {
+                updateActionItems(result.action_items);
+            }
+            showNotification('Operation authorized', 'success');
+        } else {
+            showNotification('Error: ' + result.error, 'error');
+        }
+    } catch (e) {
+        showNotification('Error authorizing operation: ' + e.message, 'error');
+    }
+}
+
+async function cancelOperation(itemId) {
+    if (!confirm('Are you sure you want to abort this operation?')) {
+        return;
+    }
+
+    try {
+        const result = await apiCall('/action-item/cancel-operation', 'POST', {
+            item_id: itemId
+        });
+
+        if (result.success) {
+            if (result.action_items) {
+                updateActionItems(result.action_items);
+            }
+            showNotification('Operation aborted', 'warning');
+        } else {
+            showNotification('Error: ' + result.error, 'error');
+        }
+    } catch (e) {
+        showNotification('Error cancelling operation: ' + e.message, 'error');
+    }
+}
+
+function setDemandResponse(itemId, demandId, response) {
+    // Track the response locally
+    if (!demandResponses[itemId]) {
+        demandResponses[itemId] = {};
+    }
+    demandResponses[itemId][demandId] = response;
+
+    // Update button states
+    const card = document.querySelector(`.action-card[data-item-id="${itemId}"]`);
+    const demandItem = card.querySelector(`.demand-item[data-demand-id="${demandId}"]`);
+
+    demandItem.querySelectorAll('.btn').forEach(btn => btn.classList.remove('selected'));
+    demandItem.querySelector(`.btn-${response}`).classList.add('selected');
+}
+
+async function submitDemandResponses(itemId) {
+    const responses = demandResponses[itemId] || {};
+
+    try {
+        const result = await apiCall('/action-item/demands', 'POST', {
+            item_id: itemId,
+            responses: responses
+        });
+
+        if (result.success) {
+            document.querySelector(`.action-card[data-item-id="${itemId}"]`).remove();
+            delete demandResponses[itemId];
+            if (result.world_state) {
+                updateWorldState(result.world_state);
+            }
+            showNotification('Demand responses submitted', 'success');
+        } else {
+            showNotification('Error: ' + result.error, 'error');
+        }
+    } catch (e) {
+        showNotification('Error submitting demands: ' + e.message, 'error');
+    }
+}
+
+async function acknowledgeInfo(itemId) {
+    try {
+        const result = await apiCall('/action-item/acknowledge', 'POST', {
+            item_id: itemId
+        });
+
+        if (result.success) {
+            document.querySelector(`.action-card[data-item-id="${itemId}"]`).remove();
+            showNotification('Information acknowledged', 'info');
+        } else {
+            showNotification('Error: ' + result.error, 'error');
+        }
+    } catch (e) {
+        showNotification('Error acknowledging: ' + e.message, 'error');
+    }
+}
+
+async function deferItem(itemId) {
+    try {
+        const result = await apiCall('/action-item/defer', 'POST', {
+            item_id: itemId
+        });
+
+        if (result.success) {
+            const card = document.querySelector(`.action-card[data-item-id="${itemId}"]`);
+            card.style.opacity = '0.5';
+            card.querySelector('.card-actions').innerHTML = '<span class="status-display">DEFERRED</span>';
+            showNotification('Item deferred to next turn', 'info');
+        } else {
+            showNotification('Error: ' + result.error, 'error');
+        }
+    } catch (e) {
+        showNotification('Error deferring item: ' + e.message, 'error');
+    }
+}
+
+function showNotification(message, type) {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 6px;
+        color: white;
+        font-weight: 500;
+        z-index: 1000;
+        animation: slideIn 0.3s ease;
+        background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : type === 'warning' ? '#ffc107' : '#17a2b8'};
+        ${type === 'warning' ? 'color: #212529;' : ''}
+    `;
+
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+// Add notification animations
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+    }
+    .action-items-area {
+        margin-top: 20px;
+    }
+    .action-items-area h3 {
+        margin-bottom: 15px;
+        color: var(--text);
+    }
+    .action-items-section h4 {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+`;
+document.head.appendChild(style);
+</script>
+{% endblock %}

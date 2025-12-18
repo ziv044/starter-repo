@@ -1,7 +1,7 @@
 """Chief of Staff Parsing Pipeline.
 
 Parses natural language agent responses into structured ActionItems.
-Uses LLM to extract and classify content into actionable items.
+Supports both structured block format and NLP-based extraction.
 """
 
 from __future__ import annotations
@@ -33,6 +33,179 @@ if TYPE_CHECKING:
     from pm6.llm import LLMClient
 
 logger = logging.getLogger("pm6.core.cos_parser")
+
+
+def _parse_impacts_string(impacts_str: str) -> dict[str, int]:
+    """Parse impacts string like 'military_readiness:+25, coalition:-10'.
+
+    Args:
+        impacts_str: Comma-separated metric:value pairs.
+
+    Returns:
+        Dict mapping metric names to integer values.
+    """
+    impacts = {}
+    # Match patterns like "metric:+25" or "metric:-10" or "metric:25"
+    pattern = r'(\w+):\s*([+-]?\d+)'
+    for match in re.finditer(pattern, impacts_str):
+        metric, value = match.groups()
+        impacts[metric] = int(value)
+    return impacts
+
+
+def parse_structured_blocks(
+    response: str,
+    agent_name: str,
+    agent_role: str,
+) -> tuple[str, list[ActionItem]]:
+    """Parse structured format blocks from agent response.
+
+    Extracts [AUTHORIZATION REQUEST], [OPTIONS], [OPERATION PROPOSAL],
+    [DEMANDS] blocks and returns both narrative and action items.
+
+    Args:
+        response: Full agent response text.
+        agent_name: Agent identifier.
+        agent_role: Agent role description.
+
+    Returns:
+        Tuple of (narrative_text, list_of_action_items).
+    """
+    items: list[ActionItem] = []
+
+    # Find where structured content begins (first block marker)
+    markers = [
+        r'\[AUTHORIZATION REQUEST\]',
+        r'\[OPTIONS\]',
+        r'\[OPERATION PROPOSAL\]',
+        r'\[DEMANDS\]',
+        r'\[INFO\]',
+    ]
+
+    first_marker_pos = len(response)
+    for marker in markers:
+        match = re.search(marker, response, re.IGNORECASE)
+        if match and match.start() < first_marker_pos:
+            first_marker_pos = match.start()
+
+    narrative = response[:first_marker_pos].strip()
+    structured_part = response[first_marker_pos:].strip()
+
+    if not structured_part:
+        return narrative, []
+
+    # Parse AUTHORIZATION REQUEST blocks
+    auth_pattern = r'\[AUTHORIZATION REQUEST\]\s*Title:\s*(.+?)\s*Content:\s*(.+?)\s*Urgency:\s*(\w+)\s*Impacts:\s*(.+?)(?=\[|$)'
+    for match in re.finditer(auth_pattern, structured_part, re.DOTALL | re.IGNORECASE):
+        title, content, urgency, impacts_str = match.groups()
+        impacts = _parse_impacts_string(impacts_str.strip())
+        urgency_level = UrgencyLevel(urgency.strip().lower()) if urgency.strip().lower() in [u.value for u in UrgencyLevel] else UrgencyLevel.MEDIUM
+
+        items.append(create_approval_request(
+            agent_name,
+            agent_role,
+            title.strip(),
+            content.strip(),
+            impacts,
+            urgency_level,
+        ))
+        logger.info(f"Parsed AUTHORIZATION REQUEST: {title.strip()}")
+
+    # Parse OPTIONS blocks
+    options_pattern = r'\[OPTIONS\]\s*Title:\s*(.+?)(?:\n)((?:\d+\..+?(?:\n|$))+)'
+    for match in re.finditer(options_pattern, structured_part, re.DOTALL | re.IGNORECASE):
+        title = match.group(1).strip()
+        options_block = match.group(2)
+
+        options = []
+        opt_pattern = r'(\d+)\.\s*(.+?)\s*\|\s*Impacts:\s*(.+?)(?:\n|$)'
+        for opt_match in re.finditer(opt_pattern, options_block, re.IGNORECASE):
+            opt_num, opt_text, opt_impacts = opt_match.groups()
+            options.append({
+                "text": opt_text.strip(),
+                "impacts": _parse_impacts_string(opt_impacts.strip()),
+            })
+
+        if options:
+            items.append(create_option_item(
+                agent_name,
+                agent_role,
+                title,
+                f"Select one of {len(options)} options",
+                options,
+            ))
+            logger.info(f"Parsed OPTIONS: {title} with {len(options)} choices")
+
+    # Parse OPERATION PROPOSAL blocks
+    op_pattern = r'\[OPERATION PROPOSAL\]\s*Codename:\s*(.+?)\s*Category:\s*(\w+)\s*Duration:\s*(\d+)\s*hours?\s*Description:\s*(.+?)\s*Expected Outcome:\s*(.+?)(?=\[|$)'
+    for match in re.finditer(op_pattern, structured_part, re.DOTALL | re.IGNORECASE):
+        codename, category, duration, description, outcome = match.groups()
+
+        category_map = {
+            "cyber": OperationCategory.CYBER,
+            "kinetic": OperationCategory.KINETIC,
+            "humint": OperationCategory.HUMINT,
+            "sigint": OperationCategory.SIGINT,
+            "recon": OperationCategory.RECON,
+            "rescue": OperationCategory.RESCUE,
+            "diplomatic": OperationCategory.DIPLOMATIC,
+        }
+        op_category = category_map.get(category.strip().lower(), OperationCategory.RECON)
+
+        items.append(create_operation_proposal(
+            agent_name,
+            agent_role,
+            codename.strip().upper().replace(" ", "_"),
+            op_category,
+            description.strip(),
+            int(duration),
+            outcome.strip(),
+        ))
+        logger.info(f"Parsed OPERATION PROPOSAL: {codename.strip()}")
+
+    # Parse DEMANDS blocks
+    demands_pattern = r'\[DEMANDS\]\s*Title:\s*(.+?)(?:\nWarning:\s*(.+?))?\s*(?:\n)((?:\d+\..+?(?:\n|$))+)'
+    for match in re.finditer(demands_pattern, structured_part, re.DOTALL | re.IGNORECASE):
+        title = match.group(1).strip()
+        warning = (match.group(2) or "").strip()
+        demands_block = match.group(3)
+
+        demands = []
+        demand_pattern = r'(\d+)\.\s*(.+?)\s*\|\s*Agree:\s*(.+?)\s*\|\s*Disagree:\s*(.+?)(?:\n|$)'
+        for d_match in re.finditer(demand_pattern, demands_block, re.IGNORECASE):
+            d_num, d_text, agree_impacts, disagree_impacts = d_match.groups()
+            demands.append({
+                "text": d_text.strip(),
+                "agree_impacts": _parse_impacts_string(agree_impacts.strip()),
+                "disagree_impacts": _parse_impacts_string(disagree_impacts.strip()),
+            })
+
+        if demands:
+            items.append(create_demand_item(
+                agent_name,
+                agent_role,
+                title,
+                demands,
+                warning,
+            ))
+            logger.info(f"Parsed DEMANDS: {title} with {len(demands)} items")
+
+    # Parse INFO blocks
+    info_pattern = r'\[INFO\]\s*Title:\s*(.+?)\s*(?:Classification:\s*(\w+)\s*)?Content:\s*(.+?)(?=\[|$)'
+    for match in re.finditer(info_pattern, structured_part, re.DOTALL | re.IGNORECASE):
+        title = match.group(1).strip()
+        classification = (match.group(2) or "confidential").strip()
+        content = match.group(3).strip()
+
+        items.append(create_info_item(
+            agent_name,
+            agent_role,
+            content,
+            title,
+        ))
+        logger.info(f"Parsed INFO: {title}")
+
+    return narrative, items
 
 
 # Parsing prompt template
@@ -142,6 +315,11 @@ class CosParser:
     ) -> list[ActionItem]:
         """Parse an agent response into action items.
 
+        Parsing priority:
+        1. Structured block format ([AUTHORIZATION REQUEST], [OPTIONS], etc.)
+        2. LLM-based parsing (if enabled and client available)
+        3. Rule-based NLP extraction (fallback)
+
         Args:
             agent_name: Name of the responding agent.
             agent_role: Role of the responding agent.
@@ -159,15 +337,52 @@ class CosParser:
         if cache_key in self._cache:
             return self._cache[cache_key]
 
-        # Parse
-        if use_llm and self._llm:
-            items = self._parse_with_llm(agent_name, agent_role, response)
+        items: list[ActionItem] = []
+
+        # Priority 1: Try structured block parsing first
+        narrative, structured_items = parse_structured_blocks(response, agent_name, agent_role)
+        if structured_items:
+            items = structured_items
+            logger.info(f"Structured parsing found {len(items)} items from {agent_name}")
         else:
-            items = self._parse_with_rules(agent_name, agent_role, response)
+            # Priority 2/3: Fall back to LLM or rule-based parsing
+            if use_llm and self._llm:
+                items = self._parse_with_llm(agent_name, agent_role, response)
+            else:
+                items = self._parse_with_rules(agent_name, agent_role, response)
 
         # Cache results
         self._cache[cache_key] = items
         return items
+
+    def parse_response_with_narrative(
+        self,
+        agent_name: str,
+        agent_role: str,
+        response: str,
+    ) -> tuple[str, list[ActionItem]]:
+        """Parse response and return both narrative and action items.
+
+        Args:
+            agent_name: Name of the responding agent.
+            agent_role: Role of the responding agent.
+            response: The agent's response text.
+
+        Returns:
+            Tuple of (narrative_text, action_items).
+        """
+        if not response or not response.strip():
+            return "", []
+
+        # Try structured parsing which returns narrative
+        narrative, items = parse_structured_blocks(response, agent_name, agent_role)
+
+        # If no structured items, use rule-based and return full response as narrative
+        if not items:
+            items = self._parse_with_rules(agent_name, agent_role, response)
+            narrative = response
+
+        return narrative, items
 
     def _parse_with_llm(
         self,

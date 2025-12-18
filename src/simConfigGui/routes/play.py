@@ -1,4 +1,7 @@
-"""Play Mode routes for end-player experience."""
+"""Play Mode routes for end-player experience.
+
+Includes Document Theater UX with CoS Briefing Generator.
+"""
 
 import json
 import logging
@@ -6,6 +9,7 @@ from flask import Blueprint, current_app, jsonify, render_template, request
 
 from pm6.core.engine import SimulationEngine
 from pm6.core.types import ResponseFormatConfig, ResponseFormatType
+from pm6.core.agent_prompts import get_enhanced_prompt
 
 logger = logging.getLogger("simConfigGui.routes.play")
 
@@ -366,21 +370,26 @@ def cos_view(sim_name: str):
 
 @play_bp.route("/play/<sim_name>/cos/step", methods=["POST"])
 def cos_step_turn(sim_name: str):
-    """Execute a turn in CoS Mode.
+    """Execute a turn in CoS Mode with Document Theater UX.
 
     Returns:
-        JSON with CosBriefingOutput data and parsed action items.
+        JSON with CosBriefingOutput data, parsed action items, and CoS briefing.
     """
     engine = _get_or_create_cos_engine(sim_name)
     if engine is None:
         return jsonify({"error": "Simulation not found"}), 404
 
     try:
+        sim = current_app.simulations[sim_name]
+
         # Execute turn and get briefing
         briefing = engine.stepCosMode()
 
         # Parse agent briefs through CosParser to extract structured action items
         action_items = []
+        action_items_list = []
+        agent_outputs = []
+
         try:
             from pm6.core.cos_parser import CosParser
 
@@ -393,36 +402,83 @@ def cos_step_turn(sim_name: str):
                 agent_role = agent_brief.agentRole
                 response_text = agent_brief.fullResponse or agent_brief.summary
 
+                # Collect agent outputs for briefing generation
+                agent_outputs.append({
+                    "agentName": agent_name,
+                    "agentRole": agent_role,
+                    "content": response_text,
+                })
+
                 if response_text:
                     # Parse agent response into structured action items
-                    # Uses improved rule-based extraction (LLM client not wired up)
+                    # Uses improved rule-based extraction with structured block support
                     parsed_items = parser.parse_response(
                         agent_name=agent_name,
                         agent_role=agent_role,
                         response=response_text,
-                        use_llm=False  # Rule-based: detects DEMANDS, RECOMMENDATIONS, OPERATIONS
+                        use_llm=False
                     )
 
                     # Add parsed items to manager
                     for item in parsed_items:
                         manager.add_item(item)
                         action_items.append(item.to_dict())
+                        action_items_list.append(item)
 
             logger.info(f"Parsed {len(action_items)} action items from {len(briefing.agentBriefs)} agent briefs")
 
         except Exception as parse_error:
             logger.warning(f"Failed to parse action items: {parse_error}")
-            # Continue without action items - don't block the briefing
+            import traceback
+            traceback.print_exc()
+
+        # Generate CoS Briefing for Document Theater UX
+        cos_briefing_data = None
+        try:
+            from pm6.core.cos_briefing import CosBriefingGenerator
+
+            generator = CosBriefingGenerator()
+            world_state = sim.getWorldState()
+
+            cos_briefing = generator.generate_briefing(
+                turn_number=engine.currentTurn,
+                game_time=world_state.get("turn_date", "Unknown"),
+                hours_elapsed=engine.currentTurn * 8,  # ~8 hours per turn
+                agent_outputs=agent_outputs,
+                action_items=action_items_list,
+                world_state=world_state,
+            )
+
+            cos_briefing_data = cos_briefing.to_dict()
+            logger.info(f"Generated CoS briefing with {len(cos_briefing.priority_queue)} priority items")
+
+        except Exception as briefing_error:
+            logger.warning(f"Failed to generate CoS briefing: {briefing_error}")
+            import traceback
+            traceback.print_exc()
+
+        # Get active operations
+        operations = []
+        try:
+            tracker = _get_operations_tracker(sim_name)
+            operations = [op.to_dict() for op in tracker.get_active_operations()]
+        except Exception:
+            pass
 
         return jsonify({
             "success": True,
             "briefing": briefing.toDict(),
             "phase": engine.cosPhase.value if engine.cosPhase else "unknown",
             "action_items": action_items,
+            "cos_briefing": cos_briefing_data,
+            "active_operations": operations,
+            "world_state": sim.getWorldState(),
         })
 
     except Exception as e:
         logger.error(f"Error in cos_step_turn: {e}")
+        import traceback
+        traceback.print_exc()
         return jsonify({"error": str(e)}), 500
 
 

@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PM Crisis Simulation - Interface Mockup</title>
+    <style>
+        :root {
+            --navy: #1e3a5f;
+            --navy-light: #2c5282;
+            --gold: #c9a227;
+            --cream: #f5f3ef;
+            --red-critical: #c53030;
+            --orange-high: #dd6b20;
+            --green-success: #38a169;
+            --gray-600: #4a5568;
+            --gray-400: #a0aec0;
+            --white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--cream);
+            color: #1a202c;
+            line-height: 1.5;
+        }
+
+        /* Main Header */
+        .main-header {
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+            color: var(--white);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .seal {
+            width: 50px;
+            height: 50px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            border: 3px solid var(--white);
+        }
+
+        .header-title h1 {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .header-title p {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .header-right {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .status-badge {
+            background: rgba(255,255,255,0.1);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .status-badge strong {
+            color: var(--gold);
+        }
+
+        .phase-badge {
+            background: var(--red-critical);
+            padding: 8px 20px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 12px;
+            letter-spacing: 1px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Main Layout */
+        .main-container {
+            display: grid;
+            grid-template-columns: 300px 1fr 320px;
+            gap: 20px;
+            padding: 20px;
+            height: calc(100vh - 82px);
+            overflow: hidden;
+        }
+
+        /* Left Sidebar */
+        .sidebar-left {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .panel {
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            background: var(--navy);
+            color: var(--white);
+            padding: 12px 16px;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-header .count {
+            background: var(--gold);
+            color: var(--navy);
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+
+        .panel-content {
+            padding: 12px;
+        }
+
+        /* Document Queue */
+        .doc-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 8px;
+        }
+
+        .doc-item:hover {
+            background: #edf2f7;
+        }
+
+        .doc-item.active {
+            background: #e2e8f0;
+            border-left: 3px solid var(--navy);
+        }
+
+        .doc-urgency {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .doc-urgency.critical { background: var(--red-critical); }
+        .doc-urgency.high { background: var(--orange-high); }
+        .doc-urgency.medium { background: #4299e1; }
+        .doc-urgency.low { background: var(--gray-400); }
+
+        .doc-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .doc-type {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gray-600);
+        }
+
+        .doc-title {
+            font-size: 13px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .doc-source {
+            font-size: 11px;
+            color: var(--gray-400);
+        }
+
+        /* Operations */
+        .op-item {
+            padding: 12px;
+            background: #f7fafc;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+
+        .op-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .op-name {
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .op-category {
+            font-size: 10px;
+            background: var(--navy);
+            color: var(--white);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4299e1 0%, #48bb78 100%);
+            transition: width 0.5s;
+        }
+
+        .op-eta {
+            font-size: 11px;
+            color: var(--gray-600);
+            margin-top: 6px;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            overflow: hidden;
+        }
+
+        /* CoS Briefing */
+        .cos-briefing {
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .cos-header {
+            background: linear-gradient(135deg, var(--navy) 0%, #2d3748 100%);
+            color: var(--white);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .cos-avatar {
+            width: 48px;
+            height: 48px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--navy);
+            font-size: 18px;
+        }
+
+        .cos-title h2 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .cos-title p {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .cos-narrative {
+            padding: 20px;
+            font-size: 14px;
+            line-height: 1.7;
+            color: #2d3748;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .cos-narrative strong {
+            color: var(--navy);
+        }
+
+        .cos-conflicts {
+            padding: 16px 20px;
+            background: #fff5f5;
+            border-left: 4px solid var(--red-critical);
+        }
+
+        .conflict-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--red-critical);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .conflict-text {
+            font-size: 13px;
+            color: #742a2a;
+        }
+
+        /* Document View */
+        .document-viewer {
+            flex: 1;
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .doc-viewer-header {
+            background: var(--navy);
+            color: var(--white);
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .doc-viewer-header h3 {
+            font-size: 14px;
+        }
+
+        .classification-stamp {
+            background: var(--red-critical);
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .doc-viewer-body {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        .doc-letterhead {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--navy);
+            margin-bottom: 20px;
+        }
+
+        .letterhead-logo {
+            width: 60px;
+            height: 60px;
+            background: var(--navy);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        .letterhead-info h4 {
+            font-size: 18px;
+            color: var(--navy);
+        }
+
+        .letterhead-info p {
+            font-size: 12px;
+            color: var(--gray-600);
+        }
+
+        .doc-subject {
+            margin-bottom: 20px;
+        }
+
+        .doc-subject label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--gray-600);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .doc-subject h5 {
+            font-size: 16px;
+            color: var(--navy);
+            margin-top: 4px;
+        }
+
+        .doc-body-text {
+            font-size: 14px;
+            line-height: 1.8;
+            margin-bottom: 24px;
+        }
+
+        .impact-section {
+            background: #f7fafc;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .impact-section h6 {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--gray-600);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .impact-item {
+            text-align: center;
+            padding: 8px;
+            background: var(--white);
+            border-radius: 6px;
+        }
+
+        .impact-label {
+            font-size: 11px;
+            color: var(--gray-600);
+        }
+
+        .impact-value {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .impact-value.positive { color: var(--green-success); }
+        .impact-value.negative { color: var(--red-critical); }
+
+        /* Document Actions */
+        .doc-actions {
+            padding: 20px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-approve {
+            background: var(--green-success);
+            color: var(--white);
+            flex: 1;
+        }
+
+        .btn-approve:hover {
+            background: #2f855a;
+        }
+
+        .btn-deny {
+            background: var(--gray-600);
+            color: var(--white);
+            flex: 1;
+        }
+
+        .btn-deny:hover {
+            background: #2d3748;
+        }
+
+        /* Right Sidebar */
+        .sidebar-right {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* World State Dashboard */
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .metric-item:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: var(--gray-600);
+        }
+
+        .metric-value {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .metric-bar {
+            width: 80px;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-left: 8px;
+        }
+
+        .metric-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        .metric-bar-fill.good { background: var(--green-success); }
+        .metric-bar-fill.warning { background: var(--orange-high); }
+        .metric-bar-fill.danger { background: var(--red-critical); }
+
+        /* Front Status */
+        .front-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .front-name {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .front-status {
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+
+        .front-status.active { background: #fed7d7; color: #c53030; }
+        .front-status.tense { background: #feebc8; color: #c05621; }
+        .front-status.quiet { background: #c6f6d5; color: #276749; }
+        .front-status.monitoring { background: #e2e8f0; color: #4a5568; }
+
+        /* Advisors */
+        .advisor-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            padding: 12px;
+        }
+
+        .advisor-btn {
+            padding: 10px 8px;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .advisor-btn:hover {
+            background: var(--navy);
+            color: var(--white);
+            border-color: var(--navy);
+        }
+
+        .advisor-btn span {
+            display: block;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .advisor-btn small {
+            font-size: 9px;
+            color: var(--gray-400);
+        }
+
+        /* Footer Actions */
+        .footer-actions {
+            padding: 16px 20px;
+            background: var(--white);
+            border-top: 2px solid var(--navy);
+            text-align: center;
+        }
+
+        .btn-proceed {
+            padding: 16px 48px;
+            background: var(--navy);
+            color: var(--white);
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            opacity: 0.5;
+        }
+
+        .btn-proceed:disabled {
+            cursor: not-allowed;
+        }
+
+        .btn-proceed.enabled {
+            opacity: 1;
+            background: var(--green-success);
+        }
+
+        .proceed-note {
+            font-size: 11px;
+            color: var(--gray-600);
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Header -->
+    <header class="main-header">
+        <div class="header-left">
+            <div class="seal">IL</div>
+            <div class="header-title">
+                <h1>STATE OF ISRAEL - PRIME MINISTER'S OFFICE</h1>
+                <p>Crisis Management Console</p>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="status-badge">Turn <strong>1</strong></div>
+            <div class="status-badge">October 7, 2023 <strong>06:30</strong></div>
+            <div class="status-badge">Hours Elapsed: <strong>0</strong></div>
+            <div class="phase-badge">CRISIS</div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Left Sidebar -->
+        <aside class="sidebar-left">
+            <!-- Document Queue -->
+            <div class="panel">
+                <div class="panel-header">
+                    Incoming Documents
+                    <span class="count">3</span>
+                </div>
+                <div class="panel-content">
+                    <div class="doc-item active">
+                        <div class="doc-urgency critical"></div>
+                        <div class="doc-info">
+                            <div class="doc-type">Authorization</div>
+                            <div class="doc-title">Reserve Mobilization</div>
+                            <div class="doc-source">IDF Chief of Staff</div>
+                        </div>
+                    </div>
+                    <div class="doc-item">
+                        <div class="doc-urgency critical"></div>
+                        <div class="doc-info">
+                            <div class="doc-type">Demands</div>
+                            <div class="doc-title">Immediate Action Required</div>
+                            <div class="doc-source">Hostage Families</div>
+                        </div>
+                    </div>
+                    <div class="doc-item">
+                        <div class="doc-urgency high"></div>
+                        <div class="doc-info">
+                            <div class="doc-type">Operation</div>
+                            <div class="doc-title">SILENT FREQUENCY</div>
+                            <div class="doc-source">Mossad Director</div>
+                        </div>
+                    </div>
+                    <div class="doc-item">
+                        <div class="doc-urgency medium"></div>
+                        <div class="doc-info">
+                            <div class="doc-type">Intelligence</div>
+                            <div class="doc-title">Initial Assessment</div>
+                            <div class="doc-source">Intelligence Briefer</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Operations -->
+            <div class="panel">
+                <div class="panel-header">
+                    Active Operations
+                    <span class="count">1</span>
+                </div>
+                <div class="panel-content">
+                    <div class="op-item">
+                        <div class="op-header">
+                            <span class="op-name">SILENT FREQUENCY</span>
+                            <span class="op-category">SIGINT</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 37%"></div>
+                        </div>
+                        <div class="op-eta">37% | ETA: 45 hours</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- CoS Briefing -->
+            <div class="cos-briefing">
+                <div class="cos-header">
+                    <div class="cos-avatar">CoS</div>
+                    <div class="cos-title">
+                        <h2>Chief of Staff Briefing</h2>
+                        <p>Turn 1 - Initial Assessment</p>
+                    </div>
+                </div>
+                <div class="cos-narrative">
+                    <strong>Prime Minister, we are facing the most significant security crisis since 1973.</strong>
+                    At 06:30 this morning, Hamas launched a coordinated multi-pronged assault from Gaza.
+                    Initial reports indicate over 250 casualties with numbers rising. Multiple kibbutzim
+                    are under active assault. The IDF is requesting emergency reserve mobilization -
+                    I recommend immediate approval. Mossad has a SIGINT operation ready that could
+                    provide critical intelligence within 72 hours.
+                </div>
+                <div class="cos-conflicts">
+                    <div class="conflict-label">Conflict Detected</div>
+                    <div class="conflict-text">
+                        The <strong>Defense Minister</strong> and <strong>Far-Right Ministers</strong>
+                        advocate for maximum military force, while <strong>Hostage Families</strong>
+                        are demanding immediate negotiations. You'll need to balance these positions.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Document Viewer -->
+            <div class="document-viewer">
+                <div class="doc-viewer-header">
+                    <h3>Authorization Request</h3>
+                    <div class="classification-stamp">CONFIDENTIAL</div>
+                </div>
+                <div class="doc-viewer-body">
+                    <div class="doc-letterhead">
+                        <div class="letterhead-logo">IDF</div>
+                        <div class="letterhead-info">
+                            <h4>Israel Defense Forces</h4>
+                            <p>Office of the Chief of Staff</p>
+                        </div>
+                    </div>
+
+                    <div class="doc-subject">
+                        <label>Subject</label>
+                        <h5>Emergency Reserve Mobilization - Protocol 7</h5>
+                    </div>
+
+                    <div class="doc-body-text">
+                        <p>Prime Minister,</p>
+                        <p style="margin-top: 12px;">
+                            The scale of infiltration exceeds anything in our contingency planning.
+                            I hereby request immediate authorization to mobilize <strong>300,000
+                            reserve soldiers</strong> under Emergency Protocol 7.
+                        </p>
+                        <p style="margin-top: 12px;">
+                            Without additional forces, we cannot secure all breach points simultaneously.
+                            Current active forces are stretched to breaking point. Every hour of delay
+                            costs lives.
+                        </p>
+                        <p style="margin-top: 12px;">
+                            This request is classified <strong>CRITICAL</strong> and requires
+                            immediate attention.
+                        </p>
+                    </div>
+
+                    <div class="impact-section">
+                        <h6>Projected Impact</h6>
+                        <div class="impact-grid">
+                            <div class="impact-item">
+                                <div class="impact-label">Military Readiness</div>
+                                <div class="impact-value positive">+25</div>
+                            </div>
+                            <div class="impact-item">
+                                <div class="impact-label">Coalition Stability</div>
+                                <div class="impact-value positive">+10</div>
+                            </div>
+                            <div class="impact-item">
+                                <div class="impact-label">Int'l Pressure</div>
+                                <div class="impact-value negative">+5</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="doc-actions">
+                    <button class="btn btn-approve">
+                        <span>&#10003;</span> APPROVE
+                    </button>
+                    <button class="btn btn-deny">
+                        <span>&#10007;</span> DENY
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Sidebar -->
+        <aside class="sidebar-right">
+            <!-- World State -->
+            <div class="panel">
+                <div class="panel-header">National Status</div>
+                <div class="panel-content" style="padding: 0;">
+                    <div class="metric-item">
+                        <span class="metric-label">Military Readiness</span>
+                        <div style="display: flex; align-items: center;">
+                            <span class="metric-value">75%</span>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill good" style="width: 75%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Coalition Stability</span>
+                        <div style="display: flex; align-items: center;">
+                            <span class="metric-value">80%</span>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill good" style="width: 80%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Public Morale</span>
+                        <div style="display: flex; align-items: center;">
+                            <span class="metric-value">75%</span>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill good" style="width: 75%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Int'l Pressure</span>
+                        <div style="display: flex; align-items: center;">
+                            <span class="metric-value">25%</span>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill good" style="width: 25%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">Hostages Held</span>
+                        <span class="metric-value" style="color: #c53030;">240</span>
+                    </div>
+                    <div class="metric-item">
+                        <span class="metric-label">US Relations</span>
+                        <div style="display: flex; align-items: center;">
+                            <span class="metric-value">75%</span>
+                            <div class="metric-bar">
+                                <div class="metric-bar-fill good" style="width: 75%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Front Status -->
+            <div class="panel">
+                <div class="panel-header">Front Status</div>
+                <div class="panel-content" style="padding: 0;">
+                    <div class="front-item">
+                        <span class="front-name">Gaza</span>
+                        <span class="front-status active">ACTIVE COMBAT</span>
+                    </div>
+                    <div class="front-item">
+                        <span class="front-name">Lebanon</span>
+                        <span class="front-status quiet">QUIET</span>
+                    </div>
+                    <div class="front-item">
+                        <span class="front-name">West Bank</span>
+                        <span class="front-status tense">TENSE</span>
+                    </div>
+                    <div class="front-item">
+                        <span class="front-name">Iran</span>
+                        <span class="front-status monitoring">MONITORING</span>
+                    </div>
+                    <div class="front-item">
+                        <span class="front-name">Syria</span>
+                        <span class="front-status quiet">QUIET</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Available Advisors -->
+            <div class="panel">
+                <div class="panel-header">Request Meeting (+7h)</div>
+                <div class="advisor-grid">
+                    <button class="advisor-btn">
+                        <span>IDF Chief</span>
+                        <small>Military</small>
+                    </button>
+                    <button class="advisor-btn">
+                        <span>Mossad</span>
+                        <small>Intelligence</small>
+                    </button>
+                    <button class="advisor-btn">
+                        <span>Defense Min</span>
+                        <small>Cabinet</small>
+                    </button>
+                    <button class="advisor-btn">
+                        <span>Shabak</span>
+                        <small>Security</small>
+                    </button>
+                    <button class="advisor-btn">
+                        <span>US SecState</span>
+                        <small>Diplomacy</small>
+                    </button>
+                    <button class="advisor-btn">
+                        <span>Families Rep</span>
+                        <small>Hostages</small>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Proceed Button -->
+            <div class="footer-actions">
+                <button class="btn-proceed" disabled>
+                    PROCEED TO NEXT TURN
+                </button>
+                <p class="proceed-note">
+                    Resolve 3 pending items to proceed
+                </p>
+            </div>
+        </aside>
+    </div>
+</body>
+</html>
